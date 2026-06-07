@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭支出明細系統</title>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #EEF2FF;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-800: #1F2937;
+    --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+  /* ── Nav ── */
+  nav { background: #fff; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 1rem; height: 56px; }
+  .nav-logo { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 1.05rem; color: var(--primary); text-decoration: none; }
+  .nav-logo img { height: 32px; width: auto; }
+  .nav-links { display: flex; gap: .25rem; margin-left: auto; }
+  .nav-btn { padding: .4rem .85rem; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: .875rem; color: var(--gray-600); transition: background .15s; }
+  .nav-btn:hover, .nav-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+  /* ── Pages ── */
+  .page { display: none; max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .page.active { display: block; }
+
+  /* ── Section headers ── */
+  h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin-bottom: .75rem; }
+
+  /* ── Cards ── */
+  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
+
+  /* ── KPI grid ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+  .kpi-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; border-left: 4px solid var(--primary); }
+  .kpi-card.shihong  { border-color: #4F46E5; }
+  .kpi-card.huifeng  { border-color: #EC4899; }
+  .kpi-card.common   { border-color: var(--success); }
+  .kpi-card.unclass  { border-color: var(--warning); }
+  .kpi-label { font-size: .8rem; color: var(--gray-400); margin-bottom: .35rem; }
+  .kpi-value { font-size: 1.75rem; font-weight: 800; }
+  .kpi-card.shihong  .kpi-value { color: #4F46E5; }
+  .kpi-card.huifeng  .kpi-value { color: #EC4899; }
+  .kpi-card.common   .kpi-value { color: var(--success); }
+  .kpi-card.unclass  .kpi-value { color: var(--warning); }
+
+  /* ── Bank countdown grid ── */
+  .bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+  .bank-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1rem; text-align: center; }
+  .bank-name { font-size: .8rem; color: var(--gray-400); margin-bottom: .4rem; }
+  .bank-days { font-size: 2rem; font-weight: 800; color: var(--primary); }
+  .bank-days.urgent { color: var(--danger); }
+  .bank-days.soon   { color: var(--warning); }
+  .bank-sub  { font-size: .75rem; color: var(--gray-400); margin-top: .2rem; }
+
+  /* ── Month selector ── */
+  .month-bar { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .month-bar label { font-size: .875rem; font-weight: 600; }
+  select, input[type=text], input[type=file] {
+    padding: .45rem .75rem; border-radius: 8px; border: 1px solid var(--gray-200);
+    font-size: .875rem; background: #fff; outline: none; color: var(--gray-800);
+  }
+  select:focus, input[type=text]:focus { border-color: var(--primary); }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; background: #fff; font-size: .875rem; }
+  thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+  tbody td { padding: .6rem .9rem; border-bottom: 1px solid var(--gray-100); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--gray-50); }
+  .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+  .badge-shihong { background: #EEF2FF; color: #4F46E5; }
+  .badge-huifeng { background: #FDF2F8; color: #EC4899; }
+  .badge-common  { background: #ECFDF5; color: var(--success); }
+  .badge-unclass { background: #FFFBEB; color: var(--warning); }
+
+  /* ── Buttons ── */
+  .btn { padding: .5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: .875rem; font-weight: 600; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-danger  { background: var(--danger); color: #fff; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-sm { padding: .3rem .65rem; font-size: .8rem; }
+
+  /* ── Filter bar ── */
+  .filter-bar { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+
+  /* ── Attribution select inline ── */
+  .attr-select { font-size: .8rem; padding: .25rem .5rem; border-radius: 6px; border: 1px solid var(--gray-200); }
+
+  /* ── Rule table ── */
+  .rule-row td { vertical-align: middle; }
+  .drag-handle { cursor: grab; color: var(--gray-400); user-select: none; padding: 0 .5rem; font-size: 1.1rem; }
+
+  /* ── CSV drop zone ── */
+  .drop-zone {
+    border: 2px dashed var(--gray-200); border-radius: var(--radius); padding: 2.5rem; text-align: center;
+    cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 1rem;
+  }
+  .drop-zone.drag-over { border-color: var(--primary); background: var(--primary-light); }
+  .drop-zone p { color: var(--gray-400); margin-top: .5rem; font-size: .9rem; }
+
+  /* ── Toast ── */
+  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: .5rem; pointer-events: none; }
+  .toast-item { background: var(--gray-800); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .875rem; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; }
+  .toast-item.show { opacity: 1; transform: translateY(0); }
+
+  /* ── Loading ── */
+  .loading { text-align: center; padding: 2rem; color: var(--gray-400); }
+  .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .kpi-value { font-size: 1.4rem; }
+    .nav-btn span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" onclick="showPage('dashboard')">
+      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
+      家庭支出
+    </a>
+    <div class="nav-links">
+      <button class="nav-btn active" id="nav-dashboard"  onclick="showPage('dashboard')">📊 總覽</button>
+      <button class="nav-btn" id="nav-transactions" onclick="showPage('transactions')">📋 明細</button>
+      <button class="nav-btn" id="nav-unclassified" onclick="showPage('unclassified')">⚠️ 未分類</button>
+      <button class="nav-btn" id="nav-import"       onclick="showPage('import')">📥 匯入</button>
+      <button class="nav-btn" id="nav-rules"        onclick="showPage('rules')">⚙️ 規則</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────────── DASHBOARD ─────────────────────────── -->
+<div id="page-dashboard" class="page active">
+  <div class="month-bar">
+    <label>帳單月份</label>
+    <select id="dash-month-select" onchange="loadDashboard()">
+      <option value="">載入中…</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="loadDashboard()">重新整理</button>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card shihong"><div class="kpi-label">世鴻應付</div><div class="kpi-value" id="kpi-shihong">-</div></div>
+    <div class="kpi-card huifeng"><div class="kpi-label">慧鳳應付</div><div class="kpi-value" id="kpi-huifeng">-</div></div>
+    <div class="kpi-card common" ><div class="kpi-label">共同支付</div><div class="kpi-value" id="kpi-common">-</div></div>
+    <div class="kpi-card unclass"><div class="kpi-label">未分類筆數</div><div class="kpi-value" id="kpi-unclass">-</div></div>
+  </div>
+
+  <h3>結帳日倒數</h3>
+  <div class="bank-grid" id="bank-grid"><div class="loading"><div class="spinner"></div></div></div>
+
+  <h3>最近 50 筆消費</h3>
+  <div class="table-wrap" id="recent-table"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
+<div id="page-transactions" class="page">
+  <h2>全部交易明細</h2>
+  <div class="filter-bar">
+    <select id="tx-month"  onchange="loadTransactions()"><option value="">所有月份</option></select>
+    <select id="tx-bank"   onchange="loadTransactions()">
+      <option value="">所有銀行</option>
+      <option>玉山銀行</option><option>永豐銀行</option>
+      <option>聯邦銀行</option><option>中國信託</option><option>富邦銀行</option>
+    </select>
+    <select id="tx-attr"   onchange="loadTransactions()">
+      <option value="">所有歸屬</option>
+      <option>世鴻應付</option><option>慧鳳應付</option>
+      <option>共同支付</option><option>未分類</option>
+    </select>
+  </div>
+  <div class="table-wrap" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ─────────────────── UNCLASSIFIED ──────────────────────── -->
+<div id="page-unclassified" class="page">
+  <h2>未分類處理</h2>
+  <div class="table-wrap" id="uc-table"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ─────────────────── IMPORT ────────────────────────────── -->
+<div id="page-import" class="page">
+  <h2>CSV 匯入</h2>
+  <div class="card" style="margin-bottom:1rem">
+    <h3>格式說明</h3>
+    <p style="font-size:.875rem;color:var(--gray-600);line-height:1.7">
+      欄位順序：<strong>消費日, 銀行, 消費明細, 金額</strong>（無標頭列）<br>
+      消費日格式：YYYY/M/D 或 YYYY/MM/DD<br>
+      範例：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/5/13,玉山銀行,家樂福＿EC,1289</code>
+    </p>
+  </div>
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
+    <div style="font-size:2.5rem">📂</div>
+    <strong>點擊或拖曳 CSV 檔案至此</strong>
+    <p>支援 .csv 格式，UTF-8 或 Big5 編碼</p>
+    <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSVFile(this.files[0])">
+  </div>
+  <div id="preview-section" style="display:none">
+    <h3 id="preview-title"></h3>
+    <div class="table-wrap" id="preview-table" style="margin-bottom:1rem;max-height:400px;overflow-y:auto"></div>
+    <button class="btn btn-success" onclick="submitImport()">確認匯入</button>
+    <button class="btn" style="margin-left:.5rem;background:var(--gray-100);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+  </div>
+</div>
+
+<!-- ─────────────────── RULES ─────────────────────────────── -->
+<div id="page-rules" class="page">
+  <h2>商家規則管理</h2>
+  <div class="card" style="margin-bottom:1rem">
+    <h3>新增規則</h3>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
+      <div>
+        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">優先順序（插入在第 N 筆之前，空白=末尾）</label>
+        <input type="text" id="new-rule-priority" placeholder="例：1" style="width:120px">
+      </div>
+      <div>
+        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">關鍵字</label>
+        <input type="text" id="new-rule-keyword" placeholder="例：全聯" style="width:160px">
+      </div>
+      <div>
+        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
+        <select id="new-rule-attr">
+          <option>世鴻應付</option><option>慧鳳應付</option>
+          <option>共同支付</option><option>未分類</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="addRule()">新增</button>
+    </div>
+  </div>
+  <div class="table-wrap" id="rules-table"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+// 請將這裡換成你的 Google Apps Script 部署網址
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwRHKwFTg5tvS7meM6DvFrZjGsdN7-9LXJ-sUP3hzgWE8ILaRG7PcUWu1sN6WbyxNc7rg/exec';
+
+// ── State ──────────────────────────────────────────────────────
+let pendingImport = [];
+
+// ── API ────────────────────────────────────────────────────────
+async function api(action, params = {}, body = null) {
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', action);
+  Object.entries(params).forEach(([k, v]) => v && url.searchParams.set(k, v));
+
+  const opts = body
+    ? { method: 'POST', body: JSON.stringify({ action, ...body }) }
+    : { method: 'GET' };
+
+  const res = await fetch(url.toString(), opts);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = 'toast-item';
+  el.textContent = msg;
+  if (type === 'error') el.style.background = '#EF4444';
+  if (type === 'success') el.style.background = '#10B981';
+  document.getElementById('toast').appendChild(el);
+  requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('show')); });
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
+
+// ── Nav / Page ─────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+
+  if (name === 'dashboard')     loadDashboard();
+  if (name === 'transactions')  { populateTxMonths(); loadTransactions(); }
+  if (name === 'unclassified')  loadUnclassified();
+  if (name === 'rules')         loadRules();
+}
+
+// ── Format helpers ─────────────────────────────────────────────
+function fmt(n) { return '$ ' + Number(n).toLocaleString('zh-TW'); }
+
+function attrBadge(attr) {
+  const cls = attr === '世鴻應付' ? 'badge-shihong'
+             : attr === '慧鳳應付' ? 'badge-huifeng'
+             : attr === '共同支付' ? 'badge-common'
+             : 'badge-unclass';
+  return `<span class="badge ${cls}">${attr}</span>`;
+}
+
+function attrSelect(rowIndex, current, onchange = '') {
+  const opts = ['世鴻應付','慧鳳應付','共同支付','未分類'].map(v =>
+    `<option${v===current?' selected':''}>${v}</option>`).join('');
+  return `<select class="attr-select" onchange="${onchange}(${rowIndex},this.value)">${opts}</select>`;
+}
+
+// ── Dashboard ──────────────────────────────────────────────────
+async function initMonthSelector() {
+  try {
+    const data = await api('getBillingMonths');
+    const sel = document.getElementById('dash-month-select');
+    sel.innerHTML = data.months.map(m => `<option value="${m}">${m}</option>`).join('');
+  } catch(e) { toast('載入月份失敗: ' + e.message, 'error'); }
+}
+
+async function loadDashboard() {
+  const month = document.getElementById('dash-month-select').value;
+  await Promise.all([loadKPI(month), loadBankCountdown(), loadRecentTx()]);
+}
+
+async function loadKPI(month) {
+  try {
+    const d = await api('getKPI', { billingMonth: month });
+    document.getElementById('kpi-shihong').textContent = fmt(d.shihong);
+    document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
+    document.getElementById('kpi-common').textContent  = fmt(d.common);
+    document.getElementById('kpi-unclass').textContent = d.unclassified + ' 筆';
+  } catch(e) { toast('載入 KPI 失敗', 'error'); }
+}
+
+async function loadBankCountdown() {
+  try {
+    const data = await api('getBankSettings');
+    const today = new Date();
+    const grid = document.getElementById('bank-grid');
+    grid.innerHTML = data.banks.map(b => {
+      const cutoff = b.cutoffDay;
+      // next cutoff date
+      let next = new Date(today.getFullYear(), today.getMonth(), cutoff);
+      if (next <= today) next = new Date(today.getFullYear(), today.getMonth() + 1, cutoff);
+      const days = Math.ceil((next - today) / 86400000);
+      const cls = days <= 3 ? 'urgent' : days <= 7 ? 'soon' : '';
+      const nextStr = `${next.getMonth()+1}/${next.getDate()}`;
+      return `<div class="bank-card">
+        <div class="bank-name">${b.bank}</div>
+        <div class="bank-days ${cls}">${days}</div>
+        <div class="bank-sub">天後結帳（${nextStr}）</div>
+      </div>`;
+    }).join('');
+  } catch(e) { toast('載入銀行設定失敗', 'error'); }
+}
+
+async function loadRecentTx() {
+  const wrap = document.getElementById('recent-table');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('getRecentTransactions');
+    wrap.innerHTML = buildTxTable(data.transactions, false);
+  } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
+}
+
+// ── Transactions ───────────────────────────────────────────────
+async function populateTxMonths() {
+  try {
+    const data = await api('getBillingMonths');
+    const sel = document.getElementById('tx-month');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">所有月份</option>' +
+      data.months.map(m => `<option value="${m}"${m===cur?' selected':''}>${m}</option>`).join('');
+  } catch(e) {}
+}
+
+async function loadTransactions() {
+  const wrap = document.getElementById('tx-table');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const params = {
+      billingMonth: document.getElementById('tx-month').value,
+      bank: document.getElementById('tx-bank').value,
+      attribution: document.getElementById('tx-attr').value,
+    };
+    const data = await api('getTransactions', params);
+    wrap.innerHTML = buildTxTable(data.transactions, true);
+  } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
+}
+
+function buildTxTable(rows, editable) {
+  if (!rows.length) return '<div class="loading" style="padding:2rem">無資料</div>';
+  const header = `<thead><tr>
+    <th>消費日</th><th>帳單月份</th><th>銀行</th><th>消費明細</th>
+    <th style="text-align:right">金額</th><th>歸屬</th>
+  </tr></thead>`;
+  const body = rows.map(r => `<tr>
+    <td>${r.date}</td>
+    <td>${r.billingMonth}</td>
+    <td>${r.bank}</td>
+    <td>${r.detail}</td>
+    <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
+    <td>${editable ? attrSelect(r.rowIndex, r.attribution, 'saveAttr') : attrBadge(r.attribution)}</td>
+  </tr>`).join('');
+  return `<table>${header}<tbody>${body}</tbody></table>`;
+}
+
+async function saveAttr(rowIndex, attribution) {
+  try {
+    await api('updateAttribution', {}, { rowIndex, attribution });
+    toast('歸屬已更新', 'success');
+  } catch(e) { toast('更新失敗: ' + e.message, 'error'); }
+}
+
+// ── Unclassified ───────────────────────────────────────────────
+async function loadUnclassified() {
+  const wrap = document.getElementById('uc-table');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('getTransactions', { attribution: '未分類' });
+    if (!data.transactions.length) {
+      wrap.innerHTML = '<div class="loading" style="padding:2rem;color:#10B981">✅ 沒有未分類的交易！</div>';
+      return;
+    }
+    const header = `<thead><tr>
+      <th>消費日</th><th>帳單月份</th><th>銀行</th><th>消費明細</th>
+      <th style="text-align:right">金額</th><th>指定歸屬</th>
+    </tr></thead>`;
+    const body = data.transactions.map(r => `<tr>
+      <td>${r.date}</td><td>${r.billingMonth}</td><td>${r.bank}</td><td>${r.detail}</td>
+      <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
+      <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttrAndReload')}</td>
+    </tr>`).join('');
+    wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
+  } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
+}
+
+async function saveAttrAndReload(rowIndex, attribution) {
+  await saveAttr(rowIndex, attribution);
+  loadUnclassified();
+}
+
+// ── CSV Import ─────────────────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleCSVFile(file);
+});
+
+function handleCSVFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result);
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  const rows = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    // support both comma and fullwidth comma
+    const parts = line.split(/,|，/);
+    if (parts.length < 4) continue;
+    rows.push({
+      date: parts[0].trim(),
+      bank: parts[1].trim(),
+      detail: parts[2].trim(),
+      amount: parseFloat(parts[3].trim().replace(/[^\d.]/g, '')) || 0,
+    });
+  }
+  if (!rows.length) { toast('CSV 格式錯誤或無有效資料', 'error'); return; }
+  pendingImport = rows;
+  showPreview(rows);
+}
+
+function showPreview(rows) {
+  document.getElementById('preview-title').textContent = `預覽：共 ${rows.length} 筆`;
+  const header = `<thead><tr><th>消費日</th><th>銀行</th><th>消費明細</th><th style="text-align:right">金額</th></tr></thead>`;
+  const body = rows.map(r => `<tr>
+    <td>${r.date}</td><td>${r.bank}</td><td>${r.detail}</td>
+    <td style="text-align:right">${r.amount.toLocaleString()}</td>
+  </tr>`).join('');
+  document.getElementById('preview-table').innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
+  document.getElementById('preview-section').style.display = 'block';
+}
+
+async function submitImport() {
+  if (!pendingImport.length) return;
+  try {
+    const result = await api('addTransactions', {}, { transactions: pendingImport });
+    toast(`成功匯入 ${result.added} 筆`, 'success');
+    cancelImport();
+    initMonthSelector();
+  } catch(e) { toast('匯入失敗: ' + e.message, 'error'); }
+}
+
+function cancelImport() {
+  pendingImport = [];
+  document.getElementById('preview-section').style.display = 'none';
+  document.getElementById('csv-file').value = '';
+}
+
+// ── Rules ──────────────────────────────────────────────────────
+async function loadRules() {
+  const wrap = document.getElementById('rules-table');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const data = await api('getMerchantRules');
+    const header = `<thead><tr><th style="width:40px">#</th><th>關鍵字</th><th>歸屬</th><th style="width:80px">操作</th></tr></thead>`;
+    const body = data.rules.map((r, i) => `<tr class="rule-row" data-row="${r.rowIndex}">
+      <td style="color:var(--gray-400);font-size:.8rem">${i+1}</td>
+      <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px">${r.keyword}</code></td>
+      <td>${attrBadge(r.attribution)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRule(${r.rowIndex})">刪除</button></td>
+    </tr>`).join('');
+    wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
+  } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
+}
+
+async function addRule() {
+  const keyword  = document.getElementById('new-rule-keyword').value.trim();
+  const attr     = document.getElementById('new-rule-attr').value;
+  const priority = document.getElementById('new-rule-priority').value.trim();
+  if (!keyword) { toast('請輸入關鍵字', 'error'); return; }
+  try {
+    await api('addMerchantRule', {}, { keyword, attribution: attr, priority: priority || null });
+    toast('規則已新增', 'success');
+    document.getElementById('new-rule-keyword').value = '';
+    document.getElementById('new-rule-priority').value = '';
+    loadRules();
+  } catch(e) { toast('新增失敗: ' + e.message, 'error'); }
+}
+
+async function deleteRule(rowIndex) {
+  if (!confirm('確定刪除此規則？')) return;
+  try {
+    await api('deleteMerchantRule', {}, { rowIndex });
+    toast('規則已刪除', 'success');
+    loadRules();
+  } catch(e) { toast('刪除失敗: ' + e.message, 'error'); }
+}
+
+// ── Init ───────────────────────────────────────────────────────
+(async () => {
+  await initMonthSelector();
+  loadDashboard();
+})();
+</script>
+</body>
+</html>
