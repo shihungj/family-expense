@@ -20,6 +20,8 @@
     --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
     --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
     --radius: 12px;
+    --row-hover: #EBF3FD;
+    --row-selected: #BFDBFE;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
@@ -114,7 +116,8 @@
   thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
   tbody td { padding: .6rem .9rem; border-bottom: 1px solid var(--gray-100); }
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: var(--gray-50); }
+  tbody tr:hover:not(.row-selected) { background: var(--row-hover); }
+  tbody tr.row-selected { background: var(--row-selected); }
   .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
   .badge-shihong { background: #EEF2FF; color: #4F46E5; }
   .badge-huifeng { background: #FDF2F8; color: #EC4899; }
@@ -123,7 +126,8 @@
 
   /* ── Buttons ── */
   .btn { padding: .5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: .875rem; font-weight: 600; transition: opacity .15s; }
-  .btn:hover { opacity: .85; }
+  .btn:hover:not(:disabled) { opacity: .85; }
+  .btn:disabled { cursor: not-allowed; opacity: .5; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-danger  { background: var(--danger);  color: #fff; }
   .btn-success { background: var(--success); color: #fff; }
@@ -148,8 +152,42 @@
   .drop-zone.drag-over { border-color: var(--primary); background: var(--primary-light); }
   .drop-zone p { color: var(--gray-400); margin-top: .5rem; font-size: .9rem; }
 
-  /* ── Import warning ── */
-  .import-warning { display: none; background: #FFFBEB; border: 1px solid var(--warning); color: #92400E; border-radius: 8px; padding: .75rem 1rem; font-size: .875rem; margin-bottom: 1rem; }
+  /* ── Import result message ── */
+  .import-result {
+    display: none;
+    padding: .7rem 1rem;
+    border-radius: 8px;
+    font-size: .875rem;
+    font-weight: 500;
+    margin-bottom: .75rem;
+  }
+  .import-result.success   { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+  .import-result.error     { background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; }
+  .import-result.warn-msg  { background: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
+
+  /* ── Import progress bar ── */
+  .import-progress {
+    display: none;
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: .75rem;
+    position: relative;
+  }
+  .import-progress-inner {
+    position: absolute;
+    top: 0;
+    left: -40%;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: import-slide 1.2s ease-in-out infinite;
+  }
+  @keyframes import-slide {
+    0%   { left: -40%; }
+    100% { left: 110%; }
+  }
 
   /* ── Settings form ── */
   .settings-msg { display: none; border-radius: 8px; padding: .6rem .85rem; font-size: .875rem; margin-bottom: .85rem; }
@@ -275,16 +313,15 @@
 <div id="page-import" class="page">
   <h2>CSV 匯入</h2>
 
+  <!-- Billing month top card -->
   <div class="card" style="margin-bottom:1rem">
-    <h3>匯入設定</h3>
-    <div style="display:flex;align-items:flex-end;gap:1.25rem;flex-wrap:wrap">
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">帳單月份（手動選擇）</label>
-        <select id="import-billing-month" style="min-width:130px"></select>
-      </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
+      <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
     </div>
   </div>
 
+  <!-- CSV format info -->
   <div class="card" style="margin-bottom:1rem">
     <h3>CSV 格式說明</h3>
     <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
@@ -295,8 +332,7 @@
     </p>
   </div>
 
-  <div class="import-warning" id="import-warning"></div>
-
+  <!-- Drop zone -->
   <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
     <div style="font-size:2.5rem">📂</div>
     <strong>點擊或拖曳 CSV 檔案至此</strong>
@@ -304,11 +340,23 @@
     <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSVFile(this.files[0])">
   </div>
 
+  <!-- Preview section (hidden until CSV loaded) -->
   <div id="preview-section" style="display:none">
-    <h3 id="preview-title"></h3>
-    <div class="table-wrap" id="preview-table" style="margin-bottom:1rem;max-height:400px;overflow-y:auto"></div>
-    <button class="btn btn-success" onclick="submitImport()">確認匯入</button>
-    <button class="btn" style="margin-left:.5rem;background:var(--gray-100);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+    <!-- Result message (above everything) -->
+    <div id="import-result" class="import-result"></div>
+    <!-- Progress bar -->
+    <div id="import-progress" class="import-progress">
+      <div class="import-progress-inner"></div>
+    </div>
+    <!-- Action buttons above table -->
+    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
+      <button id="btn-confirm-import" class="btn btn-success" onclick="submitImport()">確認匯入</button>
+      <button id="btn-cancel-import" class="btn" style="background:var(--gray-200);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+    </div>
+    <!-- Preview info text -->
+    <div id="preview-info" style="font-size:.875rem;color:var(--gray-600);font-weight:500;margin-bottom:.5rem"></div>
+    <!-- Preview table with fixed height -->
+    <div class="table-wrap" id="preview-table" style="max-height:360px;overflow-y:auto"></div>
   </div>
 </div>
 
@@ -361,6 +409,22 @@
   </div>
 </div>
 
+<!-- ── Billing month old-month warning modal ── -->
+<div id="billing-month-modal"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:var(--radius);padding:1.75rem 2rem;max-width:400px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.2)">
+    <div style="font-size:1.75rem;text-align:center;margin-bottom:.75rem">⚠️</div>
+    <p style="font-weight:700;font-size:1rem;text-align:center;margin-bottom:.5rem;color:#92400E">帳單月份確認</p>
+    <p style="font-size:.875rem;color:var(--gray-600);text-align:center;line-height:1.6;margin-bottom:1.5rem">
+      您選擇的帳單月份較舊，請確認是否正確
+    </p>
+    <div style="display:flex;gap:.75rem;justify-content:center">
+      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="cancelOldMonth()">取消</button>
+      <button class="btn" style="background:#F59E0B;color:#fff;min-width:88px" onclick="confirmOldMonth()">確認</button>
+    </div>
+  </div>
+</div>
+
 </div><!-- /#main-app -->
 
 <div id="toast"></div>
@@ -380,7 +444,8 @@ const BANK_ABBREV = {
 };
 
 // ── State ──────────────────────────────────────────────────────
-let pendingImport = [];
+let pendingImport   = [];
+let _pendingOldMonth = null;
 
 // ── API ────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
@@ -694,18 +759,67 @@ async function saveAttrAndReload(rowIndex, attribution) {
 }
 
 // ── CSV Import ─────────────────────────────────────────────────
+
+// Populate billing month dropdown: 6 months back, exclude current month, default last month
 function populateImportBillingMonths() {
   const sel = document.getElementById('import-billing-month');
   const now = new Date();
   const opts = [];
-  for (let i = 0; i < 13; i++) {
+  for (let i = 1; i <= 6; i++) {
     const d  = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const ym = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}`;
-    opts.push(`<option value="${ym}"${i===0?' selected':''}>${ym}</option>`);
+    opts.push(`<option value="${ym}"${i === 1 ? ' selected' : ''}>${ym}</option>`);
   }
   sel.innerHTML = opts.join('');
 }
 
+// Called when billing month dropdown changes
+function onImportMonthChange() {
+  const sel = document.getElementById('import-billing-month');
+  const selected = sel.value;
+  const lastMonth = sel.options.length > 0 ? sel.options[0].value : '';
+
+  if (lastMonth && selected !== lastMonth) {
+    _pendingOldMonth = selected;
+    sel.value = lastMonth; // Temporarily reset
+    document.getElementById('billing-month-modal').style.display = 'flex';
+  } else {
+    refreshPreviewInfo();
+  }
+}
+
+function confirmOldMonth() {
+  document.getElementById('billing-month-modal').style.display = 'none';
+  if (_pendingOldMonth) {
+    document.getElementById('import-billing-month').value = _pendingOldMonth;
+    refreshPreviewInfo();
+  }
+  _pendingOldMonth = null;
+}
+
+function cancelOldMonth() {
+  document.getElementById('billing-month-modal').style.display = 'none';
+  _pendingOldMonth = null;
+  refreshPreviewInfo();
+}
+
+// Compute batch IDs from rows data
+function getBatchIds(rows, billingMonth) {
+  const ym    = billingMonth.replace('/', '');
+  const banks = [...new Set(rows.map(r => r.bank))];
+  return banks.map(bank => (BANK_ABBREV[bank] || 'UNKN') + '-' + ym);
+}
+
+// Update preview info text if preview is visible
+function refreshPreviewInfo() {
+  if (!pendingImport.length) return;
+  const billingMonth = document.getElementById('import-billing-month').value;
+  const batchIds = getBatchIds(pendingImport, billingMonth);
+  document.getElementById('preview-info').textContent =
+    `共 ${pendingImport.length} 筆資料，帳單月份：${billingMonth}，批次編號：${batchIds.join('、')}`;
+}
+
+// Drop zone
 const dropZone = document.getElementById('drop-zone');
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
@@ -741,12 +855,17 @@ function parseCSV(text) {
   }
   if (!rows.length) { toast('CSV 格式錯誤或無有效資料', 'error'); return; }
   pendingImport = rows;
-  hideImportWarning();
+  hideImportResult();
   showPreview(rows);
 }
 
 function showPreview(rows) {
-  document.getElementById('preview-title').textContent = `預覽：共 ${rows.length} 筆`;
+  const billingMonth = document.getElementById('import-billing-month').value;
+  const batchIds     = getBatchIds(rows, billingMonth);
+
+  document.getElementById('preview-info').textContent =
+    `共 ${rows.length} 筆資料，帳單月份：${billingMonth}，批次編號：${batchIds.join('、')}`;
+
   const header = `<thead><tr>
     <th>入帳日</th><th>消費日</th><th>銀行</th><th>消費明細</th>
     <th style="text-align:right">金額</th>
@@ -755,18 +874,37 @@ function showPreview(rows) {
     <td>${r.postingDate}</td><td>${r.date}</td><td>${r.bank}</td><td>${r.detail}</td>
     <td style="text-align:right">${r.amount.toLocaleString()}</td>
   </tr>`).join('');
+
   document.getElementById('preview-table').innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
   document.getElementById('preview-section').style.display = 'block';
+  setImportButtons(true);
 }
 
-function showImportWarning(msg) {
-  const el = document.getElementById('import-warning');
-  el.textContent = '⚠️ ' + msg;
+// Import result helpers
+function showImportResult(msg, type) {
+  const el = document.getElementById('import-result');
+  el.textContent = msg;
+  el.className = 'import-result ' + type;
   el.style.display = 'block';
 }
 
-function hideImportWarning() {
-  document.getElementById('import-warning').style.display = 'none';
+function hideImportResult() {
+  const el = document.getElementById('import-result');
+  el.style.display = 'none';
+  el.className = 'import-result';
+}
+
+// Progress bar helpers
+function showImportProgress(visible) {
+  document.getElementById('import-progress').style.display = visible ? 'block' : 'none';
+}
+
+// Button enable/disable
+function setImportButtons(enabled) {
+  const btnConfirm = document.getElementById('btn-confirm-import');
+  const btnCancel  = document.getElementById('btn-cancel-import');
+  btnConfirm.disabled = !enabled;
+  btnCancel.disabled  = !enabled;
 }
 
 async function submitImport() {
@@ -774,24 +912,44 @@ async function submitImport() {
   const billingMonth = document.getElementById('import-billing-month').value;
   if (!billingMonth) { toast('請選擇帳單月份', 'error'); return; }
 
+  setImportButtons(false);
+  showImportProgress(true);
+  hideImportResult();
+
+  let succeeded = false;
   try {
     const result = await api('addTransactions', {}, { transactions: pendingImport, billingMonth });
+    showImportProgress(false);
 
     if (result.duplicate) {
-      showImportWarning(`此批次（${result.batchId}）已匯入過，請確認是否重複操作`);
-      return;
+      showImportResult(`此批次（${result.batchId}）已匯入過，請確認是否重複操作`, 'warn-msg');
+      setTimeout(hideImportResult, 5000);
+    } else {
+      succeeded = true;
+      const batchIds = getBatchIds(pendingImport, billingMonth);
+      showImportResult(
+        `匯入成功，共匯入 ${result.added} 筆資料，批次編號：${batchIds.join('、')}`,
+        'success'
+      );
+      initMonthSelector();
+      // Auto-clear form after 5 seconds
+      setTimeout(() => { cancelImport(); }, 5000);
     }
-    toast(`成功匯入 ${result.added} 筆`, 'success');
-    cancelImport();
-    initMonthSelector();
-  } catch(e) { toast('匯入失敗: ' + e.message, 'error'); }
+  } catch(e) {
+    showImportProgress(false);
+    showImportResult('匯入失敗，請確認 CSV 格式是否正確', 'error');
+    setTimeout(hideImportResult, 5000);
+  } finally {
+    if (!succeeded) setImportButtons(true);
+  }
 }
 
 function cancelImport() {
   pendingImport = [];
   document.getElementById('preview-section').style.display = 'none';
   document.getElementById('csv-file').value = '';
-  hideImportWarning();
+  hideImportResult();
+  showImportProgress(false);
 }
 
 // ── Rules ──────────────────────────────────────────────────────
@@ -833,6 +991,18 @@ async function deleteRule(rowIndex) {
     loadRules();
   } catch(e) { toast('刪除失敗: ' + e.message, 'error'); }
 }
+
+// ── Global table row selection ─────────────────────────────────
+document.addEventListener('click', e => {
+  const tr = e.target.closest('tbody tr');
+  if (!tr) return;
+  if (e.target.closest('button, select, a')) return;
+  const tbody = tr.closest('tbody');
+  if (!tbody) return;
+  const wasSelected = tr.classList.contains('row-selected');
+  tbody.querySelectorAll('tr.row-selected').forEach(r => r.classList.remove('row-selected'));
+  if (!wasSelected) tr.classList.add('row-selected');
+});
 
 // ── Init ───────────────────────────────────────────────────────
 (async () => {
