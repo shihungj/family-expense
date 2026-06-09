@@ -634,7 +634,8 @@ function resetSettingsForm() {
 }
 
 // ── Format helpers ───────────────────────────────────────────────
-function fmt(n) { return '$ ' + Number(n).toLocaleString('zh-TW'); }
+// [Bug1] Number(undefined)/Number(NaN) 會產生 NaN；加 || 0 確保永遠顯示數字
+function fmt(n) { return '$ ' + (Number(n) || 0).toLocaleString('zh-TW'); }
 
 function attrBadge(attr) {
   const cls = attr === '世鴻應付' ? 'badge-shihong'
@@ -1053,7 +1054,7 @@ async function loadRules() {
       <td style="color:var(--gray-400);font-size:.8rem">${i+1}</td>
       <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px">${r.keyword}</code></td>
       <td>${attrBadge(r.attribution)}</td>
-      <td>
+      <td style="white-space:nowrap"><!-- [Bug5] 防止按鈕換行 -->
         <button class="btn btn-primary btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
         <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteRule(${r.rowIndex})">刪除</button>
       </td>

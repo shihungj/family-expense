@@ -41,16 +41,16 @@ function handleRequest(e) {
       case 'changePassword':      result = changePassword(postData);     break;
       case 'getTransactions':     result = getTransactions(params);      break;
       case 'addTransactions':     result = addTransactions(postData);    break;
-      case 'addTransaction':      result = addTransaction(postData);     break;
+      case 'addTransaction':      result = addTransaction(postData);     break;  // [Bug2] 手動新增
       case 'deleteTransactions':  result = deleteTransactions(postData); break;
       case 'updateAttribution':   result = updateAttribution(postData);  break;
       case 'getKPI':              result = getKPI(params);               break;
       case 'getBankSettings':     result = getBankSettings();            break;
-      case 'addBankSetting':      result = addBankSetting(postData);     break;
-      case 'updateBankSetting':   result = updateBankSetting(postData);  break;
-      case 'deleteBankSetting':   result = deleteBankSetting(postData);  break;
+      case 'addBankSetting':      result = addBankSetting(postData);     break;  // [Bug3] 新增銀行
+      case 'updateBankSetting':   result = updateBankSetting(postData);  break;  // [Bug3] 修改銀行
+      case 'deleteBankSetting':   result = deleteBankSetting(postData);  break;  // [Bug3] 刪除銀行
       case 'getMerchantRules':    result = getMerchantRules();           break;
-      case 'addMerchantRule':     result = addMerchantRule(postData);    break;
+      case 'addMerchantRule':     result = addMerchantRule(postData);    break;  // [Bug6] 新增規則排第一
       case 'updateMerchantRule':  result = updateMerchantRule(postData); break;
       case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
       case 'getBillingMonths':    result = getBillingMonths();           break;
@@ -137,6 +137,18 @@ function toDateStr(val) {
   return String(val);
 }
 
+// ── [Bug1] 穩健金額解析 ────────────────────────────────────────
+// Google Sheets 有時以文字格式回傳數值，parseFloat('') 或 parseFloat(null) 回傳 NaN。
+// parseAmount 統一轉成數字，若無法解析則回傳 0。
+function parseAmount(raw) {
+  if (raw === null || raw === undefined || raw === '') return 0;
+  const n = Number(raw);
+  if (!isNaN(n)) return n;
+  // 最後手段：移除非數字字元（如千分位逗號）後再解析
+  const cleaned = parseFloat(String(raw).replace(/[^\d.-]/g, ''));
+  return isNaN(cleaned) ? 0 : cleaned;
+}
+
 // ── Bank code map ─────────────────────────────────────────────
 // Reads bankCode from BankSettings sheet (col C), falls back to hardcoded map.
 function buildBankCodeMap() {
@@ -144,8 +156,10 @@ function buildBankCodeMap() {
   const data  = sheet.getDataRange().getValues();
   const map   = {};
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0] && data[i][2]) {
-      map[String(data[i][0])] = String(data[i][2]);
+    const bankName = String(data[i][0] || '').trim();
+    const bankCode = String(data[i][2] || '').trim();
+    if (bankName) {
+      map[bankName] = bankCode || BANK_ABBREV[bankName] || '';
     }
   }
   return map;
@@ -188,7 +202,7 @@ function getTransactions(params) {
       date:         toDateStr(row[1]),
       bank:         row[2],
       detail:       row[3],
-      amount:       row[4],
+      amount:       parseAmount(row[4]),   // [Bug1] 確保回傳純數字
       attribution:  row[5],
       billingMonth: String(row[6] || ''),
       batchId:      String(row[7] || ''),
@@ -233,7 +247,7 @@ function addTransactions(data) {
     const batchId     = getBatchId(String(item.bank), billingMonth, bankCodeMap);
     return [
       String(item.postingDate), String(item.date), String(item.bank),
-      String(item.detail), parseFloat(item.amount) || 0,
+      String(item.detail), parseAmount(item.amount),
       attribution, billingMonth, batchId,
     ];
   });
@@ -248,7 +262,7 @@ function addTransactions(data) {
   return { success: true, added: numRows };
 }
 
-// Manual single-transaction entry
+// [Bug2] 手動單筆新增
 function addTransaction(data) {
   const sheet        = getSheet(SHEET_TRANSACTIONS);
   const billingMonth = String(data.billingMonth || '');
@@ -269,7 +283,7 @@ function addTransaction(data) {
   sheet.getRange(rowNum, 7, 1, 1).setNumberFormat('@'); // 帳單月份
   sheet.getRange(rowNum, 1, 1, 8).setValues([[
     String(data.postingDate), String(data.date), bankName,
-    String(data.detail), parseFloat(data.amount) || 0,
+    String(data.detail), parseAmount(data.amount),
     attribution, billingMonth, batchId,
   ]]);
 
@@ -296,7 +310,7 @@ function updateAttribution(data) {
   return { success: true };
 }
 
-// ── KPI ───────────────────────────────────────────────────────
+// ── [Bug1] KPI ─────────────────────────────────────────────────
 function getKPI(params) {
   const billingMonth = params.billingMonth;
   const sheet = getSheet(SHEET_TRANSACTIONS);
@@ -309,9 +323,9 @@ function getKPI(params) {
     if (!row[0] && !row[1]) continue;
     if (billingMonth && String(row[6] || '') !== billingMonth) continue;
 
-    const amount = parseFloat(row[4]) || 0;
+    const amount = parseAmount(row[4]);  // [Bug1] 使用穩健解析，保證是數字
     const attr   = String(row[5]);
-    total += amount;  // All transactions contribute to total
+    total += amount;
 
     if      (attr === '世鴻應付') shihong += amount;
     else if (attr === '慧鳳應付') huifeng += amount;
@@ -320,32 +334,50 @@ function getKPI(params) {
 
   return {
     // 世鴻 = 世鴻原始 + ceil(共同/2)；慧鳳 = 慧鳳原始 + floor(共同/2)
-    shihong: Math.round(shihong) + Math.ceil(common / 2),
-    huifeng: Math.round(huifeng) + Math.floor(common / 2),
-    common:  Math.round(common),
-    total:   Math.round(total),
+    shihong: (Math.round(shihong) + Math.ceil(common / 2))  || 0,
+    huifeng: (Math.round(huifeng) + Math.floor(common / 2)) || 0,
+    common:  Math.round(common)  || 0,
+    total:   Math.round(total)   || 0,   // [Bug1] 確保不回傳 NaN
   };
 }
 
-// ── Bank Settings ─────────────────────────────────────────────
+// ── [Bug3][Bug4] Bank Settings ─────────────────────────────────
 // BankSettings columns: A=銀行, B=結帳日, C=銀行縮寫
+// [Bug4] 自動補齊 col C（既有表格無此欄的一次性遷移邏輯）
 function getBankSettings() {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
+
+  // [Bug4] 確保 C1 標題存在（舊表格可能沒有）
+  if (!sheet.getRange(1, 3).getValue()) {
+    sheet.getRange(1, 3).setValue('銀行縮寫');
+  }
+
   const data  = sheet.getDataRange().getValues();
   const banks = [];
+
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0]) {
-      banks.push({
-        rowIndex:  i + 1,
-        bank:      String(data[i][0]),
-        cutoffDay: parseInt(data[i][1]) || 1,
-        bankCode:  String(data[i][2] || ''),
-      });
+    if (!data[i][0]) continue;
+
+    const bankName = String(data[i][0]).trim();
+    let   bankCode = String(data[i][2] || '').trim();
+
+    // [Bug4] col C 為空時，從硬編碼對照表取值並自動回寫（一次性遷移）
+    if (!bankCode && BANK_ABBREV[bankName]) {
+      bankCode = BANK_ABBREV[bankName];
+      sheet.getRange(i + 1, 3).setValue(bankCode);
     }
+
+    banks.push({
+      rowIndex:  i + 1,
+      bank:      bankName,
+      cutoffDay: parseInt(data[i][1]) || 1,
+      bankCode:  bankCode,
+    });
   }
   return { banks };
 }
 
+// [Bug3] 新增銀行
 function addBankSetting(data) {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
   // Check duplicate name
@@ -359,6 +391,7 @@ function addBankSetting(data) {
   return { success: true };
 }
 
+// [Bug3] 修改銀行
 function updateBankSetting(data) {
   const sheet    = getSheet(SHEET_BANK_SETTINGS);
   const rowIndex = parseInt(data.rowIndex);
@@ -371,6 +404,7 @@ function updateBankSetting(data) {
   return { success: true };
 }
 
+// [Bug3] 刪除銀行
 function deleteBankSetting(data) {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
   sheet.deleteRow(parseInt(data.rowIndex));
@@ -400,10 +434,10 @@ function getMerchantRules() {
   return { rules };
 }
 
-// Always inserts at the first position (row 2), pushing existing rules down.
+// [Bug6] 新增規則插在第一筆（標題列下方）
 function addMerchantRule(data) {
   const sheet = getSheet(SHEET_MERCHANT_RULES);
-  sheet.insertRowBefore(2); // Insert after header row
+  sheet.insertRowBefore(2);                                     // 在標題列後插入空列
   sheet.getRange(2, 1, 1, 2).setValues([[data.keyword, data.attribution]]);
   return { success: true };
 }
