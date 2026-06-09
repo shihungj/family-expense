@@ -2,13 +2,14 @@
 // 家庭每月支出明細系統 - Google Apps Script 後端
 // ============================================================
 
-const SHEET_TRANSACTIONS   = 'Transactions';
-const SHEET_BANK_SETTINGS  = 'BankSettings';
-const SHEET_MERCHANT_RULES = 'MerchantRules';
+const SHEET_TRANSACTIONS    = 'Transactions';
+const SHEET_BANK_SETTINGS   = 'BankSettings';
+const SHEET_MERCHANT_RULES  = 'MerchantRules';
 const SHEET_SYSTEM_SETTINGS = 'SystemSettings';
 
 const EXPECTED_API_KEY = 'family-expense-2026';
 
+// Fallback bank code map (superseded by col C of BankSettings)
 const BANK_ABBREV = {
   '玉山銀行': 'ESUN',
   '中國信託': 'CTBC',
@@ -18,19 +19,14 @@ const BANK_ABBREV = {
 };
 
 // ── CORS ──────────────────────────────────────────────────────
-function doGet(e) {
-  return handleRequest(e);
-}
-function doPost(e) {
-  return handleRequest(e);
-}
+function doGet(e)  { return handleRequest(e); }
+function doPost(e) { return handleRequest(e); }
 
 function handleRequest(e) {
   const params   = e.parameter || {};
   const postData = e.postData ? JSON.parse(e.postData.contents || '{}') : {};
   const action   = params.action || postData.action;
 
-  // API key verification (required for all requests)
   const apiKey = params.apiKey || postData.apiKey;
   if (!verifyApiKey(apiKey)) {
     return ContentService
@@ -41,19 +37,23 @@ function handleRequest(e) {
   let result;
   try {
     switch (action) {
-      case 'login':                result = login(postData);              break;
-      case 'changePassword':       result = changePassword(postData);     break;
-      case 'getTransactions':      result = getTransactions(params);      break;
-      case 'addTransactions':      result = addTransactions(postData);    break;
-      case 'updateAttribution':    result = updateAttribution(postData);  break;
-      case 'getKPI':               result = getKPI(params);               break;
-      case 'getBankSettings':      result = getBankSettings();            break;
-      case 'getMerchantRules':     result = getMerchantRules();           break;
-      case 'addMerchantRule':      result = addMerchantRule(postData);    break;
-      case 'deleteMerchantRule':   result = deleteMerchantRule(postData); break;
-      case 'reorderMerchantRule':  result = reorderMerchantRule(postData);break;
-      case 'getBillingMonths':     result = getBillingMonths();           break;
-      case 'getRecentTransactions':result = getRecentTransactions();      break;
+      case 'login':               result = login(postData);              break;
+      case 'changePassword':      result = changePassword(postData);     break;
+      case 'getTransactions':     result = getTransactions(params);      break;
+      case 'addTransactions':     result = addTransactions(postData);    break;
+      case 'addTransaction':      result = addTransaction(postData);     break;
+      case 'deleteTransactions':  result = deleteTransactions(postData); break;
+      case 'updateAttribution':   result = updateAttribution(postData);  break;
+      case 'getKPI':              result = getKPI(params);               break;
+      case 'getBankSettings':     result = getBankSettings();            break;
+      case 'addBankSetting':      result = addBankSetting(postData);     break;
+      case 'updateBankSetting':   result = updateBankSetting(postData);  break;
+      case 'deleteBankSetting':   result = deleteBankSetting(postData);  break;
+      case 'getMerchantRules':    result = getMerchantRules();           break;
+      case 'addMerchantRule':     result = addMerchantRule(postData);    break;
+      case 'updateMerchantRule':  result = updateMerchantRule(postData); break;
+      case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
+      case 'getBillingMonths':    result = getBillingMonths();           break;
       default: result = { error: 'Unknown action: ' + action };
     }
   } catch (err) {
@@ -65,9 +65,7 @@ function handleRequest(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function verifyApiKey(key) {
-  return key === EXPECTED_API_KEY;
-}
+function verifyApiKey(key) { return key === EXPECTED_API_KEY; }
 
 // ── Sheet helpers ─────────────────────────────────────────────
 function getSheet(name) {
@@ -83,14 +81,19 @@ function getSheet(name) {
 function initSheet(sheet, name) {
   if (name === SHEET_TRANSACTIONS) {
     sheet.appendRow(['入帳日', '消費日', '銀行', '消費明細', '金額', '歸屬', '帳單月份', '批次編號']);
-    // Columns A (入帳日), B (消費日), G (帳單月份) stored as plain text
     sheet.getRange('A:B').setNumberFormat('@');
     sheet.getRange('G:G').setNumberFormat('@');
 
   } else if (name === SHEET_BANK_SETTINGS) {
-    sheet.appendRow(['銀行', '結帳日']);
-    [['玉山銀行', 13], ['永豐銀行', 26], ['聯邦銀行', 12], ['中國信託', 25], ['富邦銀行', 26]]
-      .forEach(r => sheet.appendRow(r));
+    // Columns: A=銀行, B=結帳日, C=銀行縮寫
+    sheet.appendRow(['銀行', '結帳日', '銀行縮寫']);
+    [
+      ['玉山銀行', 13, 'ESUN'],
+      ['永豐銀行', 26, 'SINO'],
+      ['聯邦銀行', 12, 'UNIO'],
+      ['中國信託', 25, 'CTBC'],
+      ['富邦銀行', 26, 'FUBO'],
+    ].forEach(r => sheet.appendRow(r));
 
   } else if (name === SHEET_MERCHANT_RULES) {
     sheet.appendRow(['關鍵字', '歸屬']);
@@ -116,7 +119,6 @@ function initSheet(sheet, name) {
 
   } else if (name === SHEET_SYSTEM_SETTINGS) {
     sheet.appendRow(['key', 'value']);
-    // Passwords stored as Base64; default password is "0000"
     sheet.appendRow(['account_shihung',  'shihung']);
     sheet.appendRow(['password_shihung', Utilities.base64Encode('0000')]);
     sheet.appendRow(['account_huifeng',  'huifeng']);
@@ -125,7 +127,6 @@ function initSheet(sheet, name) {
 }
 
 // ── Date helpers ──────────────────────────────────────────────
-// Converts a Sheets Date object (if auto-converted) back to YYYY/MM/DD string.
 function toDateStr(val) {
   if (!val) return '';
   if (val instanceof Date) {
@@ -136,22 +137,25 @@ function toDateStr(val) {
   return String(val);
 }
 
-// ── Batch ID ──────────────────────────────────────────────────
-function getBatchId(bankName, billingMonth) {
-  const abbrev = BANK_ABBREV[bankName] || 'UNKN';
-  const ym = billingMonth.replace('/', ''); // '2026/05' → '202605'
-  return abbrev + '-' + ym;
-}
-
-// ── Bank Settings map (used by countdown) ────────────────────
-function getBankSettingsMap() {
+// ── Bank code map ─────────────────────────────────────────────
+// Reads bankCode from BankSettings sheet (col C), falls back to hardcoded map.
+function buildBankCodeMap() {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
   const data  = sheet.getDataRange().getValues();
   const map   = {};
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0]) map[data[i][0]] = parseInt(data[i][1]);
+    if (data[i][0] && data[i][2]) {
+      map[String(data[i][0])] = String(data[i][2]);
+    }
   }
   return map;
+}
+
+function getBatchId(bankName, billingMonth, bankCodeMap) {
+  const codeMap = bankCodeMap || {};
+  const code    = codeMap[bankName] || BANK_ABBREV[bankName] || 'UNKN';
+  const ym      = billingMonth.replace('/', '');
+  return code + '-' + ym;
 }
 
 // ── Attribution via MerchantRules ─────────────────────────────
@@ -199,31 +203,6 @@ function getTransactions(params) {
   return { transactions: filtered };
 }
 
-function getRecentTransactions() {
-  const sheet = getSheet(SHEET_TRANSACTIONS);
-  const data  = sheet.getDataRange().getValues();
-  const rows  = [];
-
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    if (!row[0] && !row[1]) continue;
-    rows.push({
-      rowIndex:     i + 1,
-      postingDate:  toDateStr(row[0]),
-      date:         toDateStr(row[1]),
-      bank:         row[2],
-      detail:       row[3],
-      amount:       row[4],
-      attribution:  row[5],
-      billingMonth: String(row[6] || ''),
-      batchId:      String(row[7] || ''),
-    });
-  }
-
-  rows.sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  return { transactions: rows.slice(0, 50) };
-}
-
 function addTransactions(data) {
   const sheet        = getSheet(SHEET_TRANSACTIONS);
   const items        = data.transactions || [];
@@ -232,10 +211,14 @@ function addTransactions(data) {
   if (!billingMonth) return { success: false, error: '請選擇帳單月份' };
   if (!items.length)  return { success: true, added: 0 };
 
-  // Collect unique batch IDs for this import
-  const batchIdSet = new Set(items.map(item => getBatchId(String(item.bank), billingMonth)));
+  const bankCodeMap = buildBankCodeMap();
 
-  // Check for duplicates before writing anything
+  // Collect unique batch IDs
+  const batchIdSet = new Set(
+    items.map(item => getBatchId(String(item.bank), billingMonth, bankCodeMap))
+  );
+
+  // Check duplicates
   const existing = sheet.getDataRange().getValues();
   for (const batchId of batchIdSet) {
     for (let i = 1; i < existing.length; i++) {
@@ -245,38 +228,71 @@ function addTransactions(data) {
     }
   }
 
-  // Build row data
   const rowsData = items.map(item => {
     const attribution = classifyMerchant(String(item.detail));
-    const batchId     = getBatchId(String(item.bank), billingMonth);
+    const batchId     = getBatchId(String(item.bank), billingMonth, bankCodeMap);
     return [
-      String(item.postingDate),          // 入帳日
-      String(item.date),                 // 消費日
-      String(item.bank),                 // 銀行
-      String(item.detail),               // 消費明細
-      parseFloat(item.amount) || 0,      // 金額
-      attribution,                       // 歸屬
-      billingMonth,                      // 帳單月份
-      batchId,                           // 批次編號
+      String(item.postingDate), String(item.date), String(item.bank),
+      String(item.detail), parseFloat(item.amount) || 0,
+      attribution, billingMonth, batchId,
     ];
   });
 
   const firstNewRow = sheet.getLastRow() + 1;
   const numRows     = rowsData.length;
-
-  // Force date / billing-month columns to text BEFORE writing values
   sheet.getRange(firstNewRow, 1, numRows, 1).setNumberFormat('@'); // 入帳日
   sheet.getRange(firstNewRow, 2, numRows, 1).setNumberFormat('@'); // 消費日
   sheet.getRange(firstNewRow, 7, numRows, 1).setNumberFormat('@'); // 帳單月份
-
   sheet.getRange(firstNewRow, 1, numRows, 8).setValues(rowsData);
 
   return { success: true, added: numRows };
 }
 
+// Manual single-transaction entry
+function addTransaction(data) {
+  const sheet        = getSheet(SHEET_TRANSACTIONS);
+  const billingMonth = String(data.billingMonth || '');
+  const bankName     = String(data.bank || '');
+
+  if (!billingMonth) return { success: false, error: '請選擇帳單月份' };
+  if (!data.postingDate || !data.date || !bankName || !data.detail || !data.amount) {
+    return { success: false, error: '請填寫所有必填欄位' };
+  }
+
+  const bankCodeMap  = buildBankCodeMap();
+  const batchId      = getBatchId(bankName, billingMonth, bankCodeMap);
+  const attribution  = String(data.attribution || '未分類');
+
+  const rowNum = sheet.getLastRow() + 1;
+  sheet.getRange(rowNum, 1, 1, 1).setNumberFormat('@'); // 入帳日
+  sheet.getRange(rowNum, 2, 1, 1).setNumberFormat('@'); // 消費日
+  sheet.getRange(rowNum, 7, 1, 1).setNumberFormat('@'); // 帳單月份
+  sheet.getRange(rowNum, 1, 1, 8).setValues([[
+    String(data.postingDate), String(data.date), bankName,
+    String(data.detail), parseFloat(data.amount) || 0,
+    attribution, billingMonth, batchId,
+  ]]);
+
+  return { success: true };
+}
+
+// Batch or single delete
+function deleteTransactions(data) {
+  const sheet = getSheet(SHEET_TRANSACTIONS);
+  const rowIndices = (data.rowIndices || [])
+    .map(i => parseInt(i))
+    .filter(i => !isNaN(i) && i >= 2)
+    .sort((a, b) => b - a); // Descending to avoid index shifting
+
+  for (const ri of rowIndices) {
+    sheet.deleteRow(ri);
+  }
+  return { success: true, deleted: rowIndices.length };
+}
+
 function updateAttribution(data) {
   const sheet = getSheet(SHEET_TRANSACTIONS);
-  sheet.getRange(data.rowIndex, 6).setValue(data.attribution); // col 6 = 歸屬
+  sheet.getRange(data.rowIndex, 6).setValue(data.attribution);
   return { success: true };
 }
 
@@ -286,37 +302,79 @@ function getKPI(params) {
   const sheet = getSheet(SHEET_TRANSACTIONS);
   const data  = sheet.getDataRange().getValues();
 
-  let shihong = 0, huifeng = 0, common = 0, unclassifiedCount = 0;
+  let shihong = 0, huifeng = 0, common = 0, total = 0;
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
     if (!row[0] && !row[1]) continue;
     if (billingMonth && String(row[6] || '') !== billingMonth) continue;
+
     const amount = parseFloat(row[4]) || 0;
     const attr   = String(row[5]);
-    if (attr === '世鴻應付')      shihong += amount;
+    total += amount;  // All transactions contribute to total
+
+    if      (attr === '世鴻應付') shihong += amount;
     else if (attr === '慧鳳應付') huifeng += amount;
     else if (attr === '共同支付') common  += amount;
-    else if (attr === '未分類')   unclassifiedCount++;
   }
 
   return {
-    shihong:      Math.round(shihong + common / 2),
-    huifeng:      Math.round(huifeng + common / 2),
-    common:       Math.round(common),
-    unclassified: unclassifiedCount,
+    // 世鴻 = 世鴻原始 + ceil(共同/2)；慧鳳 = 慧鳳原始 + floor(共同/2)
+    shihong: Math.round(shihong) + Math.ceil(common / 2),
+    huifeng: Math.round(huifeng) + Math.floor(common / 2),
+    common:  Math.round(common),
+    total:   Math.round(total),
   };
 }
 
 // ── Bank Settings ─────────────────────────────────────────────
+// BankSettings columns: A=銀行, B=結帳日, C=銀行縮寫
 function getBankSettings() {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
   const data  = sheet.getDataRange().getValues();
   const banks = [];
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0]) banks.push({ bank: data[i][0], cutoffDay: parseInt(data[i][1]) });
+    if (data[i][0]) {
+      banks.push({
+        rowIndex:  i + 1,
+        bank:      String(data[i][0]),
+        cutoffDay: parseInt(data[i][1]) || 1,
+        bankCode:  String(data[i][2] || ''),
+      });
+    }
   }
   return { banks };
+}
+
+function addBankSetting(data) {
+  const sheet = getSheet(SHEET_BANK_SETTINGS);
+  // Check duplicate name
+  const existing = sheet.getDataRange().getValues();
+  for (let i = 1; i < existing.length; i++) {
+    if (String(existing[i][0]) === String(data.bank)) {
+      return { success: false, error: '銀行名稱已存在' };
+    }
+  }
+  sheet.appendRow([String(data.bank), parseInt(data.cutoffDay) || 1, String(data.bankCode || '')]);
+  return { success: true };
+}
+
+function updateBankSetting(data) {
+  const sheet    = getSheet(SHEET_BANK_SETTINGS);
+  const rowIndex = parseInt(data.rowIndex);
+  if (data.cutoffDay !== undefined) {
+    sheet.getRange(rowIndex, 2).setValue(parseInt(data.cutoffDay) || 1);
+  }
+  if (data.bankCode !== undefined) {
+    sheet.getRange(rowIndex, 3).setValue(String(data.bankCode));
+  }
+  return { success: true };
+}
+
+function deleteBankSetting(data) {
+  const sheet = getSheet(SHEET_BANK_SETTINGS);
+  sheet.deleteRow(parseInt(data.rowIndex));
+  return { success: true };
 }
 
 // ── Billing months list ───────────────────────────────────────
@@ -342,29 +400,24 @@ function getMerchantRules() {
   return { rules };
 }
 
+// Always inserts at the first position (row 2), pushing existing rules down.
 function addMerchantRule(data) {
+  const sheet = getSheet(SHEET_MERCHANT_RULES);
+  sheet.insertRowBefore(2); // Insert after header row
+  sheet.getRange(2, 1, 1, 2).setValues([[data.keyword, data.attribution]]);
+  return { success: true };
+}
+
+function updateMerchantRule(data) {
   const sheet    = getSheet(SHEET_MERCHANT_RULES);
-  const insertAt = data.priority ? parseInt(data.priority) + 1 : sheet.getLastRow() + 1;
-  sheet.insertRowBefore(insertAt);
-  sheet.getRange(insertAt, 1, 1, 2).setValues([[data.keyword, data.attribution]]);
+  const rowIndex = parseInt(data.rowIndex);
+  sheet.getRange(rowIndex, 1, 1, 2).setValues([[String(data.keyword), String(data.attribution)]]);
   return { success: true };
 }
 
 function deleteMerchantRule(data) {
   const sheet = getSheet(SHEET_MERCHANT_RULES);
   sheet.deleteRow(parseInt(data.rowIndex));
-  return { success: true };
-}
-
-function reorderMerchantRule(data) {
-  const sheet   = getSheet(SHEET_MERCHANT_RULES);
-  const fromRow = parseInt(data.fromRowIndex);
-  const toRow   = parseInt(data.toRowIndex);
-  const rowData = sheet.getRange(fromRow, 1, 1, 2).getValues();
-  sheet.deleteRow(fromRow);
-  const adjustedTo = toRow > fromRow ? toRow : toRow;
-  sheet.insertRowBefore(adjustedTo);
-  sheet.getRange(adjustedTo, 1, 1, 2).setValues(rowData);
   return { success: true };
 }
 
@@ -384,7 +437,6 @@ function login(data) {
 
   const encodedPwd = map['password_' + username] || '';
   const decoded    = Utilities.newBlob(Utilities.base64Decode(encodedPwd)).getDataAsString();
-
   return decoded === password ? { success: true, username } : { success: false };
 }
 
