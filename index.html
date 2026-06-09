@@ -165,8 +165,9 @@
   .settings-msg.success { background: #ECFDF5; color: var(--success); }
 
   /* ── Toast ── */
-  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: .5rem; pointer-events: none; }
-  .toast-item { background: var(--gray-800); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .875rem; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; }
+  /* [問題四] Toast 改為水平置中 */
+  #toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: .5rem; pointer-events: none; }
+  .toast-item { background: var(--gray-800); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .875rem; white-space: nowrap; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; }
   .toast-item.show { opacity: 1; transform: translateY(0); }
 
   /* ── Loading ── */
@@ -236,7 +237,6 @@
     <select id="dash-month-select" onchange="loadDashboard()">
       <option value="">載入中…</option>
     </select>
-    <button class="btn btn-primary btn-sm" onclick="loadDashboard()">重新整理</button>
   </div>
 
   <div class="kpi-grid">
@@ -281,20 +281,23 @@
   </div>
 
   <div class="card" style="margin-bottom:1rem">
-    <h3>CSV 格式說明</h3>
-    <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
-      欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
-      第一列為標題列，匯入時自動跳過<br>
-      日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
-      範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
-    </p>
-  </div>
-
-  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
-    <div style="font-size:2.5rem">📂</div>
-    <strong>點擊或拖曳 CSV 檔案至此</strong>
-    <p>支援 .csv 格式，UTF-8 或 Big5 編碼</p>
-    <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSVFile(this.files[0])">
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)"
+              onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
+      <!-- [問題三] 匯入帳單按鈕取代舊有 drop-zone，比一般按鈕略大 -->
+      <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
+              onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+      <input type="file" id="csv-file" accept=".csv" style="display:none"
+             onchange="handleCSVFile(this.files[0])">
+    </div>
+    <div id="format-guide" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)">
+      <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
+        欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
+        第一列為標題列，匯入時自動跳過<br>
+        日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
+        範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
+      </p>
+    </div>
   </div>
 
   <div id="preview-section" style="display:none">
@@ -313,7 +316,7 @@
 <div id="page-rules" class="page">
   <h2>商家規則管理</h2>
   <div class="card" style="margin-bottom:1rem">
-    <h3>新增規則（自動排在最前）</h3>
+    <h3>新增規則</h3>
     <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
       <div>
         <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">關鍵字</label>
@@ -567,6 +570,11 @@ async function doLogin() {
       document.getElementById('login-page').style.display = 'none';
       document.getElementById('main-app').style.display  = 'block';
       document.getElementById('nav-username').textContent = username;
+      // [問題五] 無論登出前在哪一頁，重新登入統一回到首頁
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-dashboard').classList.add('active');
+      document.getElementById('nav-dashboard').classList.add('active');
       populateImportBillingMonths();
       await Promise.all([loadBankSettings(), initMonthSelector()]);
       loadDashboard();
@@ -600,8 +608,9 @@ async function doChangePassword() {
   try {
     const result = await api('changePassword', {}, { username, currentPassword: current, newPassword: newPwd });
     if (result.success) {
-      showSettingsMsg('密碼變更成功，即將重新登入…', 'success');
-      setTimeout(() => doLogout(), 2000);
+      // [問題六] 立即登出；用 sessionStorage 旗標讓下次進入設定頁再顯示成功訊息
+      sessionStorage.setItem('pwdChanged', '1');
+      doLogout();
     } else { showSettingsMsg(result.error || '目前密碼錯誤', 'error'); }
   } catch(e) { showSettingsMsg('操作失敗：' + e.message, 'error'); }
 }
@@ -630,7 +639,16 @@ function showPage(name) {
 function resetSettingsForm() {
   ['pwd-current','pwd-new','pwd-confirm'].forEach(id => document.getElementById(id).value = '');
   const m = document.getElementById('settings-msg');
-  m.style.display = 'none'; m.className = 'settings-msg';
+  // [問題六] 若攜帶密碼變更旗標，進入設定頁時顯示成功提示並清除旗標
+  if (sessionStorage.getItem('pwdChanged')) {
+    sessionStorage.removeItem('pwdChanged');
+    m.textContent   = '密碼變更成功';
+    m.className     = 'settings-msg success';
+    m.style.display = 'block';
+  } else {
+    m.style.display = 'none';
+    m.className     = 'settings-msg';
+  }
 }
 
 // ── Format helpers ───────────────────────────────────────────────
@@ -938,13 +956,11 @@ function refreshPreviewInfo() {
     `共 ${pendingImport.length} 筆資料，帳單月份：${billingMonth}，批次編號：${batchIds.join('、')}`;
 }
 
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0]; if (file) handleCSVFile(file);
-});
+// [問題三] 切換 CSV 格式說明摺疊區
+function toggleFormatGuide() {
+  const el = document.getElementById('format-guide');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
 
 function handleCSVFile(file) {
   if (!file) return;
@@ -1069,7 +1085,7 @@ async function addRule() {
   if (!keyword) { toast('請輸入關鍵字', 'error'); return; }
   try {
     await api('addMerchantRule', {}, { keyword, attribution: attr });
-    toast('規則已新增（排在最前）', 'success');
+    toast('規則已新增', 'success');
     document.getElementById('new-rule-keyword').value = '';
     loadRules();
   } catch(e) { toast('新增失敗: ' + e.message, 'error'); }
