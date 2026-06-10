@@ -459,6 +459,29 @@
   .quick-card-desc  { font-size: .78rem; color: var(--gray-400); }
   .quick-card-arrow { color: var(--gray-400); flex-shrink: 0; display: flex; align-items: center; }
 
+  /* ── Transactions Table enhancements ── */
+  .tx-table-outer { overflow-y: auto; max-height: 600px; border-radius: var(--radius); box-shadow: var(--shadow); background: #fff; }
+  .tx-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  .tx-table-outer thead { position: sticky; top: 0; z-index: 10; }
+  .tx-table-outer thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); white-space: nowrap; box-shadow: inset 0 -1px 0 var(--gray-200); }
+  .tx-filter-row th { background: #FAFBFC !important; padding: .3rem .4rem !important; box-shadow: inset 0 -2px 0 var(--gray-200) !important; }
+  .th-sort { cursor: pointer; user-select: none; }
+  .th-sort:hover { background: #EAECF0 !important; }
+  .sort-icon { font-size: .65rem; margin-left: .25rem; opacity: .3; vertical-align: middle; }
+  .sort-icon.active { opacity: 1; color: var(--primary); }
+  .tx-filter-select, .tx-filter-input {
+    width: 100%; font-size: .75rem; padding: .2rem .35rem;
+    border-radius: 5px; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-800); outline: none;
+  }
+  .tx-filter-select:focus, .tx-filter-input:focus { border-color: var(--primary); }
+  .tx-batch-bar {
+    display: none; align-items: center; gap: .75rem;
+    padding: .6rem .85rem; background: #EFF6FF;
+    border: 1px solid #BFDBFE; border-radius: 8px; margin-bottom: .75rem;
+  }
+  .tx-batch-bar.visible { display: flex; }
+  .tx-batch-info { font-size: .875rem; color: #1D4ED8; font-weight: 600; flex: 1; }
+
   /* ── Responsive ── */
   @media (max-width: 900px) {
     :root { --sidebar-w: 60px; }
@@ -840,17 +863,12 @@
       <h2 style="margin-bottom:0">全部交易明細</h2>
       <button class="btn btn-primary btn-sm" onclick="openAddTxModal()">＋ 新增交易</button>
     </div>
-    <div class="filter-bar">
-      <select id="tx-month"  onchange="loadTransactions()"><option value="">所有月份</option></select>
-      <select id="tx-bank"   onchange="loadTransactions()"><option value="">所有銀行</option></select>
-      <select id="tx-attr"   onchange="loadTransactions()">
-        <option value="">所有歸屬</option>
-        <option>世鴻應付</option><option>慧鳳應付</option>
-        <option>共同支付</option><option>未分類</option>
-      </select>
-      <button id="btn-batch-delete" class="btn btn-danger btn-sm" onclick="batchDeleteTx()" disabled>刪除勾選</button>
+    <div class="tx-batch-bar" id="tx-batch-bar">
+      <span class="tx-batch-info" id="tx-batch-info">已選取 0 筆</span>
+      <button class="btn btn-primary btn-sm" onclick="openBatchAttrModal()">修改歸屬</button>
+      <button class="btn btn-danger btn-sm" onclick="openBatchDeleteModal()">刪除勾選</button>
     </div>
-    <div class="table-wrap" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="tx-table-outer" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
   </div>
 
   <!-- ─────────────────── IMPORT ────────────────────────────── -->
@@ -1146,6 +1164,53 @@
   </div>
 </div>
 
+<!-- Single delete confirm modal -->
+<div id="single-delete-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width:400px">
+    <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">確認刪除</p>
+    <p style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">
+      確定刪除此筆資料？此操作無法復原
+    </p>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeSingleDeleteModal()">取消</button>
+      <button class="btn btn-danger" style="min-width:88px" onclick="confirmSingleDelete()">刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- Batch delete confirm modal -->
+<div id="batch-delete-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width:420px">
+    <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">批次刪除確認</p>
+    <p id="batch-delete-msg" style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">
+      確定刪除 0 筆資料？此操作無法復原
+    </p>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeBatchDeleteModal()">取消</button>
+      <button class="btn btn-danger" style="min-width:88px" onclick="confirmBatchDelete()">確定刪除</button>
+    </div>
+  </div>
+</div>
+
+<!-- Batch attr change modal -->
+<div id="batch-attr-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-title">批次修改歸屬</div>
+    <p id="batch-attr-msg" style="font-size:.875rem;color:var(--gray-600);margin-bottom:1rem">已選取 0 筆，請選擇新的歸屬</p>
+    <div class="form-group">
+      <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">新歸屬</label>
+      <select id="batch-attr-select" style="width:100%">
+        <option>世鴻應付</option><option>慧鳳應付</option>
+        <option>共同支付</option><option>未分類</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeBatchAttrModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitBatchAttr()">確認修改</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1164,11 +1229,14 @@ let _pendingOldMonth = null;
 let _bankSettings    = [];
 let _bankSettingsById = {};
 let _rulesById       = {};
-let _availableMonths = [];
-let _pickerYear      = new Date().getFullYear();
-let _topBankByAmount = '';
-let _topBankByCount  = '';
-let _txSortByAmount  = false;
+let _availableMonths    = [];
+let _pickerYear         = new Date().getFullYear();
+let _topBankByAmount    = '';
+let _topBankByCount     = '';
+let _allTxData          = [];
+let _txInlineFilters    = { bank: '', detail: '', attr: '', billingMonth: '' };
+let _txSort             = { col: null, dir: 'asc' };
+let _pendingSingleDeleteRow = null;
 
 // ── API ─────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
@@ -1284,7 +1352,7 @@ function showPage(name) {
   if (nb) nb.classList.add('active');
 
   if (name === 'dashboard')    loadDashboard();
-  if (name === 'transactions') { populateTxMonths(); populateTxBankFilter(); loadTransactions(); }
+  if (name === 'transactions') loadTransactions();
   if (name === 'rules')        loadRules();
   if (name === 'import')       populateImportBillingMonths();
 }
@@ -1595,159 +1663,242 @@ async function loadBankCountdown() {
 }
 
 function goToUnclassified() {
-  _txSortByAmount = false;
+  _txInlineFilters = { bank: '', detail: '', attr: '未分類', billingMonth: '' };
+  _txSort = { col: null, dir: 'asc' };
   showPage('transactions');
-  setTimeout(() => {
-    const attrSel = document.getElementById('tx-attr');
-    if (attrSel) { attrSel.value = '未分類'; loadTransactions(); }
-  }, 100);
 }
 
 function goToMaxTransaction() {
   const month = document.getElementById('dash-month-select').value;
-  _txSortByAmount = true;
+  _txInlineFilters = { bank: '', detail: '', attr: '', billingMonth: month };
+  _txSort = { col: 'amount', dir: 'desc' };
   showPage('transactions');
-  setTimeout(() => {
-    if (month) document.getElementById('tx-month').value = month;
-    document.getElementById('tx-bank').value = '';
-    document.getElementById('tx-attr').value = '';
-    loadTransactions();
-  }, 100);
 }
 
 function goToTopBankAmount(bankName) {
   const month = document.getElementById('dash-month-select').value;
-  _txSortByAmount = true;
+  _txInlineFilters = { bank: bankName || '', detail: '', attr: '', billingMonth: month };
+  _txSort = { col: 'amount', dir: 'desc' };
   showPage('transactions');
-  setTimeout(() => {
-    if (month) document.getElementById('tx-month').value = month;
-    document.getElementById('tx-bank').value = bankName || '';
-    document.getElementById('tx-attr').value = '';
-    loadTransactions();
-  }, 100);
 }
 
 function goToTopBankCount(bankName) {
   const month = document.getElementById('dash-month-select').value;
-  _txSortByAmount = false;
+  _txInlineFilters = { bank: bankName || '', detail: '', attr: '', billingMonth: month };
+  _txSort = { col: null, dir: 'asc' };
   showPage('transactions');
-  setTimeout(() => {
-    if (month) document.getElementById('tx-month').value = month;
-    document.getElementById('tx-bank').value = bankName || '';
-    document.getElementById('tx-attr').value = '';
-    loadTransactions();
-  }, 100);
 }
 
 // ── Transactions ─────────────────────────────────────────────────
-async function populateTxMonths() {
-  try {
-    const data = await api('getBillingMonths');
-    const sel  = document.getElementById('tx-month');
-    const cur  = sel.value;
-    sel.innerHTML = '<option value="">所有月份</option>' +
-      data.months.map(m => `<option value="${m}"${m===cur?' selected':''}>${m}</option>`).join('');
-  } catch(e) {}
-}
-
-function populateTxBankFilter() {
-  const bankSel = document.getElementById('tx-bank');
-  const cur = bankSel.value;
-  bankSel.innerHTML = '<option value="">所有銀行</option>' +
-    _bankSettings.map(b =>
-      `<option value="${b.bank}"${b.bank===cur?' selected':''}>${b.bank}</option>`
-    ).join('');
-}
+function populateTxMonths() {}          // 已移至 in-header 篩選，保留函式以免舊呼叫報錯
+function populateTxBankFilter() {}      // 同上
 
 async function loadTransactions() {
   const wrap = document.getElementById('tx-table');
+  if (!wrap) return;
   wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
-    const params = {
-      billingMonth: document.getElementById('tx-month').value,
-      bank:         document.getElementById('tx-bank').value,
-      attribution:  document.getElementById('tx-attr').value,
-    };
-    const data = await api('getTransactions', params);
-    let rows = data.transactions;
-    if (_txSortByAmount) {
-      rows = [...rows].sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
-    }
-    wrap.innerHTML = buildTxTable(rows);
-    updateBatchDeleteBtn();
+    const data = await api('getTransactions', {});
+    _allTxData = data.transactions || [];
+    renderTxTable();
   } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
 }
 
-function buildTxTable(rows) {
+function renderTxTable() {
+  // 套用篩選
+  let rows = _allTxData.filter(r => {
+    if (_txInlineFilters.bank && r.bank !== _txInlineFilters.bank) return false;
+    if (_txInlineFilters.detail && !r.detail.toLowerCase().includes(_txInlineFilters.detail.toLowerCase())) return false;
+    if (_txInlineFilters.attr && r.attribution !== _txInlineFilters.attr) return false;
+    if (_txInlineFilters.billingMonth && r.billingMonth !== _txInlineFilters.billingMonth) return false;
+    return true;
+  });
+  // 套用排序
+  if (_txSort.col) {
+    const dir = _txSort.dir === 'asc' ? 1 : -1;
+    rows = [...rows].sort((a, b) => {
+      let va, vb;
+      if (_txSort.col === 'amount') { va = parseFloat(a.amount)||0; vb = parseFloat(b.amount)||0; }
+      else { va = (a[_txSort.col] || ''); vb = (b[_txSort.col] || ''); }
+      return va < vb ? -dir : va > vb ? dir : 0;
+    });
+  }
+  // 動態產生下拉選單選項（從全部資料）
+  const banks  = [...new Set(_allTxData.map(r => r.bank).filter(Boolean))].sort();
+  const months = [...new Set(_allTxData.map(r => r.billingMonth).filter(Boolean))].sort().reverse();
+  const attrs  = ['世鴻應付', '慧鳳應付', '共同支付', '未分類'];
+  document.getElementById('tx-table').innerHTML = buildTxTable(rows, banks, months, attrs);
+  updateTxBatchBar();
+}
+
+function buildTxTable(rows, banks, months, attrs) {
   if (!rows.length) return '<div class="loading" style="padding:2rem">無資料</div>';
-  const header = `<thead><tr>
-    <th style="width:36px;text-align:center">
-      <input type="checkbox" id="tx-select-all" title="全選" onchange="toggleAllTxCheckboxes(this.checked)">
-    </th>
-    <th>消費日</th><th>入帳日</th><th>帳單月份</th><th>銀行</th><th>消費明細</th>
-    <th style="text-align:right">金額</th><th>歸屬</th><th style="width:100px">操作</th>
-  </tr></thead>`;
-  const body = rows.map(r => `<tr data-row-index="${r.rowIndex}">
-    <td style="text-align:center">
-      <input type="checkbox" class="tx-check" value="${r.rowIndex}" onchange="onTxCheckChange()">
-    </td>
-    <td>${r.date}</td>
+
+  function sortIcon(col) {
+    if (_txSort.col !== col) return '<span class="sort-icon">↕</span>';
+    return `<span class="sort-icon active">${_txSort.dir === 'asc' ? '▲' : '▼'}</span>`;
+  }
+  function selOpts(arr, cur) {
+    return '<option value="">全部</option>' +
+      arr.map(v => `<option value="${v}"${cur===v?' selected':''}>${v}</option>`).join('');
+  }
+
+  const header = `
+    <thead>
+      <tr>
+        <th style="width:36px;text-align:center">
+          <input type="checkbox" id="tx-select-all" title="全選" onchange="toggleAllTxCheckboxes(this.checked)">
+        </th>
+        <th style="width:46px;text-align:center">項次</th>
+        <th>入帳日</th>
+        <th>消費日</th>
+        <th class="th-sort" onclick="setTxSort('bank')">銀行${sortIcon('bank')}</th>
+        <th>消費明細</th>
+        <th class="th-sort" style="text-align:right" onclick="setTxSort('amount')">金額${sortIcon('amount')}</th>
+        <th>歸屬</th>
+        <th class="th-sort" onclick="setTxSort('billingMonth')">帳單月份${sortIcon('billingMonth')}</th>
+        <th>批次編號</th>
+        <th style="width:72px">操作</th>
+      </tr>
+      <tr class="tx-filter-row">
+        <th></th><th></th><th></th><th></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('bank',this.value)">${selOpts(banks,_txInlineFilters.bank)}</select></th>
+        <th><input type="text" class="tx-filter-input" placeholder="關鍵字" value="${_txInlineFilters.detail.replace(/"/g,'&quot;')}" oninput="updateTxFilter('detail',this.value)"></th>
+        <th></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('attr',this.value)">${selOpts(attrs,_txInlineFilters.attr)}</select></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('billingMonth',this.value)">${selOpts(months,_txInlineFilters.billingMonth)}</select></th>
+        <th></th><th></th>
+      </tr>
+    </thead>`;
+
+  const body = rows.map((r, i) => `<tr data-row-index="${r.rowIndex}">
+    <td style="text-align:center"><input type="checkbox" class="tx-check" value="${r.rowIndex}" onchange="onTxCheckChange()"></td>
+    <td style="text-align:center;color:var(--gray-400);font-size:.8rem">${i + 1}</td>
     <td>${r.postingDate || ''}</td>
-    <td>${r.billingMonth}</td>
+    <td>${r.date}</td>
     <td>${r.bank}</td>
     <td>${r.detail}</td>
     <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
-    <td>
-      <button class="btn btn-danger btn-sm" onclick="deleteSingleTx(${r.rowIndex})">刪除</button>
-    </td>
+    <td>${r.billingMonth}</td>
+    <td style="font-size:.75rem;color:var(--gray-400)">${r.batchId || ''}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
   </tr>`).join('');
+
   return `<table>${header}<tbody>${body}</tbody></table>`;
 }
 
+function setTxSort(col) {
+  if (_txSort.col === col) {
+    _txSort.dir = _txSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    _txSort.col = col;
+    _txSort.dir = col === 'amount' ? 'desc' : 'asc';
+  }
+  renderTxTable();
+}
+
+function updateTxFilter(key, value) {
+  _txInlineFilters[key] = value;
+  renderTxTable();
+}
+
 function onTxCheckChange() {
-  updateBatchDeleteBtn();
-  const all     = document.querySelectorAll('#tx-table .tx-check');
+  updateTxBatchBar();
+}
+
+function toggleAllTxCheckboxes(checked) {
+  document.querySelectorAll('#tx-table .tx-check').forEach(cb => cb.checked = checked);
+  updateTxBatchBar();
+}
+
+function updateTxBatchBar() {
   const checked = document.querySelectorAll('#tx-table .tx-check:checked');
-  const sa = document.getElementById('tx-select-all');
+  const all     = document.querySelectorAll('#tx-table .tx-check');
+  const bar     = document.getElementById('tx-batch-bar');
+  const info    = document.getElementById('tx-batch-info');
+  const sa      = document.getElementById('tx-select-all');
+  if (bar) {
+    checked.length > 0 ? bar.classList.add('visible') : bar.classList.remove('visible');
+  }
+  if (info) info.textContent = `已選取 ${checked.length} 筆`;
   if (sa) {
     sa.indeterminate = checked.length > 0 && checked.length < all.length;
     sa.checked = all.length > 0 && checked.length === all.length;
   }
 }
 
-function toggleAllTxCheckboxes(checked) {
-  document.querySelectorAll('#tx-table .tx-check').forEach(cb => cb.checked = checked);
-  updateBatchDeleteBtn();
+// ── Single delete modal ──────────────────────────────────────────
+function openSingleDeleteModal(rowIndex) {
+  _pendingSingleDeleteRow = rowIndex;
+  document.getElementById('single-delete-modal').style.display = 'flex';
+}
+function closeSingleDeleteModal() {
+  _pendingSingleDeleteRow = null;
+  document.getElementById('single-delete-modal').style.display = 'none';
+}
+async function confirmSingleDelete() {
+  if (_pendingSingleDeleteRow == null) return;
+  const rowIndex = _pendingSingleDeleteRow;
+  closeSingleDeleteModal();
+  try {
+    await api('deleteTransactions', {}, { rowIndices: [rowIndex] });
+    _allTxData = _allTxData.filter(r => r.rowIndex !== rowIndex);
+    toast('已刪除', 'success');
+    renderTxTable(); initMonthSelector();
+  } catch(e) { toast('刪除失敗：' + e.message, 'error'); }
 }
 
-function updateBatchDeleteBtn() {
+// ── Batch delete modal ───────────────────────────────────────────
+function openBatchDeleteModal() {
   const checked = document.querySelectorAll('#tx-table .tx-check:checked');
-  const btn = document.getElementById('btn-batch-delete');
-  if (!btn) return;
-  btn.disabled = checked.length === 0;
-  btn.textContent = checked.length > 0 ? `刪除勾選（${checked.length}）` : '刪除勾選';
-}
-
-async function batchDeleteTx() {
-  const checked = [...document.querySelectorAll('#tx-table .tx-check:checked')];
   if (!checked.length) return;
-  if (!confirm(`確定刪除 ${checked.length} 筆資料？此操作無法復原`)) return;
+  document.getElementById('batch-delete-msg').textContent =
+    `確定刪除 ${checked.length} 筆資料？此操作無法復原`;
+  document.getElementById('batch-delete-modal').style.display = 'flex';
+}
+function closeBatchDeleteModal() {
+  document.getElementById('batch-delete-modal').style.display = 'none';
+}
+async function confirmBatchDelete() {
+  const checked = [...document.querySelectorAll('#tx-table .tx-check:checked')];
+  closeBatchDeleteModal();
+  if (!checked.length) return;
   const rowIndices = checked.map(cb => parseInt(cb.value));
   try {
     await api('deleteTransactions', {}, { rowIndices });
+    _allTxData = _allTxData.filter(r => !rowIndices.includes(r.rowIndex));
     toast(`已刪除 ${rowIndices.length} 筆`, 'success');
-    loadTransactions(); initMonthSelector();
+    renderTxTable(); initMonthSelector();
   } catch(e) { toast('刪除失敗：' + e.message, 'error'); }
 }
 
-async function deleteSingleTx(rowIndex) {
-  if (!confirm('確定刪除此筆資料？此操作無法復原')) return;
+// ── Batch attr modal ─────────────────────────────────────────────
+function openBatchAttrModal() {
+  const checked = document.querySelectorAll('#tx-table .tx-check:checked');
+  if (!checked.length) return;
+  document.getElementById('batch-attr-msg').textContent =
+    `已選取 ${checked.length} 筆，請選擇新的歸屬`;
+  document.getElementById('batch-attr-modal').style.display = 'flex';
+}
+function closeBatchAttrModal() {
+  document.getElementById('batch-attr-modal').style.display = 'none';
+}
+async function submitBatchAttr() {
+  const checked     = [...document.querySelectorAll('#tx-table .tx-check:checked')];
+  const attribution = document.getElementById('batch-attr-select').value;
+  closeBatchAttrModal();
+  if (!checked.length) return;
+  const rowIndices = checked.map(cb => parseInt(cb.value));
   try {
-    await api('deleteTransactions', {}, { rowIndices: [rowIndex] });
-    toast('已刪除', 'success');
-    loadTransactions(); initMonthSelector();
-  } catch(e) { toast('刪除失敗：' + e.message, 'error'); }
+    await Promise.all(rowIndices.map(ri => api('updateAttribution', {}, { rowIndex: ri, attribution })));
+    rowIndices.forEach(ri => {
+      const r = _allTxData.find(x => x.rowIndex === ri);
+      if (r) r.attribution = attribution;
+    });
+    toast(`已更新 ${rowIndices.length} 筆歸屬`, 'success');
+    renderTxTable();
+  } catch(e) { toast('更新失敗：' + e.message, 'error'); }
 }
 
 async function saveAttr(rowIndex, attribution) {
