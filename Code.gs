@@ -316,28 +316,74 @@ function getKPI(params) {
   const sheet = getSheet(SHEET_TRANSACTIONS);
   const data  = sheet.getDataRange().getValues();
 
+  // Compute previous billing month string (YYYY/MM)
+  let lastMonth = '';
+  if (billingMonth) {
+    const parts = billingMonth.split('/');
+    if (parts.length === 2) {
+      let y = parseInt(parts[0]);
+      let m = parseInt(parts[1]) - 1;
+      if (m === 0) { m = 12; y -= 1; }
+      lastMonth = y + '/' + String(m).padStart(2, '0');
+    }
+  }
+
   let shihong = 0, huifeng = 0, common = 0, total = 0;
+  let totalLastMonth = 0;
+  let transactionCount = 0, unclassifiedCount = 0, maxAmount = 0;
+  const importedBankSet = new Set();
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
     if (!row[0] && !row[1]) continue;
-    if (billingMonth && String(row[6] || '') !== billingMonth) continue;
 
-    const amount = parseAmount(row[4]);  // [Bug1] 使用穩健解析，保證是數字
-    const attr   = String(row[5]);
+    const rowMonth = String(row[6] || '');
+    const amount   = parseAmount(row[4]);
+    const attr     = String(row[5]);
+
+    // Accumulate last month total
+    if (lastMonth && rowMonth === lastMonth) {
+      totalLastMonth += amount;
+    }
+
+    if (billingMonth && rowMonth !== billingMonth) continue;
+
+    // Current month stats
     total += amount;
+    transactionCount += 1;
+    if (amount > maxAmount) maxAmount = amount;
+    if (attr === '未分類') unclassifiedCount += 1;
+
+    const bankName = String(row[2] || '').trim();
+    if (bankName) importedBankSet.add(bankName);
 
     if      (attr === '世鴻應付') shihong += amount;
     else if (attr === '慧鳳應付') huifeng += amount;
     else if (attr === '共同支付') common  += amount;
   }
 
+  // Build notImportedBanks from BankSettings
+  const bankSheet = getSheet(SHEET_BANK_SETTINGS);
+  const bankData  = bankSheet.getDataRange().getValues();
+  const allBanks  = [];
+  for (let i = 1; i < bankData.length; i++) {
+    const name = String(bankData[i][0] || '').trim();
+    if (name) allBanks.push(name);
+  }
+  const importedBanks    = Array.from(importedBankSet);
+  const notImportedBanks = allBanks.filter(b => !importedBankSet.has(b));
+
   return {
-    // 世鴻 = 世鴻原始 + ceil(共同/2)；慧鳳 = 慧鳳原始 + floor(共同/2)
-    shihong: (Math.round(shihong) + Math.ceil(common / 2))  || 0,
-    huifeng: (Math.round(huifeng) + Math.floor(common / 2)) || 0,
-    common:  Math.round(common)  || 0,
-    total:   Math.round(total)   || 0,   // [Bug1] 確保不回傳 NaN
+    shihong:          (Math.round(shihong) + Math.ceil(common / 2))  || 0,
+    huifeng:          (Math.round(huifeng) + Math.floor(common / 2)) || 0,
+    common:           Math.round(common)         || 0,
+    total:            Math.round(total)           || 0,
+    totalLastMonth:   Math.round(totalLastMonth)  || 0,
+    transactionCount: transactionCount,
+    unclassifiedCount: unclassifiedCount,
+    maxAmount:        Math.round(maxAmount)       || 0,
+    importedBanks:    importedBanks,
+    notImportedBanks: notImportedBanks,
   };
 }
 
