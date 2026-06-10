@@ -1133,32 +1133,22 @@
 <div id="add-bank-modal" class="modal-overlay">
   <div class="modal-box" style="max-width:560px">
     <div class="modal-title">新增銀行設定</div>
-    <div style="display:flex;gap:1rem;align-items:flex-start">
-      <div style="flex:1">
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
-          <select id="add-bank-name-select" onchange="onBankSelectChange('add')" style="width:100%">
-            <option value="">請選擇銀行</option>
-          </select>
-          <input type="text" id="add-bank-name-custom" placeholder="請輸入銀行名稱" style="width:100%;display:none;margin-top:.4rem">
-        </div>
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
-          <input type="text" id="add-bank-cutoff" placeholder="例：25" style="width:120px">
-        </div>
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行縮寫</label>
-          <input type="text" id="add-bank-code" placeholder="例：ESUN" style="width:120px">
-          <div style="font-size:.75rem;color:#718096;margin-top:.25rem">選擇銀行後自動帶入，可手動修改</div>
-        </div>
+    <div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
+        <select id="add-bank-name-select" onchange="onBankSelectChange('add')" style="width:100%">
+          <option value="">請選擇銀行</option>
+        </select>
+        <input type="text" id="add-bank-name-custom" placeholder="請輸入銀行名稱" style="width:100%;display:none;margin-top:.4rem">
       </div>
-      <div style="background:#F5F6F8;border-radius:8px;padding:.85rem 1rem;font-size:.8rem;color:#718096;line-height:1.9;min-width:150px;flex:0 0 150px">
-        <div style="font-weight:600;color:#4A5568;margin-bottom:.5rem">操作說明</div>
-        <ul style="margin:0;padding-left:1.2rem">
-          <li>點擊「新增銀行」可新增一筆銀行設定</li>
-          <li>點擊編輯圖示可修改結帳日與縮寫</li>
-          <li>點擊刪除圖示會跳出確認視窗</li>
-        </ul>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
+        <input type="text" id="add-bank-cutoff" placeholder="例：25" style="width:120px">
+      </div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行縮寫</label>
+        <input type="text" id="add-bank-code" placeholder="例：ESUN" style="width:120px">
+        <div style="font-size:.75rem;color:#718096;margin-top:.25rem">選擇銀行後自動帶入，可手動修改</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1173,28 +1163,18 @@
   <div class="modal-box" style="max-width:560px">
     <div class="modal-title">修改銀行設定</div>
     <input type="hidden" id="edit-bank-row-index">
-    <div style="display:flex;gap:1rem;align-items:flex-start">
-      <div style="flex:1">
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
-          <div id="edit-bank-name-display" style="padding:.45rem .75rem;background:var(--gray-100);border-radius:8px;font-size:.875rem;font-weight:600"></div>
-        </div>
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
-          <input type="text" id="edit-bank-cutoff" placeholder="例：25" style="width:120px">
-        </div>
-        <div class="form-group">
-          <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行縮寫</label>
-          <input type="text" id="edit-bank-code" placeholder="例：ESUN" style="width:120px">
-        </div>
+    <div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
+        <div id="edit-bank-name-display" style="padding:.45rem .75rem;background:var(--gray-100);border-radius:8px;font-size:.875rem;font-weight:600"></div>
       </div>
-      <div style="background:#F5F6F8;border-radius:8px;padding:.85rem 1rem;font-size:.8rem;color:#718096;line-height:1.9;min-width:150px;flex:0 0 150px">
-        <div style="font-weight:600;color:#4A5568;margin-bottom:.5rem">操作說明</div>
-        <ul style="margin:0;padding-left:1.2rem">
-          <li>點擊「新增銀行」可新增一筆銀行設定</li>
-          <li>點擊編輯圖示可修改結帳日與縮寫</li>
-          <li>點擊刪除圖示會跳出確認視窗</li>
-        </ul>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
+        <input type="text" id="edit-bank-cutoff" placeholder="例：25" style="width:120px">
+      </div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行縮寫</label>
+        <input type="text" id="edit-bank-code" placeholder="例：ESUN" style="width:120px">
       </div>
     </div>
     <div class="modal-footer">
@@ -2238,25 +2218,24 @@ async function loadBankSettingsTable() {
   const header = `<thead><tr>
     <th>銀行名稱</th><th>結帳日</th><th>縮寫</th><th style="width:140px">操作</th>
   </tr></thead>`;
-  const SVG_EDIT = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
-  const SVG_DEL  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M9 6V4h6v2"/></svg>`;
   const body = _bankSettings.map(b => `<tr>
     <td><strong>${b.bank}</strong></td>
     <td>${b.cutoffDay} 日</td>
     <td><code style="background:var(--gray-100);padding:.1rem .35rem;border-radius:4px">${b.bankCode || '—'}</code></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-primary btn-sm" onclick="openEditBankModal(${b.rowIndex})" title="修改">${SVG_EDIT}</button>
-      <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})" title="刪除">${SVG_DEL}</button>
+      <button class="btn btn-primary btn-sm" onclick="openEditBankModal(${b.rowIndex})">編輯</button>
+      <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})">刪除</button>
     </td>
   </tr>`).join('');
   wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
 }
 
-function populateBankSelect(selectId) {
+function populateBankSelect(selectId, excludeNames) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
+  const excluded = new Set((excludeNames || []).map(n => n.trim()));
   sel.innerHTML = '<option value="">請選擇銀行</option>' +
-    BANK_LIST.map(n => `<option value="${n}">${n}</option>`).join('') +
+    BANK_LIST.filter(n => !excluded.has(n)).map(n => `<option value="${n}">${n}</option>`).join('') +
     '<option value="__other__">其他（自行輸入）</option>';
 }
 
@@ -2276,7 +2255,8 @@ function onBankSelectChange(prefix) {
 }
 
 function openAddBankModal() {
-  populateBankSelect('add-bank-name-select');
+  const existingNames = (_bankSettings || []).map(b => b.bank);
+  populateBankSelect('add-bank-name-select', existingNames);
   document.getElementById('add-bank-name-custom').style.display = 'none';
   document.getElementById('add-bank-name-custom').value = '';
   document.getElementById('add-bank-cutoff').value = '';
@@ -2296,6 +2276,12 @@ async function addBankSetting() {
   if (!name || !cutoff) { toast('請填寫銀行名稱與結帳日', 'error'); return; }
   if (isNaN(parseInt(cutoff)) || parseInt(cutoff) < 1 || parseInt(cutoff) > 31) {
     toast('結帳日請輸入 1–31 的數字', 'error'); return;
+  }
+  const dupName = (_bankSettings || []).find(b => b.bank.trim() === name);
+  if (dupName) { toast(`「${name}」已存在，請勿重複新增`, 'error'); return; }
+  if (code) {
+    const dupCode = (_bankSettings || []).find(b => (b.bankCode || '').toUpperCase() === code);
+    if (dupCode) { toast(`縮寫「${code}」已被「${dupCode.bank}」使用，請修改後再送出`, 'error'); return; }
   }
   try {
     await api('addBankSetting', {}, { bank: name, cutoffDay: parseInt(cutoff), bankCode: code });
