@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>家庭支出明細系統</title>
+<title>家庭每月支出明細系統</title>
 <style>
   :root {
     --primary: #4F46E5;
@@ -16,12 +16,17 @@
     --gray-200: #E5E7EB;
     --gray-400: #9CA3AF;
     --gray-600: #4B5563;
+    --gray-700: #374151;
     --gray-800: #1F2937;
     --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
     --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
     --radius: 12px;
     --row-hover: #EBF3FD;
     --row-selected: #BFDBFE;
+    --sidebar-bg: #1E293B;
+    --sidebar-w: 240px;
+    --sidebar-active: #F97316;
+    --topbar-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
@@ -36,46 +41,251 @@
   .form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .35rem; }
   .login-error { display: none; background: #FEF2F2; color: var(--danger); border-radius: 8px; padding: .5rem .75rem; font-size: .85rem; margin-bottom: .75rem; }
 
-  /* ── Main App ── */
-  #main-app { display: none; }
+  /* ── App Layout ── */
+  #main-app { display: none; min-height: 100vh; }
+  #app-layout { display: flex; min-height: 100vh; }
 
-  /* ── Nav ── */
-  nav { background: #fff; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
-  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: .5rem; height: 56px; }
-  .nav-logo { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 1.05rem; color: var(--primary); text-decoration: none; flex-shrink: 0; }
-  .nav-logo img { height: 32px; width: auto; }
-  .nav-links { display: flex; gap: .25rem; margin-left: auto; }
-  .nav-btn { padding: .4rem .75rem; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: .875rem; color: var(--gray-600); transition: background .15s; white-space: nowrap; }
-  .nav-btn:hover, .nav-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-  .nav-user { display: flex; align-items: center; gap: .4rem; padding: .3rem .65rem; background: var(--gray-100); border-radius: 8px; margin-left: .5rem; flex-shrink: 0; }
-  .nav-user span { font-size: .8rem; font-weight: 600; color: var(--gray-600); }
-  .logout-btn { background: none; border: none; cursor: pointer; padding: .1rem .2rem; font-size: 1rem; color: var(--gray-400); line-height: 1; }
-  .logout-btn:hover { color: var(--danger); }
+  /* ── Sidebar ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    color: #fff;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    overflow-y: auto;
+  }
+  .sidebar-header {
+    padding: 1.1rem 1rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+  }
+  .sidebar-header img { height: 36px; width: 36px; object-fit: contain; border-radius: 8px; }
+  .sidebar-logo-placeholder {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, #F97316, #FB923C);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .sidebar-header .sys-name { font-size: .76rem; font-weight: 700; line-height: 1.45; color: rgba(255,255,255,.88); }
+  .sidebar-nav { flex: 1; padding: .65rem .65rem; }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .6rem .85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: rgba(255,255,255,.65);
+    font-size: .875rem;
+    font-weight: 500;
+    transition: background .15s, color .15s;
+    text-decoration: none;
+    margin-bottom: .1rem;
+    user-select: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .sidebar-item.active { background: var(--sidebar-active); color: #fff; }
+  .sidebar-item .chevron { margin-left: auto; transition: transform .2s; flex-shrink: 0; }
+  .sidebar-item.submenu-open .chevron { transform: rotate(180deg); }
+  .sidebar-divider { height: 1px; background: rgba(255,255,255,.07); margin: .5rem .85rem; }
+  .sidebar-submenu { display: none; padding-left: .85rem; }
+  .sidebar-submenu.open { display: block; }
+  .sidebar-subitem {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .45rem .85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    color: rgba(255,255,255,.55);
+    font-size: .825rem;
+    transition: background .15s, color .15s;
+    margin-bottom: .05rem;
+    user-select: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+  .sidebar-subitem:hover { background: rgba(255,255,255,.07); color: #fff; }
+  .sidebar-subitem.active { color: #FB923C; font-weight: 600; }
+  .sidebar-subitem::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    opacity: .7;
+  }
+  .sidebar-footer {
+    padding: .9rem 1rem;
+    border-top: 1px solid rgba(255,255,255,.07);
+    font-size: .7rem;
+    color: rgba(255,255,255,.3);
+    line-height: 1.7;
+    flex-shrink: 0;
+  }
+
+  /* ── Main Content ── */
+  #main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── Top Bar ── */
+  #top-bar {
+    height: var(--topbar-h);
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: .75rem;
+    flex-shrink: 0;
+  }
+  .month-nav-wrapper { position: relative; display: inline-flex; align-items: center; gap: .2rem; }
+  .month-nav-btn {
+    background: var(--gray-100);
+    border: none; border-radius: 6px;
+    cursor: pointer; width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-600);
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  .month-nav-btn:hover { background: var(--gray-200); }
+  .month-display-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 1rem; font-weight: 700; color: var(--gray-800);
+    padding: .25rem .75rem; border-radius: 6px;
+    transition: background .15s; min-width: 110px; text-align: center;
+  }
+  .month-display-btn:hover { background: var(--gray-100); }
+  /* Month picker popup */
+  .month-picker-popup {
+    display: none;
+    position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: #fff; border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(0,0,0,.15);
+    padding: 1rem; z-index: 500; min-width: 260px;
+    border: 1px solid var(--gray-200);
+  }
+  .month-picker-popup.open { display: block; }
+  .picker-year-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+  .picker-year-btn { background: none; border: none; cursor: pointer; padding: .3rem .5rem; border-radius: 6px; font-size: .875rem; color: var(--gray-600); }
+  .picker-year-btn:hover { background: var(--gray-100); }
+  .picker-year-label { font-size: .95rem; font-weight: 700; color: var(--gray-800); }
+  .picker-months { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; }
+  .picker-month-btn {
+    padding: .45rem .25rem; border-radius: 6px;
+    border: 1px solid var(--gray-200); background: #fff;
+    cursor: pointer; font-size: .8rem; text-align: center;
+    transition: background .15s; color: var(--gray-700);
+  }
+  .picker-month-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+  .picker-month-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .picker-month-btn.disabled { opacity: .3; cursor: not-allowed; }
+  .picker-month-btn.disabled:hover { background: #fff; border-color: var(--gray-200); color: var(--gray-700); }
+  .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: .65rem; }
+  .bell-btn {
+    background: none; border: none; cursor: pointer;
+    padding: .45rem; border-radius: 8px; color: var(--gray-600);
+    display: flex; align-items: center; transition: background .15s;
+  }
+  .bell-btn:hover { background: var(--gray-100); }
+  .top-divider { width: 1px; height: 24px; background: var(--gray-200); }
+  .top-username { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
+  .logout-btn-top {
+    display: flex; align-items: center; gap: .35rem;
+    padding: .4rem .9rem;
+    background: var(--gray-100); border: none; border-radius: 8px;
+    cursor: pointer; font-size: .8rem; font-weight: 600; color: var(--gray-600);
+    transition: background .15s, color .15s;
+  }
+  .logout-btn-top:hover { background: #FEE2E2; color: var(--danger); }
 
   /* ── Pages ── */
-  .page { display: none; max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .pages-wrapper { flex: 1; padding: 1.5rem 1.5rem 3rem; }
+  .page { display: none; }
   .page.active { display: block; }
-
-  /* ── Section headers ── */
   h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
   h3 { font-size: 1rem; font-weight: 600; margin-bottom: .75rem; }
 
-  /* ── Cards ── */
-  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
+  /* ── KPI Cards (new design) ── */
+  .kpi-grid-new { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+  .kpi-card-new {
+    border-radius: var(--radius); padding: 1.35rem 1.25rem;
+    display: flex; align-items: center; gap: 1rem;
+    box-shadow: var(--shadow);
+  }
+  .kpi-card-new.blue  { background: #EFF6FF; }
+  .kpi-card-new.pink  { background: #FDF2F8; }
+  .kpi-card-new.green { background: #F0FDF4; }
+  .kpi-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .blue  .kpi-icon { background: #DBEAFE; color: #1D4ED8; }
+  .pink  .kpi-icon { background: #FCE7F3; color: #BE185D; }
+  .green .kpi-icon { background: #DCFCE7; color: #15803D; }
+  .kpi-info { flex: 1; min-width: 0; }
+  .kpi-name { font-size: .875rem; font-weight: 700; margin-bottom: .1rem; }
+  .blue  .kpi-name { color: #1E40AF; }
+  .pink  .kpi-name { color: #9D174D; }
+  .green .kpi-name { color: #14532D; }
+  .kpi-sub { font-size: .73rem; color: var(--gray-400); margin-bottom: .4rem; }
+  .kpi-amt { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+  .blue  .kpi-amt { color: #1D4ED8; }
+  .pink  .kpi-amt { color: #BE185D; }
+  .green .kpi-amt { color: #15803D; }
 
-  /* ── KPI grid ── */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
-  .kpi-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; border-left: 4px solid var(--primary); }
-  .kpi-card.shihong { border-color: #4F46E5; }
-  .kpi-card.huifeng { border-color: #EC4899; }
-  .kpi-card.common  { border-color: var(--success); }
-  .kpi-card.total   { border-color: #0EA5E9; }
-  .kpi-label { font-size: .8rem; color: var(--gray-400); margin-bottom: .35rem; }
-  .kpi-value { font-size: 1.75rem; font-weight: 800; }
-  .kpi-card.shihong .kpi-value { color: #4F46E5; }
-  .kpi-card.huifeng .kpi-value { color: #EC4899; }
-  .kpi-card.common  .kpi-value { color: var(--success); }
-  .kpi-card.total   .kpi-value { color: #0EA5E9; }
+  /* ── Dashboard bottom grid ── */
+  .dashboard-bottom { display: grid; grid-template-columns: 1fr 1.65fr; gap: 1rem; }
+  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
+  .section-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; }
+
+  /* 帳單預覽 */
+  .bill-total-label { font-size: .78rem; color: var(--gray-400); margin-bottom: .2rem; }
+  .bill-total-amount { font-size: 2.15rem; font-weight: 800; color: var(--gray-800); margin-bottom: .5rem; line-height: 1.1; }
+  .bill-delta { display: flex; align-items: center; gap: .35rem; font-size: .875rem; font-weight: 600; margin-bottom: .85rem; }
+  .delta-up   { color: var(--danger); }
+  .delta-down { color: var(--success); }
+  .delta-neutral { color: var(--gray-400); }
+  .bill-meta { display: flex; gap: 1.25rem; border-top: 1px solid var(--gray-100); padding-top: .85rem; }
+  .bill-meta-item { display: flex; flex-direction: column; gap: .15rem; }
+  .bill-meta-label { font-size: .72rem; color: var(--gray-400); }
+  .bill-meta-value { font-size: .9rem; font-weight: 700; color: var(--gray-700); }
+
+  /* 本期系統摘要 */
+  .summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+  .see-all-link { font-size: .8rem; color: var(--primary); cursor: pointer; text-decoration: none; }
+  .see-all-link:hover { text-decoration: underline; }
+  .summary-item {
+    display: flex; align-items: center;
+    padding: .65rem .6rem; border-radius: 8px;
+    cursor: pointer; transition: background .12s; margin-bottom: .1rem;
+  }
+  .summary-item:hover { background: var(--gray-50); }
+  .summary-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: .65rem; }
+  .dot-blue   { background: #3B82F6; }
+  .dot-orange { background: #F97316; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-red    { background: #EF4444; }
+  .summary-label { font-size: .875rem; color: var(--gray-600); flex: 1; }
+  .summary-value { font-size: .875rem; font-weight: 700; color: var(--gray-800); margin-right: .5rem; }
+  .summary-arrow { color: var(--gray-400); display: flex; align-items: center; }
 
   /* ── Bank countdown grid ── */
   .bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
@@ -85,17 +295,6 @@
   .bank-days.urgent { color: var(--danger); }
   .bank-days.soon   { color: var(--warning); }
   .bank-sub  { font-size: .75rem; color: var(--gray-400); margin-top: .2rem; }
-
-  /* ── Month selector ── */
-  .month-bar { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-  .month-bar label { font-size: .875rem; font-weight: 600; }
-  select, input[type=text], input[type=password], input[type=file] {
-    padding: .45rem .75rem; border-radius: 8px; border: 1px solid var(--gray-200);
-    font-size: .875rem; background: #fff; outline: none; color: var(--gray-800);
-  }
-  select:focus, input[type=text]:focus, input[type=password]:focus { border-color: var(--primary); }
-  input[type=text][style*="width:100%"],
-  input[type=password][style*="width:100%"] { display: block; }
 
   /* ── Table ── */
   .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
@@ -111,7 +310,6 @@
   .badge-common  { background: #ECFDF5; color: var(--success); }
   .badge-unclass { background: #FFFBEB; color: var(--warning); }
 
-  /* ── Checkbox in table ── */
   input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary); }
 
   /* ── Buttons ── */
@@ -125,16 +323,20 @@
   .btn-sm { padding: .3rem .65rem; font-size: .8rem; }
   .btn-full { width: 100%; }
 
+  select, input[type=text], input[type=password], input[type=file] {
+    padding: .45rem .75rem; border-radius: 8px; border: 1px solid var(--gray-200);
+    font-size: .875rem; background: #fff; outline: none; color: var(--gray-800);
+  }
+  select:focus, input[type=text]:focus, input[type=password]:focus { border-color: var(--primary); }
+
   /* ── Filter bar ── */
   .filter-bar { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
-
-  /* ── Attribution select inline ── */
   .attr-select { font-size: .8rem; padding: .25rem .5rem; border-radius: 6px; border: 1px solid var(--gray-200); }
 
   /* ── Rule table ── */
   .rule-row td { vertical-align: middle; }
 
-  /* ── CSV drop zone ── */
+  /* ── Drop zone ── */
   .drop-zone {
     border: 2px dashed var(--gray-200); border-radius: var(--radius); padding: 2.5rem; text-align: center;
     cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 1rem;
@@ -151,7 +353,7 @@
   .import-progress-inner { position: absolute; top: 0; left: -40%; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, var(--primary), transparent); animation: import-slide 1.2s ease-in-out infinite; }
   @keyframes import-slide { 0% { left: -40%; } 100% { left: 110%; } }
 
-  /* ── Modal overlay ── */
+  /* ── Modal ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; align-items: center; justify-content: center; }
   .modal-box { background: #fff; border-radius: var(--radius); padding: 1.75rem; width: 90%; max-width: 500px; box-shadow: 0 16px 48px rgba(0,0,0,.2); max-height: 92vh; overflow-y: auto; }
   .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
@@ -159,13 +361,19 @@
   .modal-error { display: none; background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; border-radius: 8px; padding: .5rem .75rem; font-size: .85rem; margin-top: .75rem; }
   .modal-2col { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 
-  /* ── Settings form ── */
+  /* ── Settings ── */
   .settings-msg { display: none; border-radius: 8px; padding: .6rem .85rem; font-size: .875rem; margin-bottom: .85rem; }
   .settings-msg.error   { background: #FEF2F2; color: var(--danger); }
   .settings-msg.success { background: #ECFDF5; color: var(--success); }
+  .settings-section { display: none; }
+  .settings-section.active { display: block; }
+  .settings-section-title {
+    font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--gray-400); margin-bottom: 1rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--gray-100);
+  }
 
   /* ── Toast ── */
-  /* [問題四] Toast 改為水平置中 */
   #toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: .5rem; pointer-events: none; }
   .toast-item { background: var(--gray-800); color: #fff; padding: .7rem 1.1rem; border-radius: 10px; font-size: .875rem; white-space: nowrap; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; }
   .toast-item.show { opacity: 1; transform: translateY(0); }
@@ -175,11 +383,28 @@
   .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* hidden legacy selects */
+  #dash-month-select { display: none; }
+
+  /* ── Help page ── */
+  .help-section { margin-bottom: 1.5rem; }
+  .help-section h3 { margin-bottom: .5rem; }
+  .help-section p { font-size: .875rem; color: var(--gray-600); line-height: 1.7; }
+
   /* ── Responsive ── */
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 60px; }
+    .sidebar-header .sys-name, .sidebar-item span:not(.chevron), .sidebar-submenu, .sidebar-footer { display: none; }
+    .sidebar-header { justify-content: center; padding: .85rem .5rem; }
+    .sidebar-item { justify-content: center; padding: .65rem; }
+    .kpi-grid-new { grid-template-columns: 1fr; }
+    .dashboard-bottom { grid-template-columns: 1fr; }
+  }
   @media (max-width: 640px) {
-    .kpi-value { font-size: 1.4rem; }
+    .kpi-amt { font-size: 1.25rem; }
     .login-card { margin: 1rem; padding: 2rem 1.25rem; }
     .modal-2col { grid-template-columns: 1fr; }
+    .top-username { display: none; }
   }
 </style>
 </head>
@@ -209,176 +434,486 @@
 
 <!-- ─────────────────── MAIN APP ───────────────────────────── -->
 <div id="main-app">
+<div id="app-layout">
 
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" href="#" onclick="showPage('dashboard');return false;">
-      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
-      家庭支出
-    </a>
-    <div class="nav-links">
-      <button class="nav-btn active" id="nav-dashboard"    onclick="showPage('dashboard')">📊 總覽</button>
-      <button class="nav-btn"        id="nav-transactions" onclick="showPage('transactions')">📋 明細</button>
-      <button class="nav-btn"        id="nav-import"       onclick="showPage('import')">📥 匯入</button>
-      <button class="nav-btn"        id="nav-rules"        onclick="showPage('rules')">⚙️ 規則</button>
-      <button class="nav-btn"        id="nav-settings"     onclick="showPage('settings')">🔧 設定</button>
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="Logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="sidebar-logo-placeholder" style="display:none">🏠</div>
+    <span class="sys-name">家庭每月支出<br>明細系統</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <!-- 首頁總覽 -->
+    <button class="sidebar-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9,22 9,12 15,12 15,22"/>
+      </svg>
+      <span>首頁總覽</span>
+    </button>
+
+    <!-- 全部交易明細 -->
+    <button class="sidebar-item" id="nav-transactions" onclick="showPage('transactions')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>全部交易明細</span>
+    </button>
+
+    <!-- 分類規則管理 -->
+    <button class="sidebar-item" id="nav-rules" onclick="showPage('rules')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+        <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
+      </svg>
+      <span>分類規則管理</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- 系統設定 (展開子選單) -->
+    <button class="sidebar-item" id="nav-settings-parent" onclick="toggleSettingsMenu()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+      </svg>
+      <span>系統設定</span>
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6,9 12,15 18,9"/>
+      </svg>
+    </button>
+    <div class="sidebar-submenu" id="settings-submenu">
+      <button class="sidebar-subitem" id="nav-settings-bank"     onclick="showSettingsTab('bank')"><span>銀行設定</span></button>
+      <button class="sidebar-subitem" id="nav-settings-info"     onclick="showSettingsTab('info')"><span>系統資訊</span></button>
+      <button class="sidebar-subitem" id="nav-settings-backup"   onclick="showSettingsTab('backup')"><span>備份與還原</span></button>
+      <button class="sidebar-subitem" id="nav-settings-password" onclick="showSettingsTab('password')"><span>密碼變更</span></button>
     </div>
-    <div class="nav-user">
-      <span id="nav-username"></span>
-      <button class="logout-btn" onclick="doLogout()" title="登出">⎋</button>
-    </div>
+
+    <!-- 帳單匯入 -->
+    <button class="sidebar-item" id="nav-import" onclick="showPage('import')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="17,8 12,3 7,8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <span>帳單匯入</span>
+    </button>
+
+    <!-- 使用說明 -->
+    <button class="sidebar-item" id="nav-help" onclick="showPage('help')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+        <line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/>
+      </svg>
+      <span>使用說明</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div>© 2026 家庭每月支出明細系統</div>
+    <div>v1.0.0</div>
   </div>
-</nav>
+</aside>
 
-<!-- ─────────────────── DASHBOARD ─────────────────────────── -->
-<div id="page-dashboard" class="page active">
-  <div class="month-bar">
-    <label>帳單月份</label>
-    <select id="dash-month-select" onchange="loadDashboard()">
-      <option value="">載入中…</option>
-    </select>
-  </div>
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<div id="main-content">
 
-  <div class="kpi-grid">
-    <div class="kpi-card shihong"><div class="kpi-label">世鴻應付</div><div class="kpi-value" id="kpi-shihong">-</div></div>
-    <div class="kpi-card huifeng"><div class="kpi-label">慧鳳應付</div><div class="kpi-value" id="kpi-huifeng">-</div></div>
-    <div class="kpi-card common" ><div class="kpi-label">共同支付</div><div class="kpi-value" id="kpi-common">-</div></div>
-    <div class="kpi-card total"  ><div class="kpi-label">本期總支出</div><div class="kpi-value" id="kpi-total">-</div></div>
-  </div>
-
-  <h3>結帳日倒數</h3>
-  <div class="bank-grid" id="bank-grid"><div class="loading"><div class="spinner"></div></div></div>
-</div>
-
-<!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
-<div id="page-transactions" class="page">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
-    <h2 style="margin-bottom:0">全部交易明細</h2>
-    <button class="btn btn-primary btn-sm" onclick="openAddTxModal()">＋ 新增交易</button>
-  </div>
-  <div class="filter-bar">
-    <select id="tx-month"  onchange="loadTransactions()"><option value="">所有月份</option></select>
-    <select id="tx-bank"   onchange="loadTransactions()"><option value="">所有銀行</option></select>
-    <select id="tx-attr"   onchange="loadTransactions()">
-      <option value="">所有歸屬</option>
-      <option>世鴻應付</option><option>慧鳳應付</option>
-      <option>共同支付</option><option>未分類</option>
-    </select>
-    <button id="btn-batch-delete" class="btn btn-danger btn-sm" onclick="batchDeleteTx()" disabled>刪除勾選</button>
-  </div>
-  <div class="table-wrap" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
-</div>
-
-<!-- ─────────────────── IMPORT ────────────────────────────── -->
-<div id="page-import" class="page">
-  <h2>CSV 匯入</h2>
-
-  <div class="card" style="margin-bottom:1rem">
-    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-      <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
-      <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:1rem">
-    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-      <button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)"
-              onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
-      <!-- [問題三] 匯入帳單按鈕取代舊有 drop-zone，比一般按鈕略大 -->
-      <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
-              onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
-      <input type="file" id="csv-file" accept=".csv" style="display:none"
-             onchange="handleCSVFile(this.files[0])">
-    </div>
-    <div id="format-guide" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)">
-      <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
-        欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
-        第一列為標題列，匯入時自動跳過<br>
-        日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
-        範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
-      </p>
-    </div>
-  </div>
-
-  <div id="preview-section" style="display:none">
-    <div id="import-result" class="import-result"></div>
-    <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
-    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
-      <button id="btn-confirm-import" class="btn btn-success" onclick="submitImport()">確認匯入</button>
-      <button id="btn-cancel-import" class="btn" style="background:var(--gray-200);color:var(--gray-600)" onclick="cancelImport()">取消</button>
-    </div>
-    <div id="preview-info" style="font-size:.875rem;color:var(--gray-600);font-weight:500;margin-bottom:.5rem"></div>
-    <div class="table-wrap" id="preview-table" style="max-height:360px;overflow-y:auto"></div>
-  </div>
-</div>
-
-<!-- ─────────────────── RULES ─────────────────────────────── -->
-<div id="page-rules" class="page">
-  <h2>商家規則管理</h2>
-  <div class="card" style="margin-bottom:1rem">
-    <h3>新增規則</h3>
-    <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">關鍵字</label>
-        <input type="text" id="new-rule-keyword" placeholder="例：全聯" style="width:180px">
+  <!-- ── Top Bar ── -->
+  <div id="top-bar">
+    <!-- Month navigator -->
+    <div class="month-nav-wrapper">
+      <button class="month-nav-btn" onclick="prevMonth()" title="上一個月">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15,18 9,12 15,6"/>
+        </svg>
+      </button>
+      <button class="month-display-btn" id="month-display-btn" onclick="toggleMonthPicker()">—</button>
+      <button class="month-nav-btn" onclick="nextMonth()" title="下一個月">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9,18 15,12 9,6"/>
+        </svg>
+      </button>
+      <!-- Month picker popup -->
+      <div class="month-picker-popup" id="month-picker-popup">
+        <div class="picker-year-row">
+          <button class="picker-year-btn" onclick="pickerChangeYear(-1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+          </button>
+          <span class="picker-year-label" id="picker-year-label">2026</span>
+          <button class="picker-year-btn" onclick="pickerChangeYear(1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+          </button>
+        </div>
+        <div class="picker-months" id="picker-months-grid"></div>
       </div>
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
-        <select id="new-rule-attr">
-          <option>世鴻應付</option><option>慧鳳應付</option>
-          <option>共同支付</option><option>未分類</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" onclick="addRule()">新增</button>
+    </div>
+
+    <div class="top-bar-right">
+      <!-- Notification bell -->
+      <button class="bell-btn" title="通知">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+      </button>
+      <div class="top-divider"></div>
+      <span class="top-username" id="nav-username"></span>
+      <button class="logout-btn-top" onclick="doLogout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16,17 21,12 16,7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        登出
+      </button>
     </div>
   </div>
-  <div class="table-wrap" id="rules-table" style="max-height:480px;overflow-y:auto"><div class="loading"><div class="spinner"></div></div></div>
-</div>
 
-<!-- ─────────────────── SETTINGS ──────────────────────────── -->
-<div id="page-settings" class="page">
-  <h2>系統設定</h2>
+  <!-- ── Pages ── -->
+  <div class="pages-wrapper">
 
-  <!-- Password -->
-  <div class="card" style="max-width:440px;margin-bottom:1.25rem">
-    <h3>密碼變更</h3>
-    <div class="form-group">
-      <label for="pwd-current">目前密碼</label>
-      <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+  <!-- ─────────────────── DASHBOARD ─────────────────────────── -->
+  <div id="page-dashboard" class="page active">
+    <!-- Hidden legacy select for API compat -->
+    <select id="dash-month-select" onchange="onDashMonthChange()"></select>
+
+    <!-- KPI Cards (3 cards) -->
+    <div class="kpi-grid-new">
+      <!-- 世鴻支付 -->
+      <div class="kpi-card-new blue">
+        <div class="kpi-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-name">世鴻支付</div>
+          <div class="kpi-sub">本期支出</div>
+          <div class="kpi-amt" id="kpi-shihong">-</div>
+        </div>
+      </div>
+
+      <!-- 慧鳳支付 -->
+      <div class="kpi-card-new pink">
+        <div class="kpi-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-name">慧鳳支付</div>
+          <div class="kpi-sub">本期支出</div>
+          <div class="kpi-amt" id="kpi-huifeng">-</div>
+        </div>
+      </div>
+
+      <!-- 共同支付 -->
+      <div class="kpi-card-new green">
+        <div class="kpi-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-name">共同支付</div>
+          <div class="kpi-sub">本期支出</div>
+          <div class="kpi-amt" id="kpi-common">-</div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="pwd-new">新密碼</label>
-      <input type="password" id="pwd-new" style="width:100%" placeholder="請輸入新密碼">
+
+    <!-- hidden total for compat -->
+    <span id="kpi-total" style="display:none">-</span>
+
+    <!-- Dashboard bottom: 帳單預覽 + 本期系統摘要 -->
+    <div class="dashboard-bottom">
+
+      <!-- 帳單預覽 -->
+      <div class="card bill-preview">
+        <div class="section-title">帳單預覽</div>
+        <div class="bill-total-label">本期總支出</div>
+        <div class="bill-total-amount" id="bill-total-display">-</div>
+        <div class="bill-delta" id="bill-delta">
+          <span class="delta-neutral">—</span>
+          <span id="bill-delta-text" style="color:var(--gray-400);font-weight:500">較上期資料載入中</span>
+        </div>
+        <div class="bill-meta">
+          <div class="bill-meta-item">
+            <span class="bill-meta-label">交易筆數</span>
+            <span class="bill-meta-value" id="bill-tx-count">-</span>
+          </div>
+          <div class="bill-meta-item">
+            <span class="bill-meta-label">帳單月份</span>
+            <span class="bill-meta-value" id="bill-month-display">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 本期系統摘要 -->
+      <div class="card period-summary">
+        <div class="summary-header">
+          <div class="section-title" style="margin-bottom:0">本期系統摘要</div>
+          <a class="see-all-link" onclick="showPage('transactions')">查看全部 →</a>
+        </div>
+
+        <!-- 已匯入銀行 -->
+        <div class="summary-item" onclick="showPage('import')">
+          <div class="summary-dot dot-blue"></div>
+          <div class="summary-label">已匯入銀行</div>
+          <div class="summary-value" id="summary-imported-banks">- / 5 家</div>
+          <div class="summary-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 未匯入銀行 -->
+        <div class="summary-item" onclick="showPage('import')">
+          <div class="summary-dot dot-orange"></div>
+          <div class="summary-label">未匯入銀行</div>
+          <div class="summary-value" id="summary-missing-banks" style="font-size:.8rem;color:var(--gray-400)">載入中…</div>
+          <div class="summary-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 未分類交易 -->
+        <div class="summary-item" onclick="goToUnclassified()">
+          <div class="summary-dot dot-yellow"></div>
+          <div class="summary-label">未分類交易</div>
+          <div class="summary-value" id="summary-unclassified">- 筆</div>
+          <div class="summary-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 本月單筆最高 -->
+        <div class="summary-item" onclick="goToMaxTransaction()">
+          <div class="summary-dot dot-red"></div>
+          <div class="summary-label">本月單筆最高</div>
+          <div class="summary-value" id="summary-max-tx">-</div>
+          <div class="summary-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.dashboard-bottom -->
+  </div><!-- /#page-dashboard -->
+
+  <!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
+  <div id="page-transactions" class="page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+      <h2 style="margin-bottom:0">全部交易明細</h2>
+      <button class="btn btn-primary btn-sm" onclick="openAddTxModal()">＋ 新增交易</button>
     </div>
-    <div class="form-group">
-      <label for="pwd-confirm">確認新密碼</label>
-      <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+    <div class="filter-bar">
+      <select id="tx-month"  onchange="loadTransactions()"><option value="">所有月份</option></select>
+      <select id="tx-bank"   onchange="loadTransactions()"><option value="">所有銀行</option></select>
+      <select id="tx-attr"   onchange="loadTransactions()">
+        <option value="">所有歸屬</option>
+        <option>世鴻應付</option><option>慧鳳應付</option>
+        <option>共同支付</option><option>未分類</option>
+      </select>
+      <button id="btn-batch-delete" class="btn btn-danger btn-sm" onclick="batchDeleteTx()" disabled>刪除勾選</button>
     </div>
-    <div class="settings-msg" id="settings-msg"></div>
-    <button class="btn btn-primary" onclick="doChangePassword()">變更密碼</button>
+    <div class="table-wrap" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
   </div>
 
-  <!-- Bank Settings -->
-  <div class="card">
-    <h3>銀行設定</h3>
-    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-100)">
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
-        <input type="text" id="new-bank-name" placeholder="例：台新銀行" style="width:130px">
+  <!-- ─────────────────── IMPORT ────────────────────────────── -->
+  <div id="page-import" class="page">
+    <h2>帳單匯入</h2>
+
+    <div class="card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
+        <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
       </div>
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
-        <input type="text" id="new-bank-cutoff" placeholder="25" style="width:70px">
-      </div>
-      <div>
-        <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">縮寫</label>
-        <input type="text" id="new-bank-code" placeholder="TSIB" style="width:80px">
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="addBankSetting()">新增銀行</button>
     </div>
-    <div class="table-wrap" id="bank-settings-table"><div class="loading"><div class="spinner"></div></div></div>
+
+    <div class="card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)"
+                onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
+        <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
+                onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+        <input type="file" id="csv-file" accept=".csv" style="display:none"
+               onchange="handleCSVFile(this.files[0])">
+      </div>
+      <div id="format-guide" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)">
+        <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
+          欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
+          第一列為標題列，匯入時自動跳過<br>
+          日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
+          範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
+        </p>
+      </div>
+    </div>
+
+    <div id="preview-section" style="display:none">
+      <div id="import-result" class="import-result"></div>
+      <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
+      <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
+        <button id="btn-confirm-import" class="btn btn-success" onclick="submitImport()">確認匯入</button>
+        <button id="btn-cancel-import" class="btn" style="background:var(--gray-200);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+      </div>
+      <div id="preview-info" style="font-size:.875rem;color:var(--gray-600);font-weight:500;margin-bottom:.5rem"></div>
+      <div class="table-wrap" id="preview-table" style="max-height:360px;overflow-y:auto"></div>
+    </div>
   </div>
-</div>
+
+  <!-- ─────────────────── RULES ─────────────────────────────── -->
+  <div id="page-rules" class="page">
+    <h2>分類規則管理</h2>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>新增規則</h3>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">關鍵字</label>
+          <input type="text" id="new-rule-keyword" placeholder="例：全聯" style="width:180px">
+        </div>
+        <div>
+          <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
+          <select id="new-rule-attr">
+            <option>世鴻應付</option><option>慧鳳應付</option>
+            <option>共同支付</option><option>未分類</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addRule()">新增</button>
+      </div>
+    </div>
+    <div class="table-wrap" id="rules-table" style="max-height:480px;overflow-y:auto"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <!-- ─────────────────── SETTINGS ──────────────────────────── -->
+  <div id="page-settings" class="page">
+    <h2 id="settings-page-title">系統設定</h2>
+
+    <!-- 銀行設定 -->
+    <div id="settings-section-bank" class="settings-section">
+      <div class="settings-section-title">銀行設定</div>
+      <div class="card">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-100)">
+          <div>
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">銀行名稱</label>
+            <input type="text" id="new-bank-name" placeholder="例：台新銀行" style="width:130px">
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">結帳日</label>
+            <input type="text" id="new-bank-cutoff" placeholder="25" style="width:70px">
+          </div>
+          <div>
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">縮寫</label>
+            <input type="text" id="new-bank-code" placeholder="TSIB" style="width:80px">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addBankSetting()">新增銀行</button>
+        </div>
+        <div class="table-wrap" id="bank-settings-table"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </div>
+
+    <!-- 系統資訊 -->
+    <div id="settings-section-info" class="settings-section">
+      <div class="settings-section-title">系統資訊</div>
+      <div class="card" style="max-width:500px">
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--gray-100)">
+            <span style="font-size:.875rem;color:var(--gray-600)">系統版本</span>
+            <span style="font-size:.875rem;font-weight:700">v1.0.0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--gray-100)">
+            <span style="font-size:.875rem;color:var(--gray-600)">後端服務</span>
+            <span style="font-size:.875rem;font-weight:700;color:var(--success)">Google Apps Script</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--gray-100)">
+            <span style="font-size:.875rem;color:var(--gray-600)">資料庫</span>
+            <span style="font-size:.875rem;font-weight:700">Google Sheets</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0">
+            <span style="font-size:.875rem;color:var(--gray-600)">前端部署</span>
+            <span style="font-size:.875rem;font-weight:700">GitHub Pages</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 備份與還原 -->
+    <div id="settings-section-backup" class="settings-section">
+      <div class="settings-section-title">備份與還原</div>
+      <div class="card" style="max-width:500px;text-align:center;padding:2.5rem">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gray-200)" stroke-width="1.5" style="margin:0 auto 1rem">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="17,8 12,3 7,8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p style="font-size:.875rem;color:var(--gray-400)">備份與還原功能開發中</p>
+      </div>
+    </div>
+
+    <!-- 密碼變更 -->
+    <div id="settings-section-password" class="settings-section">
+      <div class="settings-section-title">密碼變更</div>
+      <div class="card" style="max-width:440px">
+        <div class="form-group">
+          <label for="pwd-current">目前密碼</label>
+          <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+        </div>
+        <div class="form-group">
+          <label for="pwd-new">新密碼</label>
+          <input type="password" id="pwd-new" style="width:100%" placeholder="請輸入新密碼">
+        </div>
+        <div class="form-group">
+          <label for="pwd-confirm">確認新密碼</label>
+          <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+        </div>
+        <div class="settings-msg" id="settings-msg"></div>
+        <button class="btn btn-primary" onclick="doChangePassword()">變更密碼</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── HELP ───────────────────────────────── -->
+  <div id="page-help" class="page">
+    <h2>使用說明</h2>
+    <div class="card help-section">
+      <h3>基本操作流程</h3>
+      <p>1. 從「帳單匯入」頁面選擇帳單月份，上傳 CSV 檔案後確認匯入。<br>
+         2. 在「全部交易明細」中確認歸屬分類，可批次或單筆修改。<br>
+         3. 在「分類規則管理」建立關鍵字規則，下次匯入時自動套用。<br>
+         4. 在「首頁總覽」查看本期各人應付金額與系統摘要。</p>
+    </div>
+    <div class="card help-section" style="margin-top:1rem">
+      <h3>CSV 格式說明</h3>
+      <p>欄位順序（含標題列）：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
+         日期格式：YYYY/MM/DD　　金額：純數字，不含符號</p>
+    </div>
+    <div class="card help-section" style="margin-top:1rem">
+      <h3>批次編號規則</h3>
+      <p>格式：銀行縮寫-YYYYMM（例：ESUN-202605）<br>
+         相同批次重複匯入時系統會自動攔截。</p>
+    </div>
+  </div>
+
+  </div><!-- /.pages-wrapper -->
+</div><!-- /#main-content -->
+
+</div><!-- /#app-layout -->
+</div><!-- /#main-app -->
 
 <!-- ═══════════════ MODALS ═══════════════ -->
 
@@ -493,8 +1028,6 @@
   </div>
 </div>
 
-</div><!-- /#main-app -->
-
 <div id="toast"></div>
 
 <script>
@@ -502,7 +1035,6 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwRHKwFTg5tvS7meM6DvFrZjGsdN7-9LXJ-sUP3hzgWE8ILaRG7PcUWu1sN6WbyxNc7rg/exec';
 const API_KEY = atob('ZmFtaWx5LWV4cGVuc2UtMjAyNg==');
 
-// Fallback bank code map (overridden by BankSettings sheet)
 const BANK_ABBREV = {
   '玉山銀行': 'ESUN', '中國信託': 'CTBC', '富邦銀行': 'FUBO',
   '永豐銀行': 'SINO', '聯邦銀行': 'UNIO',
@@ -511,9 +1043,11 @@ const BANK_ABBREV = {
 // ── State ───────────────────────────────────────────────────────
 let pendingImport    = [];
 let _pendingOldMonth = null;
-let _bankSettings    = [];          // [{rowIndex, bank, cutoffDay, bankCode}]
+let _bankSettings    = [];
 let _bankSettingsById = {};
 let _rulesById       = {};
+let _availableMonths = [];
+let _pickerYear      = new Date().getFullYear();
 
 // ── API ─────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
@@ -570,9 +1104,8 @@ async function doLogin() {
       document.getElementById('login-page').style.display = 'none';
       document.getElementById('main-app').style.display  = 'block';
       document.getElementById('nav-username').textContent = username;
-      // [問題五] 無論登出前在哪一頁，重新登入統一回到首頁
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
       document.getElementById('page-dashboard').classList.add('active');
       document.getElementById('nav-dashboard').classList.add('active');
       populateImportBillingMonths();
@@ -608,7 +1141,6 @@ async function doChangePassword() {
   try {
     const result = await api('changePassword', {}, { username, currentPassword: current, newPassword: newPwd });
     if (result.success) {
-      // [問題六] 立即登出；用 sessionStorage 旗標讓下次進入設定頁再顯示成功訊息
       sessionStorage.setItem('pwdChanged', '1');
       doLogout();
     } else { showSettingsMsg(result.error || '目前密碼錯誤', 'error'); }
@@ -624,7 +1156,8 @@ function showSettingsMsg(msg, type) {
 function showPage(name) {
   if (!requireAuth()) return;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-subitem').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   const nb = document.getElementById('nav-' + name);
   if (nb) nb.classList.add('active');
@@ -633,13 +1166,42 @@ function showPage(name) {
   if (name === 'transactions') { populateTxMonths(); populateTxBankFilter(); loadTransactions(); }
   if (name === 'rules')        loadRules();
   if (name === 'import')       populateImportBillingMonths();
-  if (name === 'settings')     { resetSettingsForm(); loadBankSettingsTable(); }
+}
+
+function toggleSettingsMenu() {
+  const item    = document.getElementById('nav-settings-parent');
+  const submenu = document.getElementById('settings-submenu');
+  item.classList.toggle('submenu-open');
+  submenu.classList.toggle('open');
+}
+
+function showSettingsTab(tab) {
+  if (!requireAuth()) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-subitem').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-settings').classList.add('active');
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+  const section = document.getElementById('settings-section-' + tab);
+  if (section) section.classList.add('active');
+  const subitem = document.getElementById('nav-settings-' + tab);
+  if (subitem) subitem.classList.add('active');
+  // Ensure submenu is open
+  document.getElementById('nav-settings-parent').classList.add('submenu-open');
+  document.getElementById('settings-submenu').classList.add('open');
+
+  const titles = { bank: '銀行設定', info: '系統資訊', backup: '備份與還原', password: '密碼變更' };
+  document.getElementById('settings-page-title').textContent = titles[tab] || '系統設定';
+
+  resetSettingsForm();
+  if (tab === 'bank') loadBankSettingsTable();
 }
 
 function resetSettingsForm() {
-  ['pwd-current','pwd-new','pwd-confirm'].forEach(id => document.getElementById(id).value = '');
+  ['pwd-current','pwd-new','pwd-confirm'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
   const m = document.getElementById('settings-msg');
-  // [問題六] 若攜帶密碼變更旗標，進入設定頁時顯示成功提示並清除旗標
   if (sessionStorage.getItem('pwdChanged')) {
     sessionStorage.removeItem('pwdChanged');
     m.textContent   = '密碼變更成功';
@@ -652,7 +1214,6 @@ function resetSettingsForm() {
 }
 
 // ── Format helpers ───────────────────────────────────────────────
-// [Bug1] Number(undefined)/Number(NaN) 會產生 NaN；加 || 0 確保永遠顯示數字
 function fmt(n) { return '$ ' + (Number(n) || 0).toLocaleString('zh-TW'); }
 
 function attrBadge(attr) {
@@ -684,19 +1245,102 @@ function getBankCode(bankName) {
   return (b && b.bankCode) ? b.bankCode : (BANK_ABBREV[bankName] || 'UNKN');
 }
 
-// ── Dashboard ────────────────────────────────────────────────────
+// ── Month Selector (top bar) ─────────────────────────────────────
 async function initMonthSelector() {
   try {
     const data = await api('getBillingMonths');
-    const sel  = document.getElementById('dash-month-select');
-    sel.innerHTML = data.months.map(m => `<option value="${m}">${m}</option>`).join('');
+    _availableMonths = data.months || [];
+    const sel = document.getElementById('dash-month-select');
+    sel.innerHTML = _availableMonths.map(m => `<option value="${m}">${m}</option>`).join('');
+    updateMonthDisplay();
   } catch(e) { toast('載入月份失敗: ' + e.message, 'error'); }
 }
 
+function updateMonthDisplay() {
+  const sel = document.getElementById('dash-month-select');
+  const val = sel.value || '';
+  const display = val ? val.replace('/', '-') : '—';
+  document.getElementById('month-display-btn').textContent = display;
+  document.getElementById('bill-month-display').textContent = val || '—';
+  _pickerYear = val ? parseInt(val.split('/')[0]) : new Date().getFullYear();
+}
+
+function onDashMonthChange() {
+  updateMonthDisplay();
+  loadDashboard();
+}
+
+function prevMonth() {
+  const sel = document.getElementById('dash-month-select');
+  if (sel.selectedIndex < sel.options.length - 1) {
+    sel.selectedIndex++;
+    updateMonthDisplay();
+    loadDashboard();
+  }
+}
+
+function nextMonth() {
+  const sel = document.getElementById('dash-month-select');
+  if (sel.selectedIndex > 0) {
+    sel.selectedIndex--;
+    updateMonthDisplay();
+    loadDashboard();
+  }
+}
+
+function toggleMonthPicker() {
+  const popup = document.getElementById('month-picker-popup');
+  if (popup.classList.contains('open')) {
+    popup.classList.remove('open');
+  } else {
+    renderPickerMonths();
+    popup.classList.add('open');
+  }
+}
+
+function pickerChangeYear(delta) {
+  _pickerYear += delta;
+  document.getElementById('picker-year-label').textContent = _pickerYear;
+  renderPickerMonths();
+}
+
+function renderPickerMonths() {
+  document.getElementById('picker-year-label').textContent = _pickerYear;
+  const current = document.getElementById('dash-month-select').value;
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const grid = document.getElementById('picker-months-grid');
+  grid.innerHTML = monthNames.map((name, i) => {
+    const ym = `${_pickerYear}/${String(i+1).padStart(2,'0')}`;
+    const available = _availableMonths.includes(ym);
+    const isActive  = ym === current;
+    return `<button class="picker-month-btn${isActive?' active':''}${!available?' disabled':''}"
+      onclick="${available ? `selectPickerMonth('${ym}')` : ''}">${name}</button>`;
+  }).join('');
+}
+
+function selectPickerMonth(ym) {
+  const sel = document.getElementById('dash-month-select');
+  sel.value = ym;
+  document.getElementById('month-picker-popup').classList.remove('open');
+  updateMonthDisplay();
+  loadDashboard();
+}
+
+// Close picker when clicking outside
+document.addEventListener('click', e => {
+  const wrapper = document.querySelector('.month-nav-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    document.getElementById('month-picker-popup').classList.remove('open');
+  }
+});
+
+// ── Dashboard ────────────────────────────────────────────────────
 async function loadDashboard() {
   if (!requireAuth()) return;
   const month = document.getElementById('dash-month-select').value;
+  updateMonthDisplay();
   await Promise.all([loadKPI(month), loadBankCountdown()]);
+  updateSummaryBanks(month);
 }
 
 async function loadKPI(month) {
@@ -706,6 +1350,8 @@ async function loadKPI(month) {
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
     document.getElementById('kpi-total').textContent   = fmt(d.total);
+    // Update bill preview
+    document.getElementById('bill-total-display').textContent = fmt(d.total);
   } catch(e) { toast('載入 KPI 失敗', 'error'); }
 }
 
@@ -714,6 +1360,7 @@ async function loadBankCountdown() {
     const data  = await api('getBankSettings');
     const today = new Date();
     const grid  = document.getElementById('bank-grid');
+    if (!grid) return;
     grid.innerHTML = data.banks.map(b => {
       const cutoff = b.cutoffDay;
       let next = new Date(today.getFullYear(), today.getMonth(), cutoff);
@@ -728,6 +1375,25 @@ async function loadBankCountdown() {
       </div>`;
     }).join('');
   } catch(e) { toast('載入銀行設定失敗', 'error'); }
+}
+
+function updateSummaryBanks(month) {
+  const total = _bankSettings.length || 5;
+  document.getElementById('summary-imported-banks').textContent = `- / ${total} 家`;
+  const names = _bankSettings.map(b => b.bank).join('、') || '尚無資料';
+  document.getElementById('summary-missing-banks').textContent = names.length > 24 ? names.substring(0,24) + '…' : names;
+}
+
+function goToUnclassified() {
+  showPage('transactions');
+  setTimeout(() => {
+    const attrSel = document.getElementById('tx-attr');
+    if (attrSel) { attrSel.value = '未分類'; loadTransactions(); }
+  }, 100);
+}
+
+function goToMaxTransaction() {
+  showPage('transactions');
 }
 
 // ── Transactions ─────────────────────────────────────────────────
@@ -824,8 +1490,7 @@ async function batchDeleteTx() {
   try {
     await api('deleteTransactions', {}, { rowIndices });
     toast(`已刪除 ${rowIndices.length} 筆`, 'success');
-    loadTransactions();
-    initMonthSelector();
+    loadTransactions(); initMonthSelector();
   } catch(e) { toast('刪除失敗：' + e.message, 'error'); }
 }
 
@@ -834,8 +1499,7 @@ async function deleteSingleTx(rowIndex) {
   try {
     await api('deleteTransactions', {}, { rowIndices: [rowIndex] });
     toast('已刪除', 'success');
-    loadTransactions();
-    initMonthSelector();
+    loadTransactions(); initMonthSelector();
   } catch(e) { toast('刪除失敗：' + e.message, 'error'); }
 }
 
@@ -848,22 +1512,16 @@ async function saveAttr(rowIndex, attribution) {
 
 // ── Add Transaction modal ────────────────────────────────────────
 function openAddTxModal() {
-  // Populate bank dropdown
   const bankSel = document.getElementById('new-tx-bank');
   bankSel.innerHTML = '<option value="">請選擇銀行</option>' +
     _bankSettings.map(b => `<option value="${b.bank}">${b.bank}</option>`).join('');
-
-  // Populate billing month
   populateModalBillingMonths('new-tx-billing-month');
-
-  // Reset form
   ['new-tx-posting-date','new-tx-date','new-tx-detail','new-tx-amount'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('new-tx-attribution').value = '未分類';
   document.getElementById('new-tx-bank').value = '';
   document.getElementById('add-tx-error').style.display = 'none';
-
   document.getElementById('add-tx-modal').style.display = 'flex';
 }
 
@@ -892,10 +1550,7 @@ async function submitAddTx() {
   try {
     await api('addTransaction', {}, { postingDate, date, bank, billingMonth, detail, amount, attribution });
     toast('交易已新增', 'success');
-    closeAddTxModal();
-    loadTransactions();
-    initMonthSelector();
-    populateTxMonths();
+    closeAddTxModal(); loadTransactions(); initMonthSelector(); populateTxMonths();
   } catch(e) { errEl.textContent = '新增失敗：' + e.message; errEl.style.display = 'block'; }
 }
 
@@ -956,7 +1611,6 @@ function refreshPreviewInfo() {
     `共 ${pendingImport.length} 筆資料，帳單月份：${billingMonth}，批次編號：${batchIds.join('、')}`;
 }
 
-// [問題三] 切換 CSV 格式說明摺疊區
 function toggleFormatGuide() {
   const el = document.getElementById('format-guide');
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
@@ -1070,7 +1724,7 @@ async function loadRules() {
       <td style="color:var(--gray-400);font-size:.8rem">${i+1}</td>
       <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px">${r.keyword}</code></td>
       <td>${attrBadge(r.attribution)}</td>
-      <td style="white-space:nowrap"><!-- [Bug5] 防止按鈕換行 -->
+      <td style="white-space:nowrap">
         <button class="btn btn-primary btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
         <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteRule(${r.rowIndex})">刪除</button>
       </td>
