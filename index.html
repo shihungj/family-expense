@@ -60,14 +60,14 @@
     flex-shrink: 0;
   }
   .sidebar-header {
-    padding: 1.1rem 1rem 1rem;
+    padding: .85rem 1rem;
     display: flex;
     align-items: center;
-    gap: .7rem;
+    justify-content: center;
     border-bottom: 1px solid rgba(255,255,255,.08);
     flex-shrink: 0;
   }
-  .sidebar-header img { height: 36px; width: 36px; object-fit: contain; border-radius: 8px; }
+  .sidebar-header img { width: calc(var(--sidebar-w) - 2rem); height: auto; object-fit: contain; border-radius: 0; }
   .sidebar-logo-placeholder {
     width: 36px; height: 36px; border-radius: 8px;
     background: linear-gradient(135deg, #F97316, #FB923C);
@@ -538,7 +538,6 @@
     <img src="assets/logo.png" alt="Logo"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="sidebar-logo-placeholder" style="display:none">🏠</div>
-    <span class="sys-name">家庭每月支出<br>明細系統</span>
   </div>
 
   <nav class="sidebar-nav">
@@ -625,7 +624,7 @@
   <!-- ── Top Bar ── -->
   <div id="top-bar">
     <!-- Month navigator -->
-    <div class="month-nav-wrapper">
+    <div class="month-nav-wrapper" id="month-nav-wrapper">
       <button class="month-nav-btn" onclick="prevMonth()" title="上一個月">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="15,18 9,12 15,6"/>
@@ -930,7 +929,7 @@
           <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
           <select id="new-rule-attr">
             <option>世鴻應付</option><option>慧鳳應付</option>
-            <option>共同支付</option><option>未分類</option>
+            <option>共同支付</option><option value="未分類">尚未分類</option>
           </select>
         </div>
         <button class="btn btn-primary" onclick="addRule()">新增</button>
@@ -1133,7 +1132,7 @@
       <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
       <select id="edit-rule-attr" style="width:100%">
         <option>世鴻應付</option><option>慧鳳應付</option>
-        <option>共同支付</option><option>未分類</option>
+        <option>共同支付</option><option value="未分類">尚未分類</option>
       </select>
     </div>
     <div class="modal-footer">
@@ -1354,6 +1353,9 @@ function showPage(name) {
   const nb = document.getElementById('nav-' + name);
   if (nb) nb.classList.add('active');
 
+  const mnw = document.getElementById('month-nav-wrapper');
+  if (mnw) mnw.style.display = name === 'dashboard' ? '' : 'none';
+
   if (name === 'dashboard')    loadDashboard();
   if (name === 'transactions') loadTransactions();
   if (name === 'rules')        loadRules();
@@ -1385,6 +1387,9 @@ function showSettingsTab(tab) {
   const titles = { bank: '銀行設定', info: '系統資訊', backup: '備份與還原', password: '密碼變更' };
   document.getElementById('settings-page-title').textContent = titles[tab] || '系統設定';
 
+  const mnw = document.getElementById('month-nav-wrapper');
+  if (mnw) mnw.style.display = 'none';
+
   resetSettingsForm();
   if (tab === 'bank') loadBankSettingsTable();
 }
@@ -1413,7 +1418,8 @@ function attrBadge(attr) {
             : attr === '慧鳳應付' ? 'badge-huifeng'
             : attr === '共同支付' ? 'badge-common'
             : 'badge-unclass';
-  return `<span class="badge ${cls}">${attr}</span>`;
+  const label = attr === '未分類' ? '尚未分類' : attr;
+  return `<span class="badge ${cls}">${label}</span>`;
 }
 
 function attrSelect(rowIndex, current, onchange) {
@@ -1753,6 +1759,7 @@ function buildTxTable(rows, banks, months, attrs) {
         <th></th>
         <th><select class="tx-filter-select" onchange="updateTxFilter('billingMonth',this.value)">${selOpts(months,_txInlineFilters.billingMonth)}</select></th>
         <th><select class="tx-filter-select" onchange="updateTxFilter('bank',this.value)">${selOpts(banks,_txInlineFilters.bank)}</select></th>
+        <th></th>
         <th><input type="text" class="tx-filter-input" placeholder="關鍵字" value="${_txInlineFilters.detail.replace(/"/g,'&quot;')}" oninput="updateTxFilter('detail',this.value)"></th>
         <th></th>
         <th><select class="tx-filter-select" onchange="updateTxFilter('attr',this.value)">${selOpts(attrs,_txInlineFilters.attr)}</select></th>
@@ -1765,6 +1772,7 @@ function buildTxTable(rows, banks, months, attrs) {
         <th style="width:46px;text-align:center">項次</th>
         <th class="th-sort" onclick="setTxSort('billingMonth')">帳單月份${sortIcon('billingMonth')}</th>
         <th class="th-sort" onclick="setTxSort('bank')">銀行${sortIcon('bank')}</th>
+        <th>消費日</th>
         <th>消費明細</th>
         <th class="th-sort" style="text-align:right" onclick="setTxSort('amount')">金額${sortIcon('amount')}</th>
         <th>歸屬</th>
@@ -1777,6 +1785,7 @@ function buildTxTable(rows, banks, months, attrs) {
     <td style="text-align:center;color:var(--gray-400);font-size:.8rem">${i + 1}</td>
     <td>${r.billingMonth}</td>
     <td>${r.bank}</td>
+    <td>${r.date}</td>
     <td>${r.detail}</td>
     <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
