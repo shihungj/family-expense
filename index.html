@@ -253,7 +253,7 @@
   .green .kpi-amt { color: #15803D; }
 
   /* ── Dashboard bottom grid ── */
-  .dashboard-bottom { display: grid; grid-template-columns: 1fr 1.65fr; gap: 1rem; }
+  .dashboard-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
   .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
   .section-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; }
 
@@ -394,14 +394,34 @@
 
   /* ── Bank Import Progress ── */
   .bank-import-section { margin-top: 1.25rem; }
-  .bank-import-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
-  .bank-import-scroll { overflow-x: auto; padding-bottom: .5rem; }
-  .bank-import-row { display: flex; gap: 1rem; }
+  .bank-import-header { display: flex; align-items: center; margin-bottom: .75rem; }
+  .bank-import-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; }
   .bank-import-card {
     background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
     padding: .9rem 1.1rem; display: flex; align-items: center; gap: .75rem;
-    min-width: 160px; flex-shrink: 0;
   }
+
+  /* ── Payment Tools List ── */
+  .tools-list { list-style: none; }
+  .tools-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .55rem 0; border-bottom: 1px solid #ECEFF5; font-size: .875rem;
+  }
+  .tools-item:last-child { border-bottom: none; }
+  .tools-item-name { color: var(--gray-600); }
+  .tools-item-count { font-weight: 700; color: var(--gray-800); }
+
+  /* ── Behavior Stats ── */
+  .behavior-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .65rem .4rem; border-bottom: 1px solid #ECEFF5;
+    cursor: pointer; border-radius: 6px; transition: background .12s;
+  }
+  .behavior-item:last-child { border-bottom: none; }
+  .behavior-item:hover { background: var(--gray-50); }
+  .behavior-item-label { font-size: .78rem; color: #718096; margin-bottom: .15rem; }
+  .behavior-item-value { font-size: .9rem; font-weight: 700; color: var(--gray-800); }
+  .behavior-item-arrow { color: var(--gray-400); flex-shrink: 0; margin-left: .5rem; display: flex; align-items: center; }
   .bank-import-icon {
     width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -682,97 +702,75 @@
     <!-- hidden total for compat -->
     <span id="kpi-total" style="display:none">-</span>
 
-    <!-- Dashboard bottom: 帳單預覽 + 本期系統摘要 -->
+    <!-- Dashboard bottom: 帳單焦點總覽 + 支付工具統計 + 消費行為統計 -->
     <div class="dashboard-bottom">
 
-      <!-- 帳單預覽 -->
-      <div class="card bill-preview">
-        <div class="section-title">帳單預覽</div>
+      <!-- 左欄：帳單焦點總覽 -->
+      <div class="card">
+        <div class="section-title">帳單焦點總覽</div>
         <div class="bill-total-label">本期總支出</div>
-        <div class="bill-total-amount" id="bill-total-display">-</div>
-        <div class="bill-delta">
-          <span id="bill-diff" style="color:var(--gray-400);font-weight:500">較上期資料載入中</span>
+        <div style="font-size:2.15rem;font-weight:800;color:#1A202C;line-height:1.1;margin-bottom:.5rem" id="bill-total-display">-</div>
+        <div id="bill-diff" style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;min-height:1.3em">
+          <span style="color:#718096;font-weight:500">較上期資料載入中</span>
         </div>
-        <div class="bill-meta">
-          <div class="bill-meta-item">
-            <span class="bill-meta-label">交易筆數</span>
-            <span class="bill-meta-value" id="bill-count">-</span>
-          </div>
-          <div class="bill-meta-item">
-            <span class="bill-meta-label">帳單月份</span>
-            <span class="bill-meta-value" id="bill-month-display">-</span>
-          </div>
-        </div>
+        <div style="font-size:.875rem;color:#718096" id="bill-count">- 筆交易</div>
+        <span id="bill-month-display" style="display:none">-</span>
       </div>
 
-      <!-- 本期系統摘要 -->
-      <div class="card period-summary">
-        <div class="summary-header">
-          <div class="section-title" style="margin-bottom:0">本期系統摘要</div>
-          <a class="see-all-link" onclick="showPage('transactions')">查看全部 →</a>
-        </div>
+      <!-- 中欄：支付工具統計 -->
+      <div class="card">
+        <div class="section-title">支付工具統計</div>
+        <ul class="tools-list">
+          <li class="tools-item"><span class="tools-item-name">LINE Pay</span><span class="tools-item-count" id="pt-linepay">-</span></li>
+          <li class="tools-item"><span class="tools-item-name">iCASH Pay</span><span class="tools-item-count" id="pt-icashpay">-</span></li>
+          <li class="tools-item"><span class="tools-item-name">悠遊卡</span><span class="tools-item-count" id="pt-easycard">-</span></li>
+          <li class="tools-item"><span class="tools-item-name">悠遊付</span><span class="tools-item-count" id="pt-easywallet">-</span></li>
+          <li class="tools-item"><span class="tools-item-name">車麻吉</span><span class="tools-item-count" id="pt-carmoji">-</span></li>
+          <li class="tools-item"><span class="tools-item-name">信用卡</span><span class="tools-item-count" id="pt-creditcard">-</span></li>
+        </ul>
+      </div>
 
-        <!-- 已匯入銀行 -->
-        <div class="summary-item" onclick="showPage('import')">
-          <div class="summary-dot dot-blue"></div>
-          <div class="summary-label">已匯入銀行</div>
-          <div class="summary-value" id="summary-imported-banks">- / 5 家</div>
-          <div class="summary-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9,18 15,12 9,6"/>
-            </svg>
+      <!-- 右欄：消費行為統計 -->
+      <div class="card">
+        <div class="section-title">消費行為統計</div>
+        <div class="behavior-item" onclick="goToMaxTransaction()">
+          <div>
+            <div class="behavior-item-label">最高單筆消費</div>
+            <div class="behavior-item-value" id="bs-max-amount">-</div>
+          </div>
+          <div class="behavior-item-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
           </div>
         </div>
-
-        <!-- 未匯入銀行 -->
-        <div class="summary-item" onclick="showPage('import')">
-          <div class="summary-dot dot-orange"></div>
-          <div class="summary-label">未匯入銀行</div>
-          <div class="summary-value" id="summary-not-imported" style="font-size:.8rem;color:var(--gray-400)">載入中…</div>
-          <div class="summary-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9,18 15,12 9,6"/>
-            </svg>
+        <div class="behavior-item" id="bs-top-bank-amount-item">
+          <div>
+            <div class="behavior-item-label">最高消費額發卡銀行</div>
+            <div class="behavior-item-value" id="bs-top-bank-amount">-</div>
+          </div>
+          <div class="behavior-item-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
           </div>
         </div>
-
-        <!-- 未分類交易 -->
-        <div class="summary-item" onclick="goToUnclassified()">
-          <div class="summary-dot dot-yellow"></div>
-          <div class="summary-label">未分類交易</div>
-          <div class="summary-value" id="summary-unclassified">- 筆</div>
-          <div class="summary-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9,18 15,12 9,6"/>
-            </svg>
+        <div class="behavior-item" id="bs-top-bank-count-item">
+          <div>
+            <div class="behavior-item-label">最多消費次數發卡銀行</div>
+            <div class="behavior-item-value" id="bs-top-bank-count">-</div>
           </div>
-        </div>
-
-        <!-- 本月單筆最高 -->
-        <div class="summary-item" onclick="goToMaxTransaction()">
-          <div class="summary-dot dot-red"></div>
-          <div class="summary-label">本月單筆最高</div>
-          <div class="summary-value" id="summary-max-amount">-</div>
-          <div class="summary-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9,18 15,12 9,6"/>
-            </svg>
+          <div class="behavior-item-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
           </div>
         </div>
       </div>
 
     </div><!-- /.dashboard-bottom -->
 
-    <!-- 銀行匯入進度 -->
+    <!-- 帳單匯入進度 -->
     <div class="bank-import-section">
       <div class="bank-import-header">
-        <div class="section-title" style="margin-bottom:0">銀行匯入進度</div>
-        <a class="see-all-link" onclick="showSettingsTab('bank')">查看全部銀行 →</a>
+        <div class="section-title" style="margin-bottom:0">帳單匯入進度</div>
       </div>
-      <div class="bank-import-scroll">
-        <div id="bank-import-cards" class="bank-import-row">
-          <div class="loading"><div class="spinner"></div></div>
-        </div>
+      <div id="bank-import-cards" class="bank-import-grid">
+        <div class="loading"><div class="spinner"></div></div>
       </div>
     </div>
 
@@ -1168,6 +1166,9 @@ let _bankSettingsById = {};
 let _rulesById       = {};
 let _availableMonths = [];
 let _pickerYear      = new Date().getFullYear();
+let _topBankByAmount = '';
+let _topBankByCount  = '';
+let _txSortByAmount  = false;
 
 // ── API ─────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
@@ -1460,60 +1461,56 @@ async function loadDashboard() {
   const month = document.getElementById('dash-month-select').value;
   updateMonthDisplay();
   await Promise.all([loadKPI(month), loadBankCountdown()]);
-  updateSummaryBanks(month);
-  loadBankImportCards(month);
 }
 
-async function loadBankImportCards(month) {
+function renderBankImportCards(importedBanks, notImportedBanks) {
   const container = document.getElementById('bank-import-cards');
   if (!container) return;
 
-  if (!_bankSettings.length) {
+  const importedSet = new Set(importedBanks);
+  const banks = _bankSettings.length ? _bankSettings
+    : [...importedBanks, ...notImportedBanks].map(b => ({ bank: b }));
+
+  if (!banks.length) {
     container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">無銀行資料</div>';
     return;
   }
 
-  try {
-    let importedBanks = new Set();
-    if (month) {
-      const txData = await api('getTransactions', { billingMonth: month });
-      (txData.transactions || []).forEach(t => importedBanks.add(t.bank));
+  const today  = new Date();
+  const month  = document.getElementById('dash-month-select').value;
+  const [yr, mo] = month
+    ? month.split('/').map(Number)
+    : [today.getFullYear(), today.getMonth() + 1];
+
+  const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>`;
+  const clockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`;
+  const alertSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>`;
+
+  container.innerHTML = banks.map(b => {
+    const bankName = b.bank || b;
+    const imported = importedSet.has(bankName);
+    let cls, icon, label;
+
+    if (imported) {
+      cls = 'ok'; icon = checkSvg; label = '已匯入';
+    } else if (b.cutoffDay) {
+      const closing  = new Date(yr, mo - 1, b.cutoffDay);
+      const daysDiff = Math.floor((today - closing) / 86400000);
+      if (daysDiff <= 0)      { cls = 'neutral'; icon = clockSvg; label = '待匯入'; }
+      else if (daysDiff <= 3) { cls = 'warn';    icon = clockSvg; label = '尚未匯入'; }
+      else                    { cls = 'urgent';  icon = alertSvg; label = '盡速匯入'; }
+    } else {
+      cls = 'urgent'; icon = alertSvg; label = '尚未匯入';
     }
 
-    const today = new Date();
-    const [yr, mo] = month
-      ? month.split('/').map(Number)
-      : [today.getFullYear(), today.getMonth() + 1];
-
-    const checkSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>`;
-    const clockSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`;
-    const alertSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>`;
-
-    container.innerHTML = _bankSettings.map(b => {
-      const imported = importedBanks.has(b.bank);
-      let cls, icon, label;
-
-      if (imported) {
-        cls = 'ok'; icon = checkSvg; label = '已匯入';
-      } else {
-        const closing  = new Date(yr, mo - 1, b.cutoffDay);
-        const daysDiff = Math.floor((today - closing) / 86400000);
-        if (daysDiff <= 0)      { cls = 'neutral'; icon = clockSvg; label = '待匯入'; }
-        else if (daysDiff <= 3) { cls = 'warn';    icon = clockSvg; label = '尚未匯入'; }
-        else                    { cls = 'urgent';  icon = alertSvg; label = '盡速匯入'; }
-      }
-
-      return `<div class="bank-import-card">
-        <div class="bank-import-icon ${cls}">${icon}</div>
-        <div>
-          <div class="bank-import-name">${b.bank}</div>
-          <div class="bank-import-status ${cls}">${label}</div>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    if (container) container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">載入失敗</div>';
-  }
+    return `<div class="bank-import-card">
+      <div class="bank-import-icon ${cls}">${icon}</div>
+      <div>
+        <div class="bank-import-name">${bankName}</div>
+        <div class="bank-import-status ${cls}">${label}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function loadKPI(month) {
@@ -1525,31 +1522,52 @@ async function loadKPI(month) {
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
 
-    // 帳單預覽區塊
+    // 帳單焦點總覽
     document.getElementById('bill-total-display').textContent = fmt(d.total);
-    document.getElementById('bill-count').textContent = (d.transactionCount || 0) + ' 筆';
+    document.getElementById('bill-count').textContent = (d.transactionCount || 0) + ' 筆交易';
 
-    // 較上期增減
-    const diff = (d.total || 0) - (d.totalLastMonth || 0);
-    const pct  = d.totalLastMonth ? ((diff / d.totalLastMonth) * 100).toFixed(1) : 0;
+    const diff   = (d.total || 0) - (d.totalLastMonth || 0);
+    const pct    = d.totalLastMonth ? ((diff / d.totalLastMonth) * 100).toFixed(1) : null;
     const diffEl = document.getElementById('bill-diff');
     if (diffEl) {
-      diffEl.textContent = (diff >= 0 ? '▲ +$' : '▼ -$') + fmt(Math.abs(diff)) + '（' + (diff >= 0 ? '↑' : '↓') + ' ' + Math.abs(pct) + '%）';
-      diffEl.style.color = diff >= 0 ? '#E53935' : '#1B9A40';
+      if (pct !== null) {
+        const sign  = diff >= 0 ? '▲' : '▼';
+        const color = diff >= 0 ? '#E53935' : '#1B9A40';
+        const absFmt = '$ ' + Math.abs(diff).toLocaleString('zh-TW');
+        diffEl.innerHTML = `<span style="color:${color}">${sign} ${diff >= 0 ? '+' : ''}${absFmt}（${Math.abs(pct)}%）</span>`;
+      } else {
+        diffEl.innerHTML = '<span style="color:#718096;font-weight:500">暫無上期資料</span>';
+      }
     }
 
-    // 本期系統摘要
-    const importedCount = (d.importedBanks || []).length;
-    const totalBanks    = importedCount + (d.notImportedBanks || []).length;
-    const elImported    = document.getElementById('summary-imported-banks');
-    const elNotImported = document.getElementById('summary-not-imported');
-    const elUnclassified = document.getElementById('summary-unclassified');
-    const elMaxAmount   = document.getElementById('summary-max-amount');
+    // 支付工具統計
+    const pt = d.paymentTools || {};
+    [['pt-linepay', pt.linepay], ['pt-icashpay', pt.icashpay],
+     ['pt-easycard', pt.easycard], ['pt-easywallet', pt.easywallet],
+     ['pt-carmoji', pt.carmoji], ['pt-creditcard', pt.creditcard]
+    ].forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val != null ? val + ' 筆' : '-';
+    });
 
-    if (elImported)     elImported.textContent     = importedCount + ' / ' + totalBanks + ' 家';
-    if (elNotImported)  elNotImported.textContent  = (d.notImportedBanks || []).join('、') || '全部已匯入';
-    if (elUnclassified) elUnclassified.textContent = (d.unclassifiedCount || 0) + ' 筆';
-    if (elMaxAmount)    elMaxAmount.textContent     = fmt(d.maxAmount || 0);
+    // 消費行為統計
+    _topBankByAmount = d.topBankByAmount || '';
+    _topBankByCount  = d.topBankByCount  || '';
+    const bsMax = document.getElementById('bs-max-amount');
+    const bsAmt = document.getElementById('bs-top-bank-amount');
+    const bsCnt = document.getElementById('bs-top-bank-count');
+    const maxAmt = d.maxSingleAmount != null ? d.maxSingleAmount : (d.maxAmount != null ? d.maxAmount : null);
+    if (bsMax) bsMax.textContent = maxAmt != null ? fmt(maxAmt) : '-';
+    if (bsAmt) bsAmt.textContent = _topBankByAmount || '-';
+    if (bsCnt) bsCnt.textContent = _topBankByCount  || '-';
+
+    const topAmtItem = document.getElementById('bs-top-bank-amount-item');
+    const topCntItem = document.getElementById('bs-top-bank-count-item');
+    if (topAmtItem) topAmtItem.onclick = () => goToTopBankAmount(_topBankByAmount);
+    if (topCntItem) topCntItem.onclick = () => goToTopBankCount(_topBankByCount);
+
+    // 帳單匯入進度
+    renderBankImportCards(d.importedBanks || [], d.notImportedBanks || []);
 
   } catch(e) { toast('載入 KPI 失敗', 'error'); }
 }
@@ -1576,14 +1594,8 @@ async function loadBankCountdown() {
   } catch(e) { toast('載入銀行設定失敗', 'error'); }
 }
 
-function updateSummaryBanks(month) {
-  const total = _bankSettings.length || 5;
-  document.getElementById('summary-imported-banks').textContent = `- / ${total} 家`;
-  const names = _bankSettings.map(b => b.bank).join('、') || '尚無資料';
-  document.getElementById('summary-not-imported').textContent = names.length > 24 ? names.substring(0,24) + '…' : names;
-}
-
 function goToUnclassified() {
+  _txSortByAmount = false;
   showPage('transactions');
   setTimeout(() => {
     const attrSel = document.getElementById('tx-attr');
@@ -1592,7 +1604,39 @@ function goToUnclassified() {
 }
 
 function goToMaxTransaction() {
+  const month = document.getElementById('dash-month-select').value;
+  _txSortByAmount = true;
   showPage('transactions');
+  setTimeout(() => {
+    if (month) document.getElementById('tx-month').value = month;
+    document.getElementById('tx-bank').value = '';
+    document.getElementById('tx-attr').value = '';
+    loadTransactions();
+  }, 100);
+}
+
+function goToTopBankAmount(bankName) {
+  const month = document.getElementById('dash-month-select').value;
+  _txSortByAmount = true;
+  showPage('transactions');
+  setTimeout(() => {
+    if (month) document.getElementById('tx-month').value = month;
+    document.getElementById('tx-bank').value = bankName || '';
+    document.getElementById('tx-attr').value = '';
+    loadTransactions();
+  }, 100);
+}
+
+function goToTopBankCount(bankName) {
+  const month = document.getElementById('dash-month-select').value;
+  _txSortByAmount = false;
+  showPage('transactions');
+  setTimeout(() => {
+    if (month) document.getElementById('tx-month').value = month;
+    document.getElementById('tx-bank').value = bankName || '';
+    document.getElementById('tx-attr').value = '';
+    loadTransactions();
+  }, 100);
 }
 
 // ── Transactions ─────────────────────────────────────────────────
@@ -1625,7 +1669,11 @@ async function loadTransactions() {
       attribution:  document.getElementById('tx-attr').value,
     };
     const data = await api('getTransactions', params);
-    wrap.innerHTML = buildTxTable(data.transactions);
+    let rows = data.transactions;
+    if (_txSortByAmount) {
+      rows = [...rows].sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+    }
+    wrap.innerHTML = buildTxTable(rows);
     updateBatchDeleteBtn();
   } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
 }
@@ -1891,6 +1939,8 @@ async function submitImport() {
       const batchIds = getBatchIds(pendingImport, billingMonth);
       showImportResult(`匯入成功，共匯入 ${result.added} 筆資料，批次編號：${batchIds.join('、')}`, 'success');
       initMonthSelector();
+      const currentMonth = document.getElementById('dash-month-select').value;
+      if (currentMonth) loadKPI(currentMonth);
       setTimeout(() => { cancelImport(); }, 5000);
     }
   } catch(e) {
