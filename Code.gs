@@ -137,6 +137,13 @@ function toDateStr(val) {
   return String(val);
 }
 
+// ── 全形轉半形 ────────────────────────────────────────────────
+function toHalfWidth(str) {
+  return str.replace(/[！-～]/g, c =>
+    String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
+  ).replace(/　/g, ' ');
+}
+
 // ── [Bug1] 穩健金額解析 ────────────────────────────────────────
 // Google Sheets 有時以文字格式回傳數值，parseFloat('') 或 parseFloat(null) 回傳 NaN。
 // parseAmount 統一轉成數字，若無法解析則回傳 0。
@@ -369,7 +376,7 @@ function getKPI(params) {
     else if (attr === '共同支付') common  += amount;
 
     // Payment tool classification (case-insensitive)
-    const detail = String(row[3] || '').toLowerCase();
+    const detail = toHalfWidth(String(row[3] || '')).toLowerCase();
     if      (detail.includes('連加') || detail.includes('連支'))            paymentTools.linepay    += 1;
     else if (detail.includes('icash pay'))                                   paymentTools.icashpay   += 1;
     else if (detail.includes('悠遊卡'))                                      paymentTools.easycard   += 1;
