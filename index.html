@@ -474,6 +474,8 @@
     border-radius: 5px; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-800); outline: none;
   }
   .tx-filter-select:focus, .tx-filter-input:focus { border-color: var(--primary); }
+  .tx-table-outer td, .tx-table-outer th { border-right: 1px solid #ECEFF5; }
+  .tx-table-outer td:last-child, .tx-table-outer th:last-child { border-right: none; }
   .tx-batch-bar {
     display: none; align-items: center; gap: .75rem;
     padding: .6rem .85rem; background: #EFF6FF;
@@ -1745,8 +1747,17 @@ function buildTxTable(rows, banks, months, attrs) {
 
   const header = `
     <thead>
+      <tr class="tx-filter-row">
+        <th></th><th></th><th></th><th></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('bank',this.value)">${selOpts(banks,_txInlineFilters.bank)}</select></th>
+        <th><input type="text" class="tx-filter-input" placeholder="關鍵字" value="${_txInlineFilters.detail.replace(/"/g,'&quot;')}" oninput="updateTxFilter('detail',this.value)"></th>
+        <th></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('attr',this.value)">${selOpts(attrs,_txInlineFilters.attr)}</select></th>
+        <th><select class="tx-filter-select" onchange="updateTxFilter('billingMonth',this.value)">${selOpts(months,_txInlineFilters.billingMonth)}</select></th>
+        <th></th>
+      </tr>
       <tr>
-        <th style="width:36px;text-align:center">
+        <th style="width:30px;text-align:center">
           <input type="checkbox" id="tx-select-all" title="全選" onchange="toggleAllTxCheckboxes(this.checked)">
         </th>
         <th style="width:46px;text-align:center">項次</th>
@@ -1757,17 +1768,7 @@ function buildTxTable(rows, banks, months, attrs) {
         <th class="th-sort" style="text-align:right" onclick="setTxSort('amount')">金額${sortIcon('amount')}</th>
         <th>歸屬</th>
         <th class="th-sort" onclick="setTxSort('billingMonth')">帳單月份${sortIcon('billingMonth')}</th>
-        <th>批次編號</th>
         <th style="width:72px">操作</th>
-      </tr>
-      <tr class="tx-filter-row">
-        <th></th><th></th><th></th><th></th>
-        <th><select class="tx-filter-select" onchange="updateTxFilter('bank',this.value)">${selOpts(banks,_txInlineFilters.bank)}</select></th>
-        <th><input type="text" class="tx-filter-input" placeholder="關鍵字" value="${_txInlineFilters.detail.replace(/"/g,'&quot;')}" oninput="updateTxFilter('detail',this.value)"></th>
-        <th></th>
-        <th><select class="tx-filter-select" onchange="updateTxFilter('attr',this.value)">${selOpts(attrs,_txInlineFilters.attr)}</select></th>
-        <th><select class="tx-filter-select" onchange="updateTxFilter('billingMonth',this.value)">${selOpts(months,_txInlineFilters.billingMonth)}</select></th>
-        <th></th><th></th>
       </tr>
     </thead>`;
 
@@ -1781,7 +1782,6 @@ function buildTxTable(rows, banks, months, attrs) {
     <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
     <td>${r.billingMonth}</td>
-    <td style="font-size:.75rem;color:var(--gray-400)">${r.batchId || ''}</td>
     <td><button class="btn btn-danger btn-sm" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
   </tr>`).join('');
 
