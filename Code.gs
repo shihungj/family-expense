@@ -310,7 +310,7 @@ function updateAttribution(data) {
   return { success: true };
 }
 
-// ── [Bug1] KPI ─────────────────────────────────────────────────
+// ── KPI ────────────────────────────────────────────────────────
 function getKPI(params) {
   const billingMonth = params.billingMonth;
   const sheet = getSheet(SHEET_TRANSACTIONS);
@@ -330,8 +330,11 @@ function getKPI(params) {
 
   let shihong = 0, huifeng = 0, common = 0, total = 0;
   let totalLastMonth = 0;
-  let transactionCount = 0, unclassifiedCount = 0, maxAmount = 0;
+  let transactionCount = 0, unclassifiedCount = 0, maxSingleAmount = 0;
   const importedBankSet = new Set();
+  const bankAmountMap   = {};  // bankName -> total amount
+  const bankCountMap    = {};  // bankName -> transaction count
+  const paymentTools    = { linepay: 0, icashpay: 0, easycard: 0, easywallet: 0, carmoji: 0, creditcard: 0 };
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
@@ -351,15 +354,28 @@ function getKPI(params) {
     // Current month stats
     total += amount;
     transactionCount += 1;
-    if (amount > maxAmount) maxAmount = amount;
+    if (amount > maxSingleAmount) maxSingleAmount = amount;
     if (attr === '未分類') unclassifiedCount += 1;
 
     const bankName = String(row[2] || '').trim();
-    if (bankName) importedBankSet.add(bankName);
+    if (bankName) {
+      importedBankSet.add(bankName);
+      bankAmountMap[bankName] = (bankAmountMap[bankName] || 0) + amount;
+      bankCountMap[bankName]  = (bankCountMap[bankName]  || 0) + 1;
+    }
 
     if      (attr === '世鴻應付') shihong += amount;
     else if (attr === '慧鳳應付') huifeng += amount;
     else if (attr === '共同支付') common  += amount;
+
+    // Payment tool classification (case-insensitive)
+    const detail = String(row[3] || '').toLowerCase();
+    if      (detail.includes('連加') || detail.includes('連支'))            paymentTools.linepay    += 1;
+    else if (detail.includes('icash pay'))                                   paymentTools.icashpay   += 1;
+    else if (detail.includes('悠遊卡'))                                      paymentTools.easycard   += 1;
+    else if (detail.includes('悠遊付'))                                      paymentTools.easywallet += 1;
+    else if (detail.includes('中油條碼_autopass'))                           paymentTools.carmoji    += 1;
+    else                                                                     paymentTools.creditcard += 1;
   }
 
   // Build notImportedBanks from BankSettings
@@ -373,17 +389,30 @@ function getKPI(params) {
   const importedBanks    = Array.from(importedBankSet);
   const notImportedBanks = allBanks.filter(b => !importedBankSet.has(b));
 
+  // topBankByAmount / topBankByCount
+  let topBankByAmount = '';
+  let topBankByCount  = '';
+  let maxBankAmount   = -1;
+  let maxBankCount    = -1;
+  for (const bank in bankAmountMap) {
+    if (bankAmountMap[bank] > maxBankAmount) { maxBankAmount = bankAmountMap[bank]; topBankByAmount = bank; }
+    if (bankCountMap[bank]  > maxBankCount)  { maxBankCount  = bankCountMap[bank];  topBankByCount  = bank; }
+  }
+
   return {
-    shihong:          (Math.round(shihong) + Math.ceil(common / 2))  || 0,
-    huifeng:          (Math.round(huifeng) + Math.floor(common / 2)) || 0,
-    common:           Math.round(common)         || 0,
-    total:            Math.round(total)           || 0,
-    totalLastMonth:   Math.round(totalLastMonth)  || 0,
-    transactionCount: transactionCount,
+    shihong:           (Math.round(shihong) + Math.ceil(common / 2))  || 0,
+    huifeng:           (Math.round(huifeng) + Math.floor(common / 2)) || 0,
+    common:            Math.round(common)          || 0,
+    total:             Math.round(total)            || 0,
+    totalLastMonth:    Math.round(totalLastMonth)   || 0,
+    transactionCount:  transactionCount,
     unclassifiedCount: unclassifiedCount,
-    maxAmount:        Math.round(maxAmount)       || 0,
-    importedBanks:    importedBanks,
-    notImportedBanks: notImportedBanks,
+    importedBanks:     importedBanks,
+    notImportedBanks:  notImportedBanks,
+    paymentTools:      paymentTools,
+    maxSingleAmount:   Math.round(maxSingleAmount)  || 0,
+    topBankByAmount:   topBankByAmount,
+    topBankByCount:    topBankByCount,
   };
 }
 
