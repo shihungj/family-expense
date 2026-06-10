@@ -29,7 +29,7 @@
     --topbar-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #E8EEF7; color: var(--gray-800); min-height: 100vh; }
 
   /* ── Login ── */
   #login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--gray-50); }
@@ -43,20 +43,21 @@
 
   /* ── App Layout ── */
   #main-app { display: none; min-height: 100vh; }
-  #app-layout { display: flex; min-height: 100vh; }
+  #app-layout { display: flex; min-height: 100vh; max-width: 1280px; margin: 0 auto; background: #F7F9FC; position: relative; }
 
   /* ── Sidebar ── */
   #sidebar {
     width: var(--sidebar-w);
     background: var(--sidebar-bg);
     color: #fff;
-    position: fixed;
-    top: 0; left: 0;
+    position: sticky;
+    top: 0;
     height: 100vh;
     display: flex;
     flex-direction: column;
     z-index: 200;
     overflow-y: auto;
+    flex-shrink: 0;
   }
   .sidebar-header {
     padding: 1.1rem 1rem 1rem;
@@ -139,7 +140,7 @@
   }
 
   /* ── Main Content ── */
-  #main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+  #main-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: #F7F9FC; }
 
   /* ── Top Bar ── */
   #top-bar {
@@ -391,6 +392,53 @@
   .help-section h3 { margin-bottom: .5rem; }
   .help-section p { font-size: .875rem; color: var(--gray-600); line-height: 1.7; }
 
+  /* ── Bank Import Progress ── */
+  .bank-import-section { margin-top: 1.25rem; }
+  .bank-import-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+  .bank-import-scroll { overflow-x: auto; padding-bottom: .5rem; }
+  .bank-import-row { display: flex; gap: 1rem; }
+  .bank-import-card {
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: .9rem 1.1rem; display: flex; align-items: center; gap: .75rem;
+    min-width: 160px; flex-shrink: 0;
+  }
+  .bank-import-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .bank-import-icon.ok      { background: #C6F6D5; color: #38A169; }
+  .bank-import-icon.warn    { background: #FEEBCB; color: #DD6B20; }
+  .bank-import-icon.urgent  { background: #FED7D7; color: #EB4B4B; }
+  .bank-import-icon.neutral { background: var(--gray-100); color: var(--gray-400); }
+  .bank-import-name   { font-size: .85rem; font-weight: 700; color: var(--gray-800); margin-bottom: .2rem; }
+  .bank-import-status { font-size: .75rem; font-weight: 600; }
+  .bank-import-status.ok      { color: #38A169; }
+  .bank-import-status.warn    { color: #DD6B20; }
+  .bank-import-status.urgent  { color: #EB4B4B; }
+  .bank-import-status.neutral { color: var(--gray-400); }
+
+  /* ── Quick Action Cards ── */
+  .quick-cards { display: flex; gap: 1rem; margin-top: 1.25rem; }
+  .quick-card {
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+    cursor: pointer; transition: background .15s, box-shadow .15s, transform .1s;
+    flex: 1; text-decoration: none; border: none;
+  }
+  .quick-card:hover  { background: #F4F6FB; box-shadow: 0 6px 20px rgba(0,0,0,.10); }
+  .quick-card:active { transform: scale(.98); }
+  .quick-card-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .quick-card-icon.orange { background: #FFF3E5; color: #DD6B20; }
+  .quick-card-icon.green  { background: #E8F5E9; color: #1B9A40; }
+  .quick-card-icon.purple { background: #EDE9FE; color: #7C3AED; }
+  .quick-card-body  { flex: 1; min-width: 0; }
+  .quick-card-title { font-size: .9rem; font-weight: 700; color: var(--gray-800); margin-bottom: .2rem; }
+  .quick-card-desc  { font-size: .78rem; color: var(--gray-400); }
+  .quick-card-arrow { color: var(--gray-400); flex-shrink: 0; display: flex; align-items: center; }
+
   /* ── Responsive ── */
   @media (max-width: 900px) {
     :root { --sidebar-w: 60px; }
@@ -405,6 +453,7 @@
     .login-card { margin: 1rem; padding: 2rem 1.25rem; }
     .modal-2col { grid-template-columns: 1fr; }
     .top-username { display: none; }
+    .quick-cards { flex-direction: column; }
   }
 </style>
 </head>
@@ -714,6 +763,78 @@
       </div>
 
     </div><!-- /.dashboard-bottom -->
+
+    <!-- 銀行匯入進度 -->
+    <div class="bank-import-section">
+      <div class="bank-import-header">
+        <div class="section-title" style="margin-bottom:0">銀行匯入進度</div>
+        <a class="see-all-link" onclick="showSettingsTab('bank')">查看全部銀行 →</a>
+      </div>
+      <div class="bank-import-scroll">
+        <div id="bank-import-cards" class="bank-import-row">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快捷卡片 -->
+    <div class="quick-cards">
+      <!-- 帳單匯入 -->
+      <div class="quick-card" onclick="showPage('import')">
+        <div class="quick-card-icon orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17,8 12,3 7,8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="quick-card-body">
+          <div class="quick-card-title">帳單匯入</div>
+          <div class="quick-card-desc">匯入信用卡帳單</div>
+        </div>
+        <div class="quick-card-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+        </div>
+      </div>
+
+      <!-- 分類規則管理 -->
+      <div class="quick-card" onclick="showPage('rules')">
+        <div class="quick-card-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+            <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
+          </svg>
+        </div>
+        <div class="quick-card-body">
+          <div class="quick-card-title">分類規則管理</div>
+          <div class="quick-card-desc">建立／調整自動分類規則</div>
+        </div>
+        <div class="quick-card-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+        </div>
+      </div>
+
+      <!-- 帳單預覽 -->
+      <div class="quick-card" onclick="showPage('transactions')">
+        <div class="quick-card-icon purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+        </div>
+        <div class="quick-card-body">
+          <div class="quick-card-title">帳單預覽</div>
+          <div class="quick-card-desc">對帳單預覽／匯出 PDF</div>
+        </div>
+        <div class="quick-card-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /#page-dashboard -->
 
   <!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
@@ -1341,6 +1462,59 @@ async function loadDashboard() {
   updateMonthDisplay();
   await Promise.all([loadKPI(month), loadBankCountdown()]);
   updateSummaryBanks(month);
+  loadBankImportCards(month);
+}
+
+async function loadBankImportCards(month) {
+  const container = document.getElementById('bank-import-cards');
+  if (!container) return;
+
+  if (!_bankSettings.length) {
+    container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">無銀行資料</div>';
+    return;
+  }
+
+  try {
+    let importedBanks = new Set();
+    if (month) {
+      const txData = await api('getTransactions', { billingMonth: month });
+      (txData.transactions || []).forEach(t => importedBanks.add(t.bank));
+    }
+
+    const today = new Date();
+    const [yr, mo] = month
+      ? month.split('/').map(Number)
+      : [today.getFullYear(), today.getMonth() + 1];
+
+    const checkSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>`;
+    const clockSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`;
+    const alertSvg   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>`;
+
+    container.innerHTML = _bankSettings.map(b => {
+      const imported = importedBanks.has(b.bank);
+      let cls, icon, label;
+
+      if (imported) {
+        cls = 'ok'; icon = checkSvg; label = '已匯入';
+      } else {
+        const closing  = new Date(yr, mo - 1, b.cutoffDay);
+        const daysDiff = Math.floor((today - closing) / 86400000);
+        if (daysDiff <= 0)      { cls = 'neutral'; icon = clockSvg; label = '待匯入'; }
+        else if (daysDiff <= 3) { cls = 'warn';    icon = clockSvg; label = '尚未匯入'; }
+        else                    { cls = 'urgent';  icon = alertSvg; label = '盡速匯入'; }
+      }
+
+      return `<div class="bank-import-card">
+        <div class="bank-import-icon ${cls}">${icon}</div>
+        <div>
+          <div class="bank-import-name">${b.bank}</div>
+          <div class="bank-import-status ${cls}">${label}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (container) container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">載入失敗</div>';
+  }
 }
 
 async function loadKPI(month) {
