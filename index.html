@@ -947,10 +947,20 @@
 
     <!-- 銀行設定 -->
     <div id="settings-section-bank" class="settings-section">
-      <div class="card">
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-100)">
-          <button class="btn btn-primary btn-sm" onclick="openAddBankModal()">新增銀行</button>
+      <div class="card" style="margin-bottom:1rem">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">銀行設定說明</div>
+            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
+              📅&ensp;<strong>結帳日</strong>：每月帳單截止日，系統依此計算帳單月份與匯入期限<br>
+              🔤&ensp;<strong>英文縮寫</strong>：建議取英文名稱前 4 碼大寫，例如玉山銀行 → <code style="background:var(--gray-100);padding:.1rem .35rem;border-radius:4px">ESUN</code><br>
+              ✏️&ensp;<strong>其他銀行</strong>：下拉選單選擇「其他」時，需自行輸入銀行名稱與縮寫
+            </div>
+          </div>
+          <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddBankModal()">＋ 新增銀行</button>
         </div>
+      </div>
+      <div class="card">
         <div class="table-wrap" id="bank-settings-table"><div class="loading"><div class="spinner"></div></div></div>
       </div>
     </div>
@@ -2176,7 +2186,7 @@ async function loadRules() {
     const data   = await api('getMerchantRules');
     data.rules.forEach(r => { _rulesById[r.rowIndex] = r; });
     const header = `<thead><tr>
-      <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th style="white-space:nowrap">歸屬</th>
+      <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th style="width:90px;white-space:nowrap">歸屬</th>
       <th style="width:120px">操作</th>
     </tr></thead>`;
     const body   = data.rules.map((r, i) => `<tr class="rule-row" data-row="${r.rowIndex}">
