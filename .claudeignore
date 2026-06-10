@@ -1,0 +1,38 @@
+# 相依套件
+node_modules/
+.pnp/
+.pnp.js
+
+# Lock 檔（體積大、內容幾乎不需要閱讀）
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# Build 產物
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.vite/
+
+# 快取
+.cache/
+.turbo/
+.parcel-cache/
+
+# 測試覆蓋率報告
+coverage/
+
+# 環境變數（避免敏感資訊被掃描）
+.env
+.env.local
+.env.*.local
+
+# 編輯器與系統
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/extensions.json
