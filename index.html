@@ -690,14 +690,13 @@
         <div class="section-title">帳單預覽</div>
         <div class="bill-total-label">本期總支出</div>
         <div class="bill-total-amount" id="bill-total-display">-</div>
-        <div class="bill-delta" id="bill-delta">
-          <span class="delta-neutral">—</span>
-          <span id="bill-delta-text" style="color:var(--gray-400);font-weight:500">較上期資料載入中</span>
+        <div class="bill-delta">
+          <span id="bill-diff" style="color:var(--gray-400);font-weight:500">較上期資料載入中</span>
         </div>
         <div class="bill-meta">
           <div class="bill-meta-item">
             <span class="bill-meta-label">交易筆數</span>
-            <span class="bill-meta-value" id="bill-tx-count">-</span>
+            <span class="bill-meta-value" id="bill-count">-</span>
           </div>
           <div class="bill-meta-item">
             <span class="bill-meta-label">帳單月份</span>
@@ -729,7 +728,7 @@
         <div class="summary-item" onclick="showPage('import')">
           <div class="summary-dot dot-orange"></div>
           <div class="summary-label">未匯入銀行</div>
-          <div class="summary-value" id="summary-missing-banks" style="font-size:.8rem;color:var(--gray-400)">載入中…</div>
+          <div class="summary-value" id="summary-not-imported" style="font-size:.8rem;color:var(--gray-400)">載入中…</div>
           <div class="summary-arrow">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9,18 15,12 9,6"/>
@@ -753,7 +752,7 @@
         <div class="summary-item" onclick="goToMaxTransaction()">
           <div class="summary-dot dot-red"></div>
           <div class="summary-label">本月單筆最高</div>
-          <div class="summary-value" id="summary-max-tx">-</div>
+          <div class="summary-value" id="summary-max-amount">-</div>
           <div class="summary-arrow">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9,18 15,12 9,6"/>
@@ -1520,12 +1519,38 @@ async function loadBankImportCards(month) {
 async function loadKPI(month) {
   try {
     const d = await api('getKPI', { billingMonth: month });
+
+    // KPI 卡片
     document.getElementById('kpi-shihong').textContent = fmt(d.shihong);
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
-    document.getElementById('kpi-total').textContent   = fmt(d.total);
-    // Update bill preview
+
+    // 帳單預覽區塊
     document.getElementById('bill-total-display').textContent = fmt(d.total);
+    document.getElementById('bill-count').textContent = (d.transactionCount || 0) + ' 筆';
+
+    // 較上期增減
+    const diff = (d.total || 0) - (d.totalLastMonth || 0);
+    const pct  = d.totalLastMonth ? ((diff / d.totalLastMonth) * 100).toFixed(1) : 0;
+    const diffEl = document.getElementById('bill-diff');
+    if (diffEl) {
+      diffEl.textContent = (diff >= 0 ? '▲ +$' : '▼ -$') + fmt(Math.abs(diff)) + '（' + (diff >= 0 ? '↑' : '↓') + ' ' + Math.abs(pct) + '%）';
+      diffEl.style.color = diff >= 0 ? '#E53935' : '#1B9A40';
+    }
+
+    // 本期系統摘要
+    const importedCount = (d.importedBanks || []).length;
+    const totalBanks    = importedCount + (d.notImportedBanks || []).length;
+    const elImported    = document.getElementById('summary-imported-banks');
+    const elNotImported = document.getElementById('summary-not-imported');
+    const elUnclassified = document.getElementById('summary-unclassified');
+    const elMaxAmount   = document.getElementById('summary-max-amount');
+
+    if (elImported)     elImported.textContent     = importedCount + ' / ' + totalBanks + ' 家';
+    if (elNotImported)  elNotImported.textContent  = (d.notImportedBanks || []).join('、') || '全部已匯入';
+    if (elUnclassified) elUnclassified.textContent = (d.unclassifiedCount || 0) + ' 筆';
+    if (elMaxAmount)    elMaxAmount.textContent     = fmt(d.maxAmount || 0);
+
   } catch(e) { toast('載入 KPI 失敗', 'error'); }
 }
 
@@ -1555,7 +1580,7 @@ function updateSummaryBanks(month) {
   const total = _bankSettings.length || 5;
   document.getElementById('summary-imported-banks').textContent = `- / ${total} 家`;
   const names = _bankSettings.map(b => b.bank).join('、') || '尚無資料';
-  document.getElementById('summary-missing-banks').textContent = names.length > 24 ? names.substring(0,24) + '…' : names;
+  document.getElementById('summary-not-imported').textContent = names.length > 24 ? names.substring(0,24) + '…' : names;
 }
 
 function goToUnclassified() {
