@@ -54,6 +54,7 @@ function handleRequest(e) {
       case 'updateMerchantRule':  result = updateMerchantRule(postData); break;
       case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
       case 'getBillingMonths':    result = getBillingMonths();           break;
+      case 'getAvailableMonths':  result = getAvailableMonths();         break;
       case 'getStatementData':   result = getStatementData(postData);   break;
       case 'getSystemInfo':      result = getSystemInfo();              break;
       case 'backupData':         result = backupData();                 break;
@@ -495,6 +496,11 @@ function deleteBankSetting(data) {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
   sheet.deleteRow(parseInt(data.rowIndex));
   return { success: true };
+}
+
+// ── Available months (distinct billing months, descending) ────
+function getAvailableMonths() {
+  return getBillingMonths();
 }
 
 // ── Billing months list ───────────────────────────────────────

@@ -2930,13 +2930,18 @@ document.addEventListener('click', e => {
 let _stmtYM = '';
 let _stmtTab = 'shihong';
 let _stmtPickerYear = new Date().getFullYear();
+let _stmtAvailableMonths = [];
 
 async function loadStatementPage() {
   if (!requireAuth()) return;
-  if (!_stmtYM) {
-    const sel = document.getElementById('dash-month-select');
-    _stmtYM = sel.value ||
-      (new Date().getFullYear() + '/' + String(new Date().getMonth() + 1).padStart(2, '0'));
+  if (!_stmtAvailableMonths.length) {
+    try {
+      const data = await api('getAvailableMonths');
+      _stmtAvailableMonths = data.months || [];
+    } catch(e) { _stmtAvailableMonths = []; }
+  }
+  if (!_stmtYM && _stmtAvailableMonths.length) {
+    _stmtYM = _stmtAvailableMonths[0];
   }
   updateStmtMonthDisplay();
   await loadStmtData();
@@ -2945,6 +2950,10 @@ async function loadStatementPage() {
 async function loadStmtData() {
   const content = document.getElementById('stmt-content');
   if (!content) return;
+  if (!_stmtAvailableMonths.length || !_stmtYM) {
+    content.innerHTML = '<div class="loading" style="color:var(--gray-400);font-size:.95rem">尚無帳單資料</div>';
+    return;
+  }
   content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   try {
     if (!_allTxData.length) {
@@ -2966,10 +2975,12 @@ function updateStmtMonthDisplay() {
 }
 
 function stmtNavMonth(delta) {
-  if (!_stmtYM) return;
-  const [y, m] = _stmtYM.split('/').map(Number);
-  const d = new Date(y, m - 1 + delta, 1);
-  _stmtYM = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+  if (!_stmtAvailableMonths.length) return;
+  const idx = _stmtAvailableMonths.indexOf(_stmtYM);
+  // list is descending; left(delta=-1)=older → higher index; right(delta=1)=newer → lower index
+  const newIdx = idx - delta;
+  if (newIdx < 0 || newIdx >= _stmtAvailableMonths.length) return;
+  _stmtYM = _stmtAvailableMonths[newIdx];
   updateStmtMonthDisplay();
   loadStmtData();
 }
@@ -2995,7 +3006,7 @@ function renderStmtPickerMonths() {
   const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
   grid.innerHTML = monthNames.map((name, i) => {
     const ym        = `${_stmtPickerYear}/${String(i + 1).padStart(2, '0')}`;
-    const available = _availableMonths.includes(ym);
+    const available = _stmtAvailableMonths.includes(ym);
     const isActive  = ym === _stmtYM;
     return `<button class="picker-month-btn${isActive ? ' active' : ''}${!available ? ' disabled' : ''}"
       onclick="${available ? `stmtSelectPickerMonth('${ym}')` : ''}">${name}</button>`;
@@ -3153,24 +3164,24 @@ async function exportStatementPDF() {
   const filename  = `${name}對帳單_${ym}.pdf`;
 
   let txData = _allTxData.length ? _allTxData : (await api('getTransactions', {})).transactions || [];
-  const monthTx    = txData.filter(r => r.billingMonth === _stmtYM);
-  const attrKey    = isShihong ? '世鴻應付' : '慧鳳應付';
-  const personalTx = monthTx.filter(r => r.attribution === attrKey);
-  const commonTx   = monthTx.filter(r => r.attribution === '共同支付');
+  const monthTx     = txData.filter(r => r.billingMonth === _stmtYM);
+  const attrKey     = isShihong ? '世鴻應付' : '慧鳳應付';
+  const personalTx  = monthTx.filter(r => r.attribution === attrKey);
+  const commonTx    = monthTx.filter(r => r.attribution === '共同支付');
   const personalSum = personalTx.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
   const commonSum   = commonTx.reduce((s,   r) => s + (parseFloat(r.amount) || 0), 0);
   const myShare     = isShihong ? Math.ceil(commonSum / 2) : Math.floor(commonSum / 2);
   const totalDue    = personalSum + myShare;
   const bankCounts  = {};
   monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
-  const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
+  const topBank     = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
   const personalMax = personalTx.length
     ? Math.max(...personalTx.map(r => parseFloat(r.amount) || 0)) : 0;
-  const fmtN = n => '$ ' + (Number(n) || 0).toLocaleString('zh-TW');
+  const fmtN      = n => '$ ' + (Number(n) || 0).toLocaleString('zh-TW');
   const splitNote = isShihong ? '（無條件進位）' : '（無條件捨去）';
 
   function pdfTable(rows, s1Lbl, s1Amt, s2Lbl, s2Amt) {
-    if (!rows.length) return '<p style="font-size:12px;color:#9CA3AF;padding:6px 16px 12px">本期無資料</p>';
+    if (!rows.length) return '<p style="font-size:12px;color:#9CA3AF;padding:6px 16px 12px;margin:0">本期無資料</p>';
     const body = rows.map((r, i) => `<tr style="background:${i % 2 === 0 ? '#fff' : '#F8FAFC'}">
       <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.date}</td>
       <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.bank}</td>
@@ -3185,7 +3196,7 @@ async function exportStatementPDF() {
       <td colspan="3" style="padding:6px 8px;text-align:right;font-weight:600;font-size:12px">${s2Lbl}</td>
       <td style="padding:6px 8px;text-align:right;font-weight:800;font-size:13px;color:${accent}">${fmtN(s2Amt)}</td>
     </tr>`;
-    return `<table style="width:100%;border-collapse:collapse">
+    return `<table style="width:100%;border-collapse:collapse;margin:0">
       <thead><tr style="background:#F3F4F6">
         <th style="padding:6px 8px;text-align:left;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">消費日</th>
         <th style="padding:6px 8px;text-align:left;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">銀行</th>
@@ -3198,76 +3209,94 @@ async function exportStatementPDF() {
   }
 
   const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:0 24px 20px;width:100%;box-sizing:border-box">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:7px">
-      <img src="assets/logo.png" style="width:227px;height:auto" onerror="this.style.display='none'">
-      <div style="text-align:right">
-        <div style="font-size:30px;font-weight:800;color:${accent};line-height:1.1">${name}</div>
-        <div style="font-size:13px;color:#4B5563;letter-spacing:.06em;margin-top:2px">信用卡費用對帳單</div>
-        <div style="font-size:11px;color:#9CA3AF;margin-top:4px">帳單月份：${_stmtYM.replace('/', '-')}</div>
-      </div>
-    </div>
-    <div style="height:4px;background:linear-gradient(to right,${accent},rgba(255,255,255,0));border-radius:2px;margin-bottom:16px"></div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:0;padding-bottom:7px">
+      <tr>
+        <td style="vertical-align:bottom;padding:0 0 7px 0">
+          <img src="assets/logo.png" style="width:227px;height:auto" onerror="this.style.display='none'">
+        </td>
+        <td style="text-align:right;vertical-align:bottom;padding:0 0 7px 0">
+          <div style="display:block;font-size:30px;font-weight:800;color:${accent};line-height:1.1">${name}</div>
+          <div style="display:block;font-size:13px;color:#4B5563;letter-spacing:.06em;margin-top:2px">信用卡費用對帳單</div>
+          <div style="display:block;font-size:11px;color:#9CA3AF;margin-top:4px">帳單月份：${_stmtYM.replace('/', '-')}</div>
+        </td>
+      </tr>
+    </table>
+    <div style="display:block;height:4px;background:linear-gradient(to right,${accent},rgba(255,255,255,0));border-radius:2px;margin-bottom:16px"></div>
     <div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px">
       <div style="padding:12px 16px">
-        <div style="font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">應繳摘要</div>
-        <div style="background:${bgLight};border-radius:8px;padding:12px 16px;margin-bottom:8px">
-          <div style="font-size:11px;color:#9CA3AF;margin-bottom:3px">${name} 本期應付總金額</div>
-          <div style="font-size:28px;font-weight:800;color:${accent};line-height:1.1">${fmtN(totalDue)}</div>
+        <div style="display:block;font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">應繳摘要</div>
+        <div style="display:block;background:${bgLight};border-radius:8px;padding:12px 16px;margin-bottom:8px">
+          <div style="display:block;font-size:11px;color:#9CA3AF;margin-bottom:3px">${name} 本期應付總金額</div>
+          <div style="display:block;font-size:28px;font-weight:800;color:${accent};line-height:1.1">${fmtN(totalDue)}</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-          <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
-            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">${name} 自付金額</div>
-            <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(personalSum)}</div>
-          </div>
-          <div style="background:#F0FDF4;border-radius:7px;padding:8px 10px">
-            <div style="font-size:10px;color:#14532D;font-weight:600;margin-bottom:2px">共同支付原始總額</div>
-            <div style="font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
-          </div>
-          <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
-            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤 50%${splitNote}</div>
-            <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
-          </div>
-        </div>
+        <table style="width:100%;border-collapse:collapse;margin:0">
+          <tr>
+            <td style="width:33%;padding:0 3px 0 0;vertical-align:top">
+              <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+                <div style="display:block;font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">${name} 自付金額</div>
+                <div style="display:block;font-size:14px;font-weight:800;color:${accent}">${fmtN(personalSum)}</div>
+              </div>
+            </td>
+            <td style="width:33%;padding:0 3px;vertical-align:top">
+              <div style="background:#F0FDF4;border-radius:7px;padding:8px 10px">
+                <div style="display:block;font-size:10px;color:#14532D;font-weight:600;margin-bottom:2px">共同支付原始總額</div>
+                <div style="display:block;font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
+              </div>
+            </td>
+            <td style="width:34%;padding:0 0 0 3px;vertical-align:top">
+              <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+                <div style="display:block;font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤 50%${splitNote}</div>
+                <div style="display:block;font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
       <div style="height:1px;background:#E5E7EB"></div>
       <div style="padding:12px 16px">
-        <div style="font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">消費統計</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">自付消費筆數</div>
-            <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length} 筆</div>
-          </div>
-          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">最高單筆金額</div>
-            <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length ? fmtN(personalMax) : '—'}</div>
-          </div>
-          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">消費最多銀行</div>
-            <div style="font-size:14px;font-weight:800;color:#1F2937">${topBank ? topBank[0] : '—'}</div>
-          </div>
-        </div>
+        <div style="display:block;font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">消費統計</div>
+        <table style="width:100%;border-collapse:collapse;margin:0">
+          <tr>
+            <td style="width:33%;padding:0 3px 0 0;vertical-align:top">
+              <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+                <div style="display:block;font-size:10px;color:#9CA3AF;margin-bottom:2px">自付消費筆數</div>
+                <div style="display:block;font-size:15px;font-weight:800;color:#1F2937">${personalTx.length} 筆</div>
+              </div>
+            </td>
+            <td style="width:33%;padding:0 3px;vertical-align:top">
+              <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+                <div style="display:block;font-size:10px;color:#9CA3AF;margin-bottom:2px">最高單筆金額</div>
+                <div style="display:block;font-size:15px;font-weight:800;color:#1F2937">${personalTx.length ? fmtN(personalMax) : '—'}</div>
+              </div>
+            </td>
+            <td style="width:34%;padding:0 0 0 3px;vertical-align:top">
+              <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+                <div style="display:block;font-size:10px;color:#9CA3AF;margin-bottom:2px">消費最多銀行</div>
+                <div style="display:block;font-size:14px;font-weight:800;color:#1F2937">${topBank ? topBank[0] : '—'}</div>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
     <div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px">
       <div style="padding:12px 16px 8px">
-        <div style="font-size:13px;font-weight:700;color:${accent}">${name} 自付明細</div>
+        <div style="display:block;font-size:13px;font-weight:700;color:${accent}">${name} 自付明細</div>
       </div>
       ${pdfTable(personalTx, '自付小計', personalSum, null, null)}
       <div style="height:1px;background:#E5E7EB;margin-top:8px"></div>
       <div style="padding:12px 16px 8px">
-        <div style="font-size:13px;font-weight:700;color:${accent}">共同支付明細</div>
+        <div style="display:block;font-size:13px;font-weight:700;color:${accent}">共同支付明細</div>
       </div>
       ${pdfTable(commonTx, '原始小計', commonSum, '個人分攤' + splitNote, myShare)}
     </div>
-    <div style="border-top:1px solid #E5E7EB;padding-top:8px;text-align:center;font-size:10px;color:#9CA3AF">
+    <div style="display:block;border-top:1px solid #E5E7EB;padding-top:8px;text-align:center;font-size:10px;color:#9CA3AF">
       本報表由家庭每月支出明細系統自動產生
     </div>
   </div>`;
 
-  const el = document.createElement('div');
-  el.style.cssText = 'position:absolute;top:-9999px;left:-9999px;width:794px;margin-top:0';
-  el.innerHTML = pdfContent;
-  document.body.appendChild(el);
+  const renderZone = document.getElementById('pdf-render-zone');
+  renderZone.innerHTML = pdfContent;
   try {
     toast('正在產生 PDF…');
     await html2pdf().set({
@@ -3277,12 +3306,12 @@ async function exportStatementPDF() {
       html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 794 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(el.firstElementChild).save();
+    }).from(renderZone.firstElementChild).save();
     toast('PDF 已下載', 'success');
   } catch (err) {
     toast('PDF 產生失敗：' + err.message, 'error');
   } finally {
-    document.body.removeChild(el);
+    renderZone.innerHTML = '';
   }
 }
 
@@ -3301,5 +3330,6 @@ async function exportStatementPDF() {
   loadDashboard();
 })();
 </script>
+<div id="pdf-render-zone" style="position:fixed;left:-9999px;top:0;width:794px"></div>
 </body>
 </html>
