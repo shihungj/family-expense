@@ -16,6 +16,8 @@
     --gray-600: #4B5563;
     --gray-700: #374151;
     --gray-800: #1F2937;
+    --accent: #3D6B9E;
+    --accent-light: rgba(61,107,158,.12);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: #E8EEF7; color: var(--gray-800); min-height: 100vh; }
@@ -89,7 +91,7 @@
     border-radius: 8px; font-size: .9rem; outline: none;
     transition: border .15s, box-shadow .15s;
   }
-  .pwd-field:focus { border-color: #7C3AED; box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+  .pwd-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
   .pwd-err {
     background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5;
     border-radius: 8px; padding: .45rem .65rem; font-size: .82rem;
@@ -99,7 +101,7 @@
     width: 100%; margin-top: .65rem; padding: .6rem 1rem;
     border: none; border-radius: 8px; cursor: pointer;
     font-size: .9rem; font-weight: 700; color: #fff;
-    background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    background: var(--accent);
     transition: opacity .15s;
   }
   .btn-confirm:hover:not(:disabled) { opacity: .87; }
@@ -107,7 +109,7 @@
 
   /* ── Loading ── */
   .loading { text-align: center; padding: 3rem; color: var(--gray-400); }
-  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--gray-200); border-top-color: #7C3AED; border-radius: 50%; animation: spin .7s linear infinite; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--gray-200); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── Print bar ── */
@@ -116,7 +118,7 @@
     display: flex; align-items: center; gap: .4rem;
     padding: .6rem 1.4rem; border: none; border-radius: 8px;
     cursor: pointer; font-size: .9rem; font-weight: 700; color: #fff;
-    background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    background: var(--accent);
     transition: opacity .15s;
   }
   .btn-print:hover { opacity: .87; }
@@ -200,6 +202,14 @@ const MONTH  = params.get('month') || '';
 const PERSON = params.get('person') || 'shihong';
 const IS_SH  = PERSON === 'shihong';
 const SESS_KEY = 'stmtPwdVerified';
+
+// Set person-specific accent color
+(function() {
+  const accent      = IS_SH ? '#3D6B9E' : '#C0737A';
+  const accentLight = IS_SH ? 'rgba(61,107,158,.12)' : 'rgba(192,115,122,.12)';
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--accent-light', accentLight);
+})();
 
 async function gasApi(action, body = null) {
   const url = new URL(GAS_URL);

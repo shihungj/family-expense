@@ -784,8 +784,7 @@
       <button class="sidebar-subitem" id="nav-settings-bank"     onclick="showSettingsTab('bank')"><span>銀行設定</span></button>
       <button class="sidebar-subitem" id="nav-settings-info"     onclick="showSettingsTab('info')"><span>系統資訊</span></button>
       <button class="sidebar-subitem" id="nav-settings-backup"   onclick="showSettingsTab('backup')"><span>備份與還原</span></button>
-      <button class="sidebar-subitem" id="nav-settings-password"      onclick="showSettingsTab('password')"><span>網站密碼變更</span></button>
-      <button class="sidebar-subitem" id="nav-settings-stmt-password" onclick="showSettingsTab('stmt-password')"><span>對帳單密碼</span></button>
+      <button class="sidebar-subitem" id="nav-settings-password"      onclick="showSettingsTab('password')"><span>密碼設定</span></button>
     </div>
 
     <!-- 使用說明 -->
@@ -1302,44 +1301,17 @@
       </div>
     </div>
 
-    <!-- 對帳單密碼 -->
-    <div id="settings-section-stmt-password" class="settings-section">
-      <div class="card" style="margin-bottom:1rem">
-        <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">對帳單密碼說明</div>
-        <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-          🔒&ensp;對帳單頁面受獨立密碼保護，與登入密碼分開管理<br>
-          🔑&ensp;首次驗證後，同一瀏覽器 session 不需重複輸入<br>
-          ⚠️&ensp;若忘記對帳單密碼，可在此直接重設，無需輸入舊密碼
-        </div>
-      </div>
-      <div class="card" style="max-width:440px;padding:0;overflow:hidden">
-        <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
-        <div style="padding:1.5rem">
-          <div class="form-group">
-            <label for="stmt-setting-pwd-new">新的對帳單密碼</label>
-            <input type="password" id="stmt-setting-pwd-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
-          </div>
-          <div class="form-group">
-            <label for="stmt-setting-pwd-confirm">確認新密碼</label>
-            <input type="password" id="stmt-setting-pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-          </div>
-          <div class="settings-msg" id="stmt-setting-pwd-msg"></div>
-          <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doSaveStmtPassword()">儲存對帳單密碼</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 密碼變更 -->
+    <!-- 密碼設定 -->
     <div id="settings-section-password" class="settings-section">
 
       <!-- 說明區塊 -->
       <div class="card" style="margin-bottom:1rem">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
           <div style="flex:1;min-width:0">
-            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">網站密碼變更注意事項</div>
+            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">密碼設定注意事項</div>
             <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
               🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
-              🔑&ensp;<strong>新密碼規則</strong>：新密碼至少需要 4 個字元<br>
+              🔑&ensp;<strong>新密碼規則</strong>：新密碼至少需8碼，且須包含英文字母與數字<br>
               ⚠️&ensp;<strong>變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入
             </div>
           </div>
@@ -1356,7 +1328,7 @@
           </div>
           <div class="form-group">
             <label for="pwd-new">新密碼</label>
-            <input type="password" id="pwd-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+            <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
           </div>
           <div class="form-group">
             <label for="pwd-confirm">確認新密碼</label>
@@ -1980,7 +1952,9 @@ async function doChangePassword() {
   const username = sessionStorage.getItem('authUser');
   if (!current || !newPwd || !confirm) { showSettingsMsg('請填寫所有欄位', 'error'); return; }
   if (newPwd !== confirm) { showSettingsMsg('新密碼與確認密碼不符', 'error'); return; }
-  if (newPwd.length < 4)  { showSettingsMsg('新密碼至少需要 4 個字元', 'error'); return; }
+  if (newPwd.length < 8 || !/[a-zA-Z]/.test(newPwd) || !/[0-9]/.test(newPwd)) {
+    showSettingsMsg('密碼至少需8碼，且須包含英文字母與數字', 'error'); return;
+  }
   try {
     const result = await api('changePassword', {}, { username, currentPassword: current, newPassword: newPwd });
     if (result.success) {
@@ -2037,7 +2011,7 @@ function showSettingsTab(tab) {
   document.getElementById('nav-settings-parent').classList.add('submenu-open');
   document.getElementById('settings-submenu').classList.add('open');
 
-  const titles = { bank: '銀行設定', info: '系統資訊', backup: '備份與還原', password: '網站密碼變更' };
+  const titles = { bank: '銀行設定', info: '系統資訊', backup: '備份與還原', password: '密碼設定' };
   document.getElementById('settings-page-title').textContent = titles[tab] || '系統設定';
 
   const mnw = document.getElementById('month-nav-wrapper');
