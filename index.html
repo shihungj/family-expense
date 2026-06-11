@@ -3043,7 +3043,7 @@ function renderStatementPanel(monthTx) {
   monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
   const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
 
-  const splitLabel = `個人分攤（${isShihong ? '無條件進位' : '無條件捨去'}）`;
+  const splitLabel = `個人分攤 50%（${isShihong ? '無條件進位' : '無條件捨去'}）`;
 
   const svgReceipt = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
   const svgChart   = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
@@ -3066,7 +3066,7 @@ function renderStatementPanel(monthTx) {
           <div class="stmt-sub-cell-value">${fmt(commonSum)}</div>
         </div>
         <div class="stmt-sub-cell ${colorCls}">
-          <div class="stmt-sub-cell-label">個人分攤金額</div>
+          <div class="stmt-sub-cell-label">${splitLabel}</div>
           <div class="stmt-sub-cell-value">${fmt(myShare)}</div>
         </div>
       </div>
@@ -3197,13 +3197,12 @@ async function exportStatementPDF() {
     </table>`;
   }
 
-  const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:20px 24px;max-width:750px;margin:0 auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px">
+  const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:0 24px 20px;width:100%;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:7px">
       <img src="assets/logo.png" style="width:227px;height:auto" onerror="this.style.display='none'">
       <div style="text-align:right">
         <div style="font-size:30px;font-weight:800;color:${accent};line-height:1.1">${name}</div>
         <div style="font-size:13px;color:#4B5563;letter-spacing:.06em;margin-top:2px">信用卡費用對帳單</div>
-        <div style="margin-top:5px;height:3px;background:linear-gradient(to right,transparent,${accent});border-radius:2px;min-width:160px"></div>
         <div style="font-size:11px;color:#9CA3AF;margin-top:4px">帳單月份：${_stmtYM.replace('/', '-')}</div>
       </div>
     </div>
@@ -3225,7 +3224,7 @@ async function exportStatementPDF() {
             <div style="font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
           </div>
           <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
-            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤金額</div>
+            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤 50%${splitNote}</div>
             <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
           </div>
         </div>
@@ -3266,17 +3265,18 @@ async function exportStatementPDF() {
   </div>`;
 
   const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;top:-9999px;left:0;width:800px';
+  el.style.cssText = 'position:fixed;top:-9999px;left:0;width:718px';
   el.innerHTML = pdfContent;
   document.body.appendChild(el);
   try {
     toast('正在產生 PDF…');
     await html2pdf().set({
-      margin: [8, 8],
+      margin: [10, 10, 10, 10],
       filename,
       image: { type: 'jpeg', quality: 0.95 },
       html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
     }).from(el.firstElementChild).save();
     toast('PDF 已下載', 'success');
   } catch (err) {
