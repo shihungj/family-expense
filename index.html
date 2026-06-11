@@ -2937,8 +2937,13 @@ async function loadStatementPage() {
   if (!_stmtAvailableMonths.length) {
     try {
       const data = await api('getAvailableMonths');
+      console.log('[getAvailableMonths] 完整回傳結果:', data);
       _stmtAvailableMonths = data.months || [];
-    } catch(e) { _stmtAvailableMonths = []; }
+      console.log('[getAvailableMonths] 解析後月份清單:', _stmtAvailableMonths);
+    } catch(e) {
+      console.error('[getAvailableMonths] 呼叫失敗:', e);
+      _stmtAvailableMonths = [];
+    }
   }
   if (!_stmtYM && _stmtAvailableMonths.length) {
     _stmtYM = _stmtAvailableMonths[0];
