@@ -597,6 +597,19 @@
   .stmt-table-wrap { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
   .stmt-export-bar { display:flex; justify-content:flex-end; margin-top:1.5rem; padding-bottom:1rem; }
 
+  /* ── Statement Link Copy Hint ── */
+  .stmt-copy-hint {
+    display: inline-block;
+    position: absolute;
+    bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--gray-800); color: #fff;
+    font-size: .75rem; font-weight: 500;
+    padding: .3rem .65rem; border-radius: 6px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity .2s;
+  }
+  .stmt-copy-hint.show { opacity: 1; }
+
   /* ── Statement Password Form ── */
   .stmt-pwd-wrap { display:flex; align-items:center; justify-content:center; padding:3rem 1rem; min-height:340px; }
   .stmt-pwd-box { background:#fff; border-radius:16px; border:1px solid var(--gray-100); padding:2.5rem 2rem; width:100%; max-width:360px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,.06); }
@@ -1353,6 +1366,33 @@
           <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
         </div>
       </div>
+
+      <!-- 對帳單檢視密碼 -->
+      <div style="margin-top:1.5rem">
+        <h3 style="margin-bottom:.85rem">對帳單檢視密碼</h3>
+        <div class="card" style="margin-bottom:.65rem">
+          <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
+            🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
+            🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
+            ⚠️&ensp;可直接重設，無需輸入舊密碼
+          </div>
+        </div>
+        <div class="card" style="max-width:440px;padding:0;overflow:hidden">
+          <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
+          <div style="padding:1.5rem">
+            <div class="form-group">
+              <label for="pwd-stmt-new">新的對帳單密碼</label>
+              <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+            </div>
+            <div class="form-group">
+              <label for="pwd-stmt-confirm">確認新密碼</label>
+              <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+            </div>
+            <div class="settings-msg" id="pwd-stmt-msg"></div>
+            <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1537,6 +1577,54 @@
 </div><!-- /#main-app -->
 
 <!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- 匯出帳單連結 Modal -->
+<div id="stmt-link-modal" class="modal-overlay" onclick="if(event.target===this)closeStmtLinkModal()">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-.25em;margin-right:.45rem"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      匯出帳單連結
+    </div>
+    <p style="font-size:.82rem;color:var(--gray-400);margin-bottom:1.25rem;line-height:1.7">
+      以下連結可直接開啟獨立對帳單頁面，輸入對帳單密碼後即可查看。複製連結後傳送給對應成員。
+    </p>
+    <!-- 世鴻 -->
+    <div style="margin-bottom:1rem">
+      <div style="font-size:.78rem;font-weight:700;color:#1E40AF;margin-bottom:.45rem;display:flex;align-items:center;gap:.35rem">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1D4ED8"></span> 世鴻對帳單
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <input type="text" id="stmt-link-shihong" readonly
+               style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
+               onclick="this.select()">
+        <button class="btn btn-sm" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;white-space:nowrap;position:relative"
+                onclick="copyStmtLink('shihong')">
+          複製
+          <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
+        </button>
+      </div>
+    </div>
+    <!-- 慧鳳 -->
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:.78rem;font-weight:700;color:#991B1B;margin-bottom:.45rem;display:flex;align-items:center;gap:.35rem">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E53935"></span> 慧鳳對帳單
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <input type="text" id="stmt-link-huifeng" readonly
+               style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
+               onclick="this.select()">
+        <button class="btn btn-sm" style="background:#FEF2F2;color:#E53935;border:1px solid #FCA5A5;white-space:nowrap;position:relative"
+                onclick="copyStmtLink('huifeng')">
+          複製
+          <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeStmtLinkModal()">關閉</button>
+    </div>
+  </div>
+</div>
 
 <!-- Billing month old-month warning -->
 <div id="billing-month-modal" class="modal-overlay">
@@ -3030,21 +3118,6 @@ let _stmtAvailableMonths = [];
 
 async function loadStatementPage() {
   if (!requireAuth()) return;
-  if (sessionStorage.getItem('stmtPwdVerified') !== '1') {
-    const content = document.getElementById('stmt-content');
-    if (content) content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    try {
-      const probe = await api('verifyStatementPassword', {}, { password: '' });
-      if (probe.isSet === false) {
-        stmtRenderSetPasswordForm();
-      } else {
-        stmtRenderEnterPasswordForm();
-      }
-    } catch(e) {
-      stmtRenderEnterPasswordForm();
-    }
-    return;
-  }
   await _loadStatementContent();
 }
 
@@ -3345,8 +3418,9 @@ function renderStatementPanel(monthTx) {
 
     <div class="stmt-export-bar">
       <button class="btn btn-primary" style="padding:.6rem 1.5rem;font-size:.9rem;display:flex;align-items:center;gap:.4rem"
-              onclick="exportStatementPDF()">
-        ${svgPdf} 列印 / 儲存 PDF
+              onclick="openStmtLinkModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-.2em;margin-right:.35rem"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        匯出帳單連結
       </button>
     </div>`;
 }
@@ -3383,9 +3457,59 @@ function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, acce
   </table>`;
 }
 
-function exportStatementPDF() {
+function openStmtLinkModal() {
   if (!_stmtYM) { toast('請先選擇帳單月份', 'error'); return; }
-  window.print();
+  const base = location.origin + location.pathname.replace(/[^/]*$/, '') + 'statement.html';
+  const shLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=shihong`;
+  const hfLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=huifeng`;
+  document.getElementById('stmt-link-shihong').value = shLink;
+  document.getElementById('stmt-link-huifeng').value = hfLink;
+  const modal = document.getElementById('stmt-link-modal');
+  modal.style.display = 'flex';
+}
+
+function closeStmtLinkModal() {
+  document.getElementById('stmt-link-modal').style.display = 'none';
+}
+
+function copyStmtLink(person) {
+  const input = document.getElementById('stmt-link-' + person);
+  const hint  = document.getElementById('hint-' + person);
+  if (!input) return;
+  navigator.clipboard.writeText(input.value).then(() => {
+    hint.classList.add('show');
+    setTimeout(() => hint.classList.remove('show'), 1800);
+  }).catch(() => {
+    input.select();
+    document.execCommand('copy');
+    hint.classList.add('show');
+    setTimeout(() => hint.classList.remove('show'), 1800);
+  });
+}
+
+async function doChangeStmtPasswordInPwdPage() {
+  const newEl = document.getElementById('pwd-stmt-new');
+  const cfmEl = document.getElementById('pwd-stmt-confirm');
+  const msgEl = document.getElementById('pwd-stmt-msg');
+  const pwd = newEl ? newEl.value : '';
+  const cfm = cfmEl ? cfmEl.value : '';
+  msgEl.style.display = 'none';
+  msgEl.className = 'settings-msg';
+  if (!pwd)           { msgEl.className = 'settings-msg error'; msgEl.textContent = '請輸入新密碼';          msgEl.style.display = ''; return; }
+  if (pwd.length < 4) { msgEl.className = 'settings-msg error'; msgEl.textContent = '密碼至少需要 4 個字元'; msgEl.style.display = ''; return; }
+  if (pwd !== cfm)    { msgEl.className = 'settings-msg error'; msgEl.textContent = '兩次輸入密碼不一致';    msgEl.style.display = ''; return; }
+  try {
+    await api('saveStatementPassword', {}, { password: pwd });
+    msgEl.className = 'settings-msg success';
+    msgEl.textContent = '對帳單密碼已更新';
+    msgEl.style.display = '';
+    if (newEl) newEl.value = '';
+    if (cfmEl) cfmEl.value = '';
+  } catch(e) {
+    msgEl.className = 'settings-msg error';
+    msgEl.textContent = '儲存失敗：' + e.message;
+    msgEl.style.display = '';
+  }
 }
 
 // ── Init ─────────────────────────────────────────────────────────

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>對帳單</title>
+<style>
+  :root {
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    --gray-50:  #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #E8EEF7; color: var(--gray-800); min-height: 100vh; }
+
+  /* ── Page wrapper ── */
+  .page-wrap { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  /* ── Header ── */
+  .stmt-top {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .stmt-logo-area { display: flex; align-items: center; gap: .85rem; }
+  .stmt-logo-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, #F97316, #FB923C);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+  }
+  .stmt-logo-title { font-size: .95rem; font-weight: 700; color: var(--gray-800); line-height: 1.4; }
+  .stmt-logo-sub   { font-size: .75rem; color: var(--gray-400); }
+  .stmt-heading-right { text-align: right; }
+  .stmt-person-badge {
+    display: inline-block; padding: .35rem 1rem; border-radius: 999px;
+    font-size: .85rem; font-weight: 700; margin-bottom: .3rem;
+  }
+  .stmt-month-label { font-size: .78rem; color: var(--gray-400); }
+
+  /* ── Cards ── */
+  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: .85rem; display: flex; align-items: center; gap: .5rem; }
+
+  /* ── Summary ── */
+  .summary-label  { font-size: .8rem; color: var(--gray-400); margin-bottom: .3rem; }
+  .summary-amount { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; }
+  .sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+  .sub-cell { border-radius: 10px; padding: .85rem 1rem; }
+  .sub-cell-label { font-size: .73rem; font-weight: 600; margin-bottom: .3rem; }
+  .sub-cell-value { font-size: 1.1rem; font-weight: 800; }
+
+  /* ── Stat cards ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+  .stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1rem; text-align: center; }
+  .stat-label { font-size: .75rem; color: var(--gray-400); margin-bottom: .3rem; font-weight: 500; }
+  .stat-value { font-size: 1.2rem; font-weight: 800; color: var(--gray-800); }
+
+  /* ── Detail table ── */
+  .detail-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  .detail-table thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 2px solid var(--gray-200); }
+  .detail-table tbody tr:nth-child(even) { background: #F8FAFC; }
+  .detail-table tbody td { padding: .55rem .9rem; border-bottom: 1px solid var(--gray-100); }
+  .detail-table tfoot td { padding: .65rem .9rem; font-weight: 700; border-top: 2px solid var(--gray-200); background: var(--gray-50); }
+  .table-wrap { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+
+  /* ── Password screen ── */
+  #pwd-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: #E8EEF7;
+  }
+  .pwd-box {
+    background: #fff; border-radius: 16px; border: 1px solid var(--gray-100);
+    padding: 2.5rem 2rem; width: 90%; max-width: 380px;
+    text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  }
+  .pwd-icon  { font-size: 2.5rem; margin-bottom: .75rem; }
+  .pwd-title { font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: .5rem; }
+  .pwd-desc  { font-size: .875rem; color: var(--gray-400); margin-bottom: 1.25rem; line-height: 1.6; }
+  .pwd-field {
+    width: 100%; padding: .6rem .75rem; border: 1px solid var(--gray-200);
+    border-radius: 8px; font-size: .9rem; outline: none;
+    transition: border .15s, box-shadow .15s;
+  }
+  .pwd-field:focus { border-color: #7C3AED; box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+  .pwd-err {
+    background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5;
+    border-radius: 8px; padding: .45rem .65rem; font-size: .82rem;
+    margin-top: .4rem; margin-bottom: .25rem;
+  }
+  .btn-confirm {
+    width: 100%; margin-top: .65rem; padding: .6rem 1rem;
+    border: none; border-radius: 8px; cursor: pointer;
+    font-size: .9rem; font-weight: 700; color: #fff;
+    background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    transition: opacity .15s;
+  }
+  .btn-confirm:hover:not(:disabled) { opacity: .87; }
+  .btn-confirm:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── Loading ── */
+  .loading { text-align: center; padding: 3rem; color: var(--gray-400); }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--gray-200); border-top-color: #7C3AED; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Print bar ── */
+  .print-bar { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-print {
+    display: flex; align-items: center; gap: .4rem;
+    padding: .6rem 1.4rem; border: none; border-radius: 8px;
+    cursor: pointer; font-size: .9rem; font-weight: 700; color: #fff;
+    background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    transition: opacity .15s;
+  }
+  .btn-print:hover { opacity: .87; }
+
+  /* ── Shihong / Huifeng accent ── */
+  .sh { color: #3D6B9E; }
+  .hf { color: #C0737A; }
+  .sh-bg { background: #EFF4FA; }
+  .hf-bg { background: #FAF0F1; }
+  .sh-sub-cell { background: #EFF4FA; }
+  .sh-sub-cell .sub-cell-label { color: #2D527A; }
+  .sh-sub-cell .sub-cell-value { color: #3D6B9E; }
+  .hf-sub-cell { background: #FAF0F1; }
+  .hf-sub-cell .sub-cell-label { color: #9A5056; }
+  .hf-sub-cell .sub-cell-value { color: #C0737A; }
+  .gn-sub-cell { background: #F0FDF4; }
+  .gn-sub-cell .sub-cell-label { color: #14532D; }
+  .gn-sub-cell .sub-cell-value { color: #15803D; }
+  .sh-badge { background: #E5EEFA; color: #2D527A; }
+  .hf-badge { background: #F5E7E8; color: #9A5056; }
+
+  @media print {
+    #pwd-screen { display: none !important; }
+    body { background: #fff !important; }
+    .page-wrap { padding: 0; max-width: 100%; }
+    .print-bar { display: none !important; }
+    .card { box-shadow: none !important; border: 1px solid #E5E7EB !important; break-inside: avoid; }
+    .table-wrap { box-shadow: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Password screen ── -->
+<div id="pwd-screen">
+  <div class="pwd-box">
+    <div class="pwd-icon">🔒</div>
+    <div class="pwd-title">對帳單受密碼保護</div>
+    <div class="pwd-desc" id="pwd-desc">請輸入密碼以查看對帳單內容</div>
+    <input type="password" id="pwd-input" class="pwd-field" placeholder="請輸入對帳單密碼"
+           onkeydown="if(event.key==='Enter')doVerifyPwd()">
+    <div id="pwd-err" class="pwd-err" style="display:none">密碼錯誤，請再試一次</div>
+    <button class="btn-confirm" id="pwd-btn" onclick="doVerifyPwd()">確認</button>
+  </div>
+</div>
+
+<!-- ── Statement content ── -->
+<div id="stmt-content" style="display:none">
+  <div class="page-wrap">
+
+    <!-- 頁首 -->
+    <div class="stmt-top">
+      <div class="stmt-logo-area">
+        <div class="stmt-logo-icon">🏠</div>
+        <div>
+          <div class="stmt-logo-title">家庭每月支出明細系統</div>
+          <div class="stmt-logo-sub">個人對帳單</div>
+        </div>
+      </div>
+      <div class="stmt-heading-right">
+        <div class="stmt-person-badge" id="person-badge">—</div>
+        <div class="stmt-month-label" id="month-label">—</div>
+      </div>
+    </div>
+
+    <!-- Loading placeholder -->
+    <div id="content-area">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwRHKwFTg5tvS7meM6DvFrZjGsdN7-9LXJ-sUP3hzgWE8ILaRG7PcUWu1sN6WbyxNc7rg/exec';
+const API_KEY = atob('ZmFtaWx5LWV4cGVuc2UtMjAyNg==');
+
+const params = new URLSearchParams(location.search);
+const MONTH  = params.get('month') || '';
+const PERSON = params.get('person') || 'shihong';
+const IS_SH  = PERSON === 'shihong';
+const SESS_KEY = 'stmtPwdVerified';
+
+async function gasApi(action, body = null) {
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', action);
+  url.searchParams.set('apiKey', API_KEY);
+  const opts = body
+    ? { method: 'POST', body: JSON.stringify({ action, apiKey: API_KEY, ...body }) }
+    : { method: 'GET' };
+  const res  = await fetch(url.toString(), opts);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+function fmt(n) {
+  return 'NT$ ' + Math.round(n).toLocaleString();
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+(async () => {
+  if (!MONTH) {
+    document.getElementById('pwd-desc').textContent = '連結格式錯誤：缺少帳單月份';
+    document.getElementById('pwd-btn').disabled = true;
+    document.getElementById('pwd-icon') && (document.querySelector('.pwd-icon').textContent = '⚠️');
+    document.querySelector('.pwd-title').textContent = '連結無效';
+    return;
+  }
+
+  // Already verified in this session
+  if (sessionStorage.getItem(SESS_KEY) === '1') {
+    showStatement();
+    return;
+  }
+
+  document.getElementById('pwd-input').focus();
+})();
+
+async function doVerifyPwd() {
+  const input = document.getElementById('pwd-input');
+  const errEl = document.getElementById('pwd-err');
+  const btn   = document.getElementById('pwd-btn');
+  const pwd   = input.value;
+  errEl.style.display = 'none';
+  if (!pwd) { errEl.textContent = '請輸入密碼'; errEl.style.display = ''; return; }
+  btn.disabled = true;
+  btn.textContent = '驗證中…';
+  try {
+    const res = await gasApi('verifyStatementPassword', { password: pwd });
+    if (res.success) {
+      sessionStorage.setItem(SESS_KEY, '1');
+      showStatement();
+    } else {
+      errEl.textContent = '密碼錯誤，請再試一次';
+      errEl.style.display = '';
+      input.value = '';
+      input.focus();
+    }
+  } catch(e) {
+    errEl.textContent = '驗證失敗，請稍後再試';
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '確認';
+  }
+}
+
+async function showStatement() {
+  document.getElementById('pwd-screen').style.display = 'none';
+  document.getElementById('stmt-content').style.display = '';
+
+  const name       = IS_SH ? '世鴻' : '慧鳳';
+  const colorCls   = IS_SH ? 'sh' : 'hf';
+  const accentHex  = IS_SH ? '#3D6B9E' : '#C0737A';
+  const badgeCls   = IS_SH ? 'sh-badge' : 'hf-badge';
+
+  document.getElementById('person-badge').textContent = name + ' 對帳單';
+  document.getElementById('person-badge').className = 'stmt-person-badge ' + badgeCls;
+  document.getElementById('month-label').textContent = MONTH + ' 帳單';
+
+  try {
+    const data = await gasApi('getTransactions');
+    const allTx = data.transactions || [];
+    const monthTx = allTx.filter(r => r.billingMonth === MONTH);
+    renderContent(monthTx, name, colorCls, accentHex);
+  } catch(e) {
+    document.getElementById('content-area').innerHTML =
+      '<div class="loading" style="color:#EF4444">載入失敗：' + e.message + '</div>';
+  }
+}
+
+function renderContent(monthTx, name, colorCls, accentHex) {
+  const attrKey   = IS_SH ? '世鴻應付' : '慧鳳應付';
+  const personalTx = monthTx.filter(r => r.attribution === attrKey);
+  const commonTx   = monthTx.filter(r => r.attribution === '共同支付');
+  const personalSum = personalTx.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+  const commonSum   = commonTx.reduce((s,   r) => s + (parseFloat(r.amount) || 0), 0);
+  const myShare     = IS_SH ? Math.ceil(commonSum / 2) : Math.floor(commonSum / 2);
+  const totalDue    = personalSum + myShare;
+
+  const personalMax = personalTx.length
+    ? Math.max(...personalTx.map(r => parseFloat(r.amount) || 0)) : 0;
+
+  const bankCounts = {};
+  monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
+  const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
+  const splitLabel = `個人分攤 50%（${IS_SH ? '無條件進位' : '無條件捨去'}）`;
+
+  const subCellCls = IS_SH ? 'sh-sub-cell' : 'hf-sub-cell';
+
+  const svgReceipt = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
+  const svgChart   = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
+  const svgList    = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/></svg>`;
+  const svgShared  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>`;
+  const svgPrint   = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+
+  document.getElementById('content-area').innerHTML = `
+    <!-- 應繳摘要 -->
+    <div class="card">
+      <div class="section-title">${svgReceipt} 應繳摘要</div>
+      <div class="summary-label">${name} 本期應付總金額</div>
+      <div class="summary-amount ${colorCls}">${fmt(totalDue)}</div>
+      <div class="sub-grid">
+        <div class="sub-cell ${subCellCls}">
+          <div class="sub-cell-label">${name} 自付金額</div>
+          <div class="sub-cell-value">${fmt(personalSum)}</div>
+        </div>
+        <div class="sub-cell gn-sub-cell">
+          <div class="sub-cell-label">共同支付原始總額</div>
+          <div class="sub-cell-value">${fmt(commonSum)}</div>
+        </div>
+        <div class="sub-cell ${subCellCls}">
+          <div class="sub-cell-label">${splitLabel}</div>
+          <div class="sub-cell-value">${fmt(myShare)}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 消費統計 -->
+    <div style="margin-bottom:1rem">
+      <div class="section-title">${svgChart} 消費統計</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">自付消費筆數</div>
+          <div class="stat-value">${personalTx.length} 筆</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最高單筆金額</div>
+          <div class="stat-value">${personalTx.length ? fmt(personalMax) : '—'}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">消費最多銀行</div>
+          <div class="stat-value" style="font-size:1rem">${topBank ? topBank[0] : '—'}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自付明細 -->
+    <div class="card">
+      <div class="section-title">${svgList} ${name} 自付明細</div>
+      <div class="table-wrap">${buildDetailTable(personalTx, '自付小計', personalSum, null, null, accentHex)}</div>
+    </div>
+
+    <!-- 共同支付明細 -->
+    <div class="card">
+      <div class="section-title">${svgShared} 共同支付明細</div>
+      <div class="table-wrap">${buildDetailTable(commonTx, '原始小計', commonSum, splitLabel, myShare, accentHex)}</div>
+    </div>
+
+    <!-- 列印 -->
+    <div class="print-bar">
+      <button class="btn-print" onclick="window.print()">
+        ${svgPrint} 列印 / 儲存 PDF
+      </button>
+    </div>`;
+}
+
+function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, accentHex) {
+  if (!rows.length) {
+    return '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:.875rem">本期無資料</div>';
+  }
+  const body = rows.map(r => `<tr>
+    <td>${r.date}</td>
+    <td>${r.bank}</td>
+    <td>${r.detail}</td>
+    <td style="text-align:right;font-weight:600">${Number(parseFloat(r.amount)||0).toLocaleString()}</td>
+  </tr>`).join('');
+
+  let foot = `<tr>
+    <td colspan="3" style="text-align:right">${sub1Label}</td>
+    <td style="text-align:right;color:${accentHex}">${fmt(sub1Amt)}</td>
+  </tr>`;
+  if (sub2Label) {
+    foot += `<tr>
+      <td colspan="3" style="text-align:right">${sub2Label}</td>
+      <td style="text-align:right;font-weight:800;font-size:.95rem;color:${accentHex}">${fmt(sub2Amt)}</td>
+    </tr>`;
+  }
+
+  return `<table class="detail-table">
+    <thead><tr>
+      <th>消費日</th><th>銀行</th><th>消費明細</th>
+      <th style="text-align:right">金額</th>
+    </tr></thead>
+    <tbody>${body}</tbody>
+    <tfoot>${foot}</tfoot>
+  </table>`;
+}
+</script>
+</body>
+</html>
