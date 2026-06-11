@@ -54,6 +54,9 @@ function handleRequest(e) {
       case 'updateMerchantRule':  result = updateMerchantRule(postData); break;
       case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
       case 'getBillingMonths':    result = getBillingMonths();           break;
+      case 'getSystemInfo':      result = getSystemInfo();              break;
+      case 'backupData':         result = backupData();                 break;
+      case 'restoreData':        result = restoreData(postData);        break;
       default: result = { error: 'Unknown action: ' + action };
     }
   } catch (err) {
@@ -534,6 +537,120 @@ function updateMerchantRule(data) {
 function deleteMerchantRule(data) {
   const sheet = getSheet(SHEET_MERCHANT_RULES);
   sheet.deleteRow(parseInt(data.rowIndex));
+  return { success: true };
+}
+
+// ── System Info ───────────────────────────────────────────────
+function getSystemInfo() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = getSheet(SHEET_SYSTEM_SETTINGS);
+  const data  = sheet.getDataRange().getValues();
+
+  // frontendVersion: 找 C 欄 === 'frontendVersion' 的列，取 D 欄值
+  let frontendVersion = '';
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][2] || '').trim() === 'frontendVersion') {
+      frontendVersion = String(data[i][3] || '').trim();
+      break;
+    }
+  }
+
+  // lastUpdated: 試用 getLastUpdated()，不支援時 fallback 現在時間
+  let lastUpdatedDate;
+  try {
+    lastUpdatedDate = ss.getLastUpdated();
+  } catch (e) {
+    lastUpdatedDate = new Date();
+  }
+  const lu = lastUpdatedDate;
+  const lastUpdated =
+    lu.getFullYear() + '/' +
+    String(lu.getMonth() + 1).padStart(2, '0') + '/' +
+    String(lu.getDate()).padStart(2, '0') + ' ' +
+    String(lu.getHours()).padStart(2, '0') + ':' +
+    String(lu.getMinutes()).padStart(2, '0') + ':' +
+    String(lu.getSeconds()).padStart(2, '0');
+
+  const txSheet = getSheet(SHEET_TRANSACTIONS);
+  const txData  = txSheet.getDataRange().getValues();
+  const months  = new Set();
+  for (let i = 1; i < txData.length; i++) {
+    const m = String(txData[i][6] || '');
+    if (m) months.add(m);
+  }
+
+  return {
+    frontendVersion,
+    lastUpdated,
+    sheetName:        ss.getName(),
+    transactionCount: Math.max(0, txData.length - 1),
+    billingMonths:    months.size,
+  };
+}
+
+// ── Backup / Restore ──────────────────────────────────────────
+function backupData() {
+  const sheetNames = [
+    SHEET_TRANSACTIONS,
+    SHEET_MERCHANT_RULES,
+    SHEET_BANK_SETTINGS,
+    SHEET_SYSTEM_SETTINGS,
+  ];
+  const backup = {};
+  sheetNames.forEach(name => {
+    const sheet = getSheet(name);
+    backup[name] = sheet.getDataRange().getValues();
+  });
+  return { success: true, data: backup };
+}
+
+function restoreData(payload) {
+  const backup = payload.data;
+  if (!backup) return { success: false, error: '缺少 data 欄位' };
+
+  const sheetNames = [
+    SHEET_TRANSACTIONS,
+    SHEET_MERCHANT_RULES,
+    SHEET_BANK_SETTINGS,
+    SHEET_SYSTEM_SETTINGS,
+  ];
+
+  sheetNames.forEach(name => {
+    const rows = backup[name];
+    if (!rows || !rows.length) return;
+
+    const sheet = getSheet(name);
+
+    if (name === SHEET_SYSTEM_SETTINGS) {
+      // 保留 C、D 欄現有值，只覆蓋 A、B 欄
+      const currentData  = sheet.getDataRange().getValues();
+      const currentRows  = currentData.length;
+      const restoreRows  = rows.length;
+      const maxRows      = Math.max(currentRows, restoreRows);
+
+      // 先確保工作表有足夠列數
+      const needed = maxRows - sheet.getLastRow();
+      if (needed > 0) {
+        sheet.insertRowsAfter(sheet.getLastRow(), needed);
+      }
+
+      // 逐列寫入 A、B 欄
+      for (let i = 0; i < restoreRows; i++) {
+        const rowNum = i + 1;
+        sheet.getRange(rowNum, 1).setValue(rows[i][0] !== undefined ? rows[i][0] : '');
+        sheet.getRange(rowNum, 2).setValue(rows[i][1] !== undefined ? rows[i][1] : '');
+      }
+      // 若原本列數多於還原列數，清除多餘 A、B 欄
+      for (let i = restoreRows; i < currentRows; i++) {
+        sheet.getRange(i + 1, 1).clearContent();
+        sheet.getRange(i + 1, 2).clearContent();
+      }
+    } else {
+      sheet.clearContents();
+      sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+    }
+  });
+
   return { success: true };
 }
 
