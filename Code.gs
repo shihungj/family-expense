@@ -55,7 +55,9 @@ function handleRequest(e) {
       case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
       case 'getBillingMonths':    result = getBillingMonths();           break;
       case 'getAvailableMonths':  result = getAvailableMonths();         break;
-      case 'getStatementData':   result = getStatementData(postData);   break;
+      case 'getStatementData':          result = getStatementData(postData);          break;
+      case 'verifyStatementPassword':   result = verifyStatementPassword(postData);   break;
+      case 'saveStatementPassword':     result = saveStatementPassword(postData);     break;
       case 'getSystemInfo':      result = getSystemInfo();              break;
       case 'backupData':         result = backupData();                 break;
       case 'restoreData':        result = restoreData(postData);        break;
@@ -730,6 +732,33 @@ function getStatementData(params) {
     maxSingle:        Math.round(maxSingle),
     topBank:          topBank,
   };
+}
+
+// ── Statement Password ────────────────────────────────────────
+// C1 = label 'statement_password'，C2 = Base64 編碼後的密碼
+function verifyStatementPassword(data) {
+  const password = String(data.password || '');
+  const sheet    = getSheet(SHEET_SYSTEM_SETTINGS);
+
+  if (String(sheet.getRange(1, 3).getValue()) !== 'statement_password') {
+    return { success: false, isSet: false };
+  }
+
+  const encoded = String(sheet.getRange(2, 3).getValue() || '');
+  if (!encoded) return { success: false, isSet: false };
+
+  const decoded = Utilities.newBlob(Utilities.base64Decode(encoded)).getDataAsString();
+  return { success: decoded === password, isSet: true };
+}
+
+function saveStatementPassword(data) {
+  const password = String(data.password || '');
+  const sheet    = getSheet(SHEET_SYSTEM_SETTINGS);
+  const encoded  = Utilities.base64Encode(password);
+
+  sheet.getRange(1, 3).setValue('statement_password');
+  sheet.getRange(2, 3).setValue(encoded);
+  return { success: true };
 }
 
 // ── Auth: Login ───────────────────────────────────────────────
