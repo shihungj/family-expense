@@ -544,16 +544,9 @@ function deleteMerchantRule(data) {
 function getSystemInfo() {
   const ss    = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = getSheet(SHEET_SYSTEM_SETTINGS);
-  const data  = sheet.getDataRange().getValues();
 
-  // frontendVersion: 找 C 欄 === 'frontendVersion' 的列，取 D 欄值
-  let frontendVersion = '';
-  for (let i = 1; i < data.length; i++) {
-    if (String(data[i][2] || '').trim() === 'frontendVersion') {
-      frontendVersion = String(data[i][3] || '').trim();
-      break;
-    }
-  }
+  // frontendVersion: 直接讀取 D2 儲存格（C1=frontendVersion 標題，D2 為對應值）
+  const frontendVersion = String(sheet.getRange(2, 4).getValue() || '').trim();
 
   // lastUpdated: 試用 getLastUpdated()，不支援時 fallback 現在時間
   let lastUpdatedDate;

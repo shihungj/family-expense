@@ -967,7 +967,6 @@
 
     <!-- 系統資訊 -->
     <div id="settings-section-info" class="settings-section">
-      <div class="settings-section-title">系統資訊</div>
 
       <!-- 版本資訊卡片 -->
       <div class="card" style="margin-bottom:1rem;display:flex;gap:2.5rem;align-items:center;flex-wrap:wrap">
@@ -1042,7 +1041,6 @@
 
     <!-- 備份與還原 -->
     <div id="settings-section-backup" class="settings-section">
-      <div class="settings-section-title">備份與還原</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:720px">
 
         <!-- 匯出備份 -->
@@ -1081,22 +1079,40 @@
 
     <!-- 密碼變更 -->
     <div id="settings-section-password" class="settings-section">
-      <div class="settings-section-title">密碼變更</div>
-      <div class="card" style="max-width:440px">
-        <div class="form-group">
-          <label for="pwd-current">目前密碼</label>
-          <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+
+      <!-- 說明區塊 -->
+      <div class="card" style="margin-bottom:1rem">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">密碼變更注意事項</div>
+            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
+              🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
+              🔑&ensp;<strong>新密碼規則</strong>：新密碼至少需要 4 個字元<br>
+              ⚠️&ensp;<strong>變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="pwd-new">新密碼</label>
-          <input type="password" id="pwd-new" style="width:100%" placeholder="請輸入新密碼">
+      </div>
+
+      <!-- 表單卡片 -->
+      <div class="card" style="max-width:440px;padding:0;overflow:hidden">
+        <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
+        <div style="padding:1.5rem">
+          <div class="form-group">
+            <label for="pwd-current">目前密碼</label>
+            <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+          </div>
+          <div class="form-group">
+            <label for="pwd-new">新密碼</label>
+            <input type="password" id="pwd-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+          </div>
+          <div class="form-group">
+            <label for="pwd-confirm">確認新密碼</label>
+            <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+          </div>
+          <div class="settings-msg" id="settings-msg"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
         </div>
-        <div class="form-group">
-          <label for="pwd-confirm">確認新密碼</label>
-          <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-        </div>
-        <div class="settings-msg" id="settings-msg"></div>
-        <button class="btn btn-primary" onclick="doChangePassword()">變更密碼</button>
       </div>
     </div>
   </div>
