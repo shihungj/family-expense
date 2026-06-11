@@ -3265,7 +3265,7 @@ async function exportStatementPDF() {
   </div>`;
 
   const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;top:-9999px;left:0;width:718px';
+  el.style.cssText = 'position:absolute;top:-9999px;left:-9999px;width:794px;margin-top:0';
   el.innerHTML = pdfContent;
   document.body.appendChild(el);
   try {
@@ -3273,10 +3273,10 @@ async function exportStatementPDF() {
     await html2pdf().set({
       margin: [10, 10, 10, 10],
       filename,
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 794 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     }).from(el.firstElementChild).save();
     toast('PDF 已下載', 'success');
   } catch (err) {
