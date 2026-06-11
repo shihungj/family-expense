@@ -54,6 +54,7 @@ function handleRequest(e) {
       case 'updateMerchantRule':  result = updateMerchantRule(postData); break;
       case 'deleteMerchantRule':  result = deleteMerchantRule(postData); break;
       case 'getBillingMonths':    result = getBillingMonths();           break;
+      case 'getStatementData':   result = getStatementData(postData);   break;
       case 'getSystemInfo':      result = getSystemInfo();              break;
       case 'backupData':         result = backupData();                 break;
       case 'restoreData':        result = restoreData(postData);        break;
@@ -645,6 +646,84 @@ function restoreData(payload) {
   });
 
   return { success: true };
+}
+
+// ── Statement Data ────────────────────────────────────────────
+// params: { month: 'YYYY/MM', person: 'shihong' | 'huifeng' }
+function getStatementData(params) {
+  const month  = String(params.month  || '');
+  const person = String(params.person || '');
+
+  if (!month)  return { error: '請提供帳單月份 (month)' };
+  if (person !== 'shihong' && person !== 'huifeng') {
+    return { error: 'person 必須為 shihong 或 huifeng' };
+  }
+
+  const selfAttr = person === 'shihong' ? '世鴻應付' : '慧鳳應付';
+
+  const sheet = getSheet(SHEET_TRANSACTIONS);
+  const data  = sheet.getDataRange().getValues();
+
+  const selfItems   = [];
+  const commonItems = [];
+  let   selfRaw     = 0;
+  let   commonRaw   = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (!row[0] && !row[1]) continue;
+    if (String(row[6] || '') !== month) continue;
+
+    const amount = parseAmount(row[4]);
+    const attr   = String(row[5] || '');
+    const item   = {
+      date:   toDateStr(row[1]),
+      bank:   String(row[2] || ''),
+      detail: String(row[3] || ''),
+      amount: amount,
+    };
+
+    if (attr === selfAttr) {
+      selfItems.push(item);
+      selfRaw += amount;
+    } else if (attr === '共同支付') {
+      commonItems.push(item);
+      commonRaw += amount;
+    }
+  }
+
+  const commonShare = person === 'shihong'
+    ? Math.ceil(commonRaw / 2)
+    : Math.floor(commonRaw / 2);
+
+  // topBank: self items 中金額最高的銀行
+  const bankAmountMap = {};
+  for (const item of selfItems) {
+    if (item.bank) bankAmountMap[item.bank] = (bankAmountMap[item.bank] || 0) + item.amount;
+  }
+  let topBank = '';
+  let topAmt  = -1;
+  for (const bank in bankAmountMap) {
+    if (bankAmountMap[bank] > topAmt) { topAmt = bankAmountMap[bank]; topBank = bank; }
+  }
+
+  // maxSingle: self items 中最高單筆
+  let maxSingle = 0;
+  for (const item of selfItems) {
+    if (item.amount > maxSingle) maxSingle = item.amount;
+  }
+
+  return {
+    selfItems,
+    commonItems,
+    selfTotal:        Math.round(selfRaw),
+    commonTotal:      Math.round(commonRaw),
+    commonShare:      commonShare,
+    grandTotal:       Math.round(selfRaw) + commonShare,
+    transactionCount: selfItems.length,
+    maxSingle:        Math.round(maxSingle),
+    topBank:          topBank,
+  };
 }
 
 // ── Auth: Login ───────────────────────────────────────────────

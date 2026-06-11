@@ -553,7 +553,51 @@
     .top-username { display: none; }
     .quick-cards { flex-direction: column; }
   }
+
+  /* ── Statement Preview ── */
+  .stmt-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
+  .stmt-month-btn { background:var(--gray-100); border:none; border-radius:6px; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:var(--gray-600); transition:background .15s; flex-shrink:0; }
+  .stmt-month-btn:hover { background:var(--gray-200); }
+  .stmt-month-display { background:none; border:none; cursor:pointer; font-size:1.1rem; font-weight:700; color:var(--gray-800); padding:.25rem .75rem; border-radius:6px; transition:background .15s; min-width:120px; text-align:center; }
+  .stmt-month-display:hover { background:var(--gray-100); }
+  .stmt-picker-popup { display:none; position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%); background:#fff; border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,.15); padding:1rem; z-index:500; min-width:260px; border:1px solid var(--gray-200); }
+  .stmt-picker-popup.open { display:block; }
+  .stmt-tabs { display:flex; gap:.5rem; }
+  .stmt-tab { padding:.5rem 1.75rem; border-radius:8px; border:2px solid var(--gray-200); background:#fff; cursor:pointer; font-size:.95rem; font-weight:700; color:var(--gray-600); transition:all .15s; }
+  .stmt-tab:not(.active):hover { background:var(--gray-100); }
+  .stmt-tab.active.sh { border-color:#1D4ED8; background:#1D4ED8; color:#fff; }
+  .stmt-tab.active.hf { border-color:#E53935; background:#E53935; color:#fff; }
+  .stmt-section-title { font-size:1rem; font-weight:700; color:var(--gray-800); margin-bottom:.85rem; display:flex; align-items:center; gap:.5rem; }
+  .stmt-summary-label { font-size:.8rem; color:var(--gray-400); margin-bottom:.3rem; }
+  .stmt-summary-amount { font-size:2.6rem; font-weight:800; line-height:1.1; margin-bottom:1rem; }
+  .stmt-summary-amount.sh { color:#1D4ED8; }
+  .stmt-summary-amount.hf { color:#E53935; }
+  .stmt-sub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+  .stmt-sub-cell { border-radius:10px; padding:.85rem 1rem; }
+  .stmt-sub-cell-label { font-size:.73rem; font-weight:600; margin-bottom:.3rem; }
+  .stmt-sub-cell-value { font-size:1.1rem; font-weight:800; }
+  .stmt-sub-cell.sh { background:#EFF6FF; }
+  .stmt-sub-cell.sh .stmt-sub-cell-label { color:#1E40AF; }
+  .stmt-sub-cell.sh .stmt-sub-cell-value { color:#1D4ED8; }
+  .stmt-sub-cell.hf { background:#FEF2F2; }
+  .stmt-sub-cell.hf .stmt-sub-cell-label { color:#991B1B; }
+  .stmt-sub-cell.hf .stmt-sub-cell-value { color:#E53935; }
+  .stmt-sub-cell.gn { background:#F0FDF4; }
+  .stmt-sub-cell.gn .stmt-sub-cell-label { color:#14532D; }
+  .stmt-sub-cell.gn .stmt-sub-cell-value { color:#15803D; }
+  .stmt-stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+  .stmt-stat-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:1rem; text-align:center; }
+  .stmt-stat-label { font-size:.75rem; color:var(--gray-400); margin-bottom:.3rem; font-weight:500; }
+  .stmt-stat-value { font-size:1.2rem; font-weight:800; color:var(--gray-800); }
+  .stmt-detail-table { width:100%; border-collapse:collapse; font-size:.875rem; }
+  .stmt-detail-table thead th { background:var(--gray-50); padding:.65rem .9rem; text-align:left; font-weight:600; color:var(--gray-600); border-bottom:2px solid var(--gray-200); }
+  .stmt-detail-table tbody tr:nth-child(even) { background:#F8FAFC; }
+  .stmt-detail-table tbody td { padding:.55rem .9rem; border-bottom:1px solid var(--gray-100); }
+  .stmt-detail-table tfoot td { padding:.65rem .9rem; font-weight:700; border-top:2px solid var(--gray-200); background:var(--gray-50); }
+  .stmt-table-wrap { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  .stmt-export-bar { display:flex; justify-content:flex-end; margin-top:1.5rem; padding-bottom:1rem; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -630,6 +674,18 @@
         <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
       </svg>
       <span>分類規則管理</span>
+    </button>
+
+    <!-- 對帳單預覽 -->
+    <button class="sidebar-item" id="nav-statement" onclick="showPage('statement')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14,2 14,8 20,8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10,9 9,9 8,9"/>
+      </svg>
+      <span>對帳單預覽</span>
     </button>
 
     <div class="sidebar-divider"></div>
@@ -889,7 +945,7 @@
       </div>
 
       <!-- 帳單預覽 -->
-      <div class="quick-card" onclick="showPage('transactions')">
+      <div class="quick-card" onclick="showPage('statement')">
         <div class="quick-card-icon purple">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
@@ -910,6 +966,49 @@
     </div>
 
   </div><!-- /#page-dashboard -->
+
+  <!-- ─────────────────── STATEMENT PREVIEW ───────────────────── -->
+  <div id="page-statement" class="page">
+    <!-- Top: month nav + tabs -->
+    <div class="stmt-header">
+      <div style="position:relative" id="stmt-month-nav-wrap">
+        <div style="display:inline-flex;align-items:center;gap:.2rem">
+          <button class="stmt-month-btn" onclick="stmtNavMonth(-1)" title="上一個月">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15,18 9,12 15,6"/>
+            </svg>
+          </button>
+          <button class="stmt-month-display" id="stmt-month-display-btn" onclick="stmtTogglePicker()">—</button>
+          <button class="stmt-month-btn" onclick="stmtNavMonth(1)" title="下一個月">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Month picker popup -->
+        <div class="stmt-picker-popup" id="stmt-picker-popup">
+          <div class="picker-year-row">
+            <button class="picker-year-btn" onclick="stmtPickerChangeYear(-1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+            </button>
+            <span class="picker-year-label" id="stmt-picker-year-label">2026</span>
+            <button class="picker-year-btn" onclick="stmtPickerChangeYear(1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+            </button>
+          </div>
+          <div class="picker-months" id="stmt-picker-months-grid"></div>
+        </div>
+      </div>
+      <div class="stmt-tabs">
+        <button class="stmt-tab active sh" id="stmt-tab-shihong" onclick="switchStmtTab('shihong')">世鴻</button>
+        <button class="stmt-tab" id="stmt-tab-huifeng" onclick="switchStmtTab('huifeng')">慧鳳</button>
+      </div>
+    </div>
+    <!-- Dynamic content rendered by JS -->
+    <div id="stmt-content">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
 
   <!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
   <div id="page-transactions" class="page">
@@ -1724,6 +1823,7 @@ function showPage(name) {
   if (name === 'transactions') loadTransactions();
   if (name === 'rules')        loadRules();
   if (name === 'import')       populateImportBillingMonths();
+  if (name === 'statement')    loadStatementPage();
 }
 
 function toggleSettingsMenu() {
@@ -1889,11 +1989,16 @@ function selectPickerMonth(ym) {
   loadDashboard();
 }
 
-// Close picker when clicking outside
+// Close pickers when clicking outside
 document.addEventListener('click', e => {
   const wrapper = document.querySelector('.month-nav-wrapper');
   if (wrapper && !wrapper.contains(e.target)) {
     document.getElementById('month-picker-popup').classList.remove('open');
+  }
+  const stmtWrap = document.getElementById('stmt-month-nav-wrap');
+  if (stmtWrap && !stmtWrap.contains(e.target)) {
+    const sp = document.getElementById('stmt-picker-popup');
+    if (sp) sp.classList.remove('open');
   }
 });
 
@@ -2820,6 +2925,357 @@ document.addEventListener('click', e => {
   tbody.querySelectorAll('tr.row-selected').forEach(r => r.classList.remove('row-selected'));
   if (!wasSelected) tr.classList.add('row-selected');
 });
+
+// ── Statement Preview ────────────────────────────────────────────
+let _stmtYM = '';
+let _stmtTab = 'shihong';
+let _stmtPickerYear = new Date().getFullYear();
+
+async function loadStatementPage() {
+  if (!requireAuth()) return;
+  if (!_stmtYM) {
+    const sel = document.getElementById('dash-month-select');
+    _stmtYM = sel.value ||
+      (new Date().getFullYear() + '/' + String(new Date().getMonth() + 1).padStart(2, '0'));
+  }
+  updateStmtMonthDisplay();
+  await loadStmtData();
+}
+
+async function loadStmtData() {
+  const content = document.getElementById('stmt-content');
+  if (!content) return;
+  content.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    if (!_allTxData.length) {
+      const data = await api('getTransactions', {});
+      _allTxData = data.transactions || [];
+    }
+    const monthTx = _allTxData.filter(r => r.billingMonth === _stmtYM);
+    renderStatementPanel(monthTx);
+  } catch (e) {
+    content.innerHTML = '<div class="loading">載入失敗</div>';
+    toast('載入對帳單失敗', 'error');
+  }
+}
+
+function updateStmtMonthDisplay() {
+  const btn = document.getElementById('stmt-month-display-btn');
+  if (btn) btn.textContent = _stmtYM ? _stmtYM.replace('/', '-') : '—';
+  _stmtPickerYear = _stmtYM ? parseInt(_stmtYM.split('/')[0]) : new Date().getFullYear();
+}
+
+function stmtNavMonth(delta) {
+  if (!_stmtYM) return;
+  const [y, m] = _stmtYM.split('/').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  _stmtYM = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+  updateStmtMonthDisplay();
+  loadStmtData();
+}
+
+function stmtTogglePicker() {
+  const popup = document.getElementById('stmt-picker-popup');
+  if (!popup) return;
+  if (popup.classList.contains('open')) { popup.classList.remove('open'); return; }
+  renderStmtPickerMonths();
+  popup.classList.add('open');
+}
+
+function stmtPickerChangeYear(delta) {
+  _stmtPickerYear += delta;
+  renderStmtPickerMonths();
+}
+
+function renderStmtPickerMonths() {
+  const label = document.getElementById('stmt-picker-year-label');
+  const grid  = document.getElementById('stmt-picker-months-grid');
+  if (!label || !grid) return;
+  label.textContent = _stmtPickerYear;
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  grid.innerHTML = monthNames.map((name, i) => {
+    const ym        = `${_stmtPickerYear}/${String(i + 1).padStart(2, '0')}`;
+    const available = _availableMonths.includes(ym);
+    const isActive  = ym === _stmtYM;
+    return `<button class="picker-month-btn${isActive ? ' active' : ''}${!available ? ' disabled' : ''}"
+      onclick="${available ? `stmtSelectPickerMonth('${ym}')` : ''}">${name}</button>`;
+  }).join('');
+}
+
+function stmtSelectPickerMonth(ym) {
+  _stmtYM = ym;
+  const popup = document.getElementById('stmt-picker-popup');
+  if (popup) popup.classList.remove('open');
+  updateStmtMonthDisplay();
+  loadStmtData();
+}
+
+function switchStmtTab(tab) {
+  _stmtTab = tab;
+  const tabSh = document.getElementById('stmt-tab-shihong');
+  const tabHf = document.getElementById('stmt-tab-huifeng');
+  if (tabSh) tabSh.className = 'stmt-tab' + (tab === 'shihong' ? ' active sh' : '');
+  if (tabHf) tabHf.className = 'stmt-tab' + (tab === 'huifeng' ? ' active hf' : '');
+  loadStmtData();
+}
+
+function renderStatementPanel(monthTx) {
+  const content = document.getElementById('stmt-content');
+  if (!content) return;
+
+  const isShihong  = _stmtTab === 'shihong';
+  const colorCls   = isShihong ? 'sh' : 'hf';
+  const accentHex  = isShihong ? '#1D4ED8' : '#E53935';
+  const name       = isShihong ? '世鴻' : '慧鳳';
+  const attrKey    = isShihong ? '世鴻應付' : '慧鳳應付';
+
+  const personalTx  = monthTx.filter(r => r.attribution === attrKey);
+  const commonTx    = monthTx.filter(r => r.attribution === '共同支付');
+  const personalSum = personalTx.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+  const commonSum   = commonTx.reduce((s,   r) => s + (parseFloat(r.amount) || 0), 0);
+  const myShare     = isShihong ? Math.ceil(commonSum / 2) : Math.floor(commonSum / 2);
+  const totalDue    = personalSum + myShare;
+
+  const personalMax = personalTx.length
+    ? Math.max(...personalTx.map(r => parseFloat(r.amount) || 0)) : 0;
+
+  const bankCounts = {};
+  monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
+  const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
+
+  const splitLabel = `個人分攤（${isShihong ? '無條件進位' : '無條件捨去'}）`;
+
+  const svgReceipt = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
+  const svgChart   = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
+  const svgList    = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/></svg>`;
+  const svgShared  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>`;
+  const svgPdf     = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-.2em;margin-right:.35rem"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`;
+
+  content.innerHTML = `
+    <div class="card" style="margin-bottom:1rem">
+      <div class="stmt-section-title">${svgReceipt} 應繳摘要</div>
+      <div class="stmt-summary-label">${name} 本期應付總金額</div>
+      <div class="stmt-summary-amount ${colorCls}">${fmt(totalDue)}</div>
+      <div class="stmt-sub-grid">
+        <div class="stmt-sub-cell ${colorCls}">
+          <div class="stmt-sub-cell-label">${name} 自付金額</div>
+          <div class="stmt-sub-cell-value">${fmt(personalSum)}</div>
+        </div>
+        <div class="stmt-sub-cell gn">
+          <div class="stmt-sub-cell-label">共同支付原始總額</div>
+          <div class="stmt-sub-cell-value">${fmt(commonSum)}</div>
+        </div>
+        <div class="stmt-sub-cell ${colorCls}">
+          <div class="stmt-sub-cell-label">個人分攤金額</div>
+          <div class="stmt-sub-cell-value">${fmt(myShare)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem">
+      <div class="stmt-section-title">${svgChart} 消費統計</div>
+      <div class="stmt-stat-grid">
+        <div class="stmt-stat-card">
+          <div class="stmt-stat-label">自付消費筆數</div>
+          <div class="stmt-stat-value">${personalTx.length} 筆</div>
+        </div>
+        <div class="stmt-stat-card">
+          <div class="stmt-stat-label">最高單筆金額</div>
+          <div class="stmt-stat-value">${personalTx.length ? fmt(personalMax) : '—'}</div>
+        </div>
+        <div class="stmt-stat-card">
+          <div class="stmt-stat-label">消費最多銀行</div>
+          <div class="stmt-stat-value" style="font-size:1rem">${topBank ? topBank[0] : '—'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1rem">
+      <div class="stmt-section-title">${svgList} ${name} 自付明細</div>
+      <div class="stmt-table-wrap">${buildStmtDetailTable(personalTx, '自付小計', personalSum, null, null, accentHex)}</div>
+    </div>
+
+    <div class="card" style="margin-bottom:1rem">
+      <div class="stmt-section-title">${svgShared} 共同支付明細</div>
+      <div class="stmt-table-wrap">${buildStmtDetailTable(commonTx, '原始小計', commonSum, splitLabel, myShare, accentHex)}</div>
+    </div>
+
+    <div class="stmt-export-bar">
+      <button class="btn btn-primary" style="padding:.6rem 1.5rem;font-size:.9rem;display:flex;align-items:center;gap:.4rem"
+              onclick="exportStatementPDF()">
+        ${svgPdf} 匯出 PDF
+      </button>
+    </div>`;
+}
+
+function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, accentHex) {
+  if (!rows.length) {
+    return '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:.875rem">本期無資料</div>';
+  }
+  const bodyHtml = rows.map(r => `<tr>
+    <td>${r.date}</td>
+    <td>${r.bank}</td>
+    <td>${r.detail}</td>
+    <td style="text-align:right;font-weight:600">${Number(parseFloat(r.amount) || 0).toLocaleString()}</td>
+  </tr>`).join('');
+
+  let footHtml = `<tr>
+    <td colspan="3" style="text-align:right">${sub1Label}</td>
+    <td style="text-align:right;color:${accentHex}">${fmt(sub1Amt)}</td>
+  </tr>`;
+  if (sub2Label) {
+    footHtml += `<tr>
+      <td colspan="3" style="text-align:right">${sub2Label}</td>
+      <td style="text-align:right;font-weight:800;font-size:.95rem;color:${accentHex}">${fmt(sub2Amt)}</td>
+    </tr>`;
+  }
+
+  return `<table class="stmt-detail-table">
+    <thead><tr>
+      <th>消費日</th><th>銀行</th><th>消費明細</th>
+      <th style="text-align:right">金額</th>
+    </tr></thead>
+    <tbody>${bodyHtml}</tbody>
+    <tfoot>${footHtml}</tfoot>
+  </table>`;
+}
+
+async function exportStatementPDF() {
+  if (!_stmtYM) { toast('請先選擇帳單月份', 'error'); return; }
+  if (typeof html2pdf === 'undefined') { toast('PDF 套件尚未載入，請稍後再試', 'error'); return; }
+
+  const isShihong = _stmtTab === 'shihong';
+  const name      = isShihong ? '世鴻' : '慧鳳';
+  const accent    = isShihong ? '#1D4ED8' : '#E53935';
+  const bgLight   = isShihong ? '#EFF6FF' : '#FEF2F2';
+  const labelClr  = isShihong ? '#1E40AF' : '#991B1B';
+  const ym        = _stmtYM.replace('/', '');
+  const filename  = `${name}對帳單_${ym}.pdf`;
+
+  let txData = _allTxData.length ? _allTxData : (await api('getTransactions', {})).transactions || [];
+  const monthTx    = txData.filter(r => r.billingMonth === _stmtYM);
+  const attrKey    = isShihong ? '世鴻應付' : '慧鳳應付';
+  const personalTx = monthTx.filter(r => r.attribution === attrKey);
+  const commonTx   = monthTx.filter(r => r.attribution === '共同支付');
+  const personalSum = personalTx.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+  const commonSum   = commonTx.reduce((s,   r) => s + (parseFloat(r.amount) || 0), 0);
+  const myShare     = isShihong ? Math.ceil(commonSum / 2) : Math.floor(commonSum / 2);
+  const totalDue    = personalSum + myShare;
+  const bankCounts  = {};
+  monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
+  const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
+  const personalMax = personalTx.length
+    ? Math.max(...personalTx.map(r => parseFloat(r.amount) || 0)) : 0;
+  const fmtN = n => '$ ' + (Number(n) || 0).toLocaleString('zh-TW');
+  const splitNote = isShihong ? '（無條件進位）' : '（無條件捨去）';
+
+  function pdfTable(rows, s1Lbl, s1Amt, s2Lbl, s2Amt) {
+    if (!rows.length) return '<p style="font-size:12px;color:#9CA3AF;padding:6px 0">本期無資料</p>';
+    const body = rows.map((r, i) => `<tr style="background:${i % 2 === 0 ? '#fff' : '#F8FAFC'}">
+      <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.date}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.bank}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.detail}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px;text-align:right;font-weight:600">${Number(parseFloat(r.amount) || 0).toLocaleString()}</td>
+    </tr>`).join('');
+    let foot = `<tr style="background:#F9FAFB">
+      <td colspan="3" style="padding:6px 8px;text-align:right;font-weight:600;font-size:12px;border-top:2px solid #E5E7EB">${s1Lbl}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:700;font-size:12px;color:${accent};border-top:2px solid #E5E7EB">${fmtN(s1Amt)}</td>
+    </tr>`;
+    if (s2Lbl) foot += `<tr style="background:#F9FAFB">
+      <td colspan="3" style="padding:6px 8px;text-align:right;font-weight:600;font-size:12px">${s2Lbl}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:800;font-size:13px;color:${accent}">${fmtN(s2Amt)}</td>
+    </tr>`;
+    return `<table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:#F3F4F6">
+        <th style="padding:6px 8px;text-align:left;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">消費日</th>
+        <th style="padding:6px 8px;text-align:left;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">銀行</th>
+        <th style="padding:6px 8px;text-align:left;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">消費明細</th>
+        <th style="padding:6px 8px;text-align:right;font-size:11px;color:#4B5563;border-bottom:2px solid #E5E7EB;font-weight:600">金額</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+      <tfoot>${foot}</tfoot>
+    </table>`;
+  }
+
+  const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:20px 24px;max-width:750px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:3px solid ${accent};margin-bottom:16px">
+      <img src="assets/logo.png" style="height:48px;width:auto" onerror="this.style.display='none'">
+      <div style="text-align:right">
+        <div style="font-size:20px;font-weight:800;color:${accent}">${name}對帳單</div>
+        <div style="font-size:12px;color:#9CA3AF;margin-top:2px">帳單月份：${_stmtYM.replace('/', '-')}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">應繳摘要</div>
+      <div style="background:${bgLight};border-radius:8px;padding:12px 16px;margin-bottom:8px">
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:3px">${name} 本期應付總金額</div>
+        <div style="font-size:28px;font-weight:800;color:${accent};line-height:1.1">${fmtN(totalDue)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">${name} 自付金額</div>
+          <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(personalSum)}</div>
+        </div>
+        <div style="background:#F0FDF4;border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;color:#14532D;font-weight:600;margin-bottom:2px">共同支付原始總額</div>
+          <div style="font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
+        </div>
+        <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+          <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤金額</div>
+          <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">消費統計</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">自付消費筆數</div>
+          <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length} 筆</div>
+        </div>
+        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">最高單筆金額</div>
+          <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length ? fmtN(personalMax) : '—'}</div>
+        </div>
+        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">消費最多銀行</div>
+          <div style="font-size:14px;font-weight:800;color:#1F2937">${topBank ? topBank[0] : '—'}</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">${name} 自付明細</div>
+      ${pdfTable(personalTx, '自付小計', personalSum, null, null)}
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">共同支付明細</div>
+      ${pdfTable(commonTx, '原始小計', commonSum, '個人分攤' + splitNote, myShare)}
+    </div>
+    <div style="border-top:1px solid #E5E7EB;padding-top:8px;text-align:center;font-size:10px;color:#9CA3AF">
+      本報表由家庭每月支出明細系統自動產生
+    </div>
+  </div>`;
+
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:-9999px;left:0;width:800px';
+  el.innerHTML = pdfContent;
+  document.body.appendChild(el);
+  try {
+    toast('正在產生 PDF…');
+    await html2pdf().set({
+      margin: [8, 8],
+      filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el.firstElementChild).save();
+    toast('PDF 已下載', 'success');
+  } catch (err) {
+    toast('PDF 產生失敗：' + err.message, 'error');
+  } finally {
+    document.body.removeChild(el);
+  }
+}
 
 // ── Init ─────────────────────────────────────────────────────────
 (async () => {
