@@ -3146,9 +3146,9 @@ async function exportStatementPDF() {
 
   const isShihong = _stmtTab === 'shihong';
   const name      = isShihong ? '世鴻' : '慧鳳';
-  const accent    = isShihong ? '#1D4ED8' : '#E53935';
-  const bgLight   = isShihong ? '#EFF6FF' : '#FEF2F2';
-  const labelClr  = isShihong ? '#1E40AF' : '#991B1B';
+  const accent    = isShihong ? '#3D6B9E' : '#C0737A';
+  const bgLight   = isShihong ? '#EEF3FA' : '#FAEEF0';
+  const labelClr  = isShihong ? '#2D5080' : '#9A5560';
   const ym        = _stmtYM.replace('/', '');
   const filename  = `${name}對帳單_${ym}.pdf`;
 
@@ -3170,7 +3170,7 @@ async function exportStatementPDF() {
   const splitNote = isShihong ? '（無條件進位）' : '（無條件捨去）';
 
   function pdfTable(rows, s1Lbl, s1Amt, s2Lbl, s2Amt) {
-    if (!rows.length) return '<p style="font-size:12px;color:#9CA3AF;padding:6px 0">本期無資料</p>';
+    if (!rows.length) return '<p style="font-size:12px;color:#9CA3AF;padding:6px 16px 12px">本期無資料</p>';
     const body = rows.map((r, i) => `<tr style="background:${i % 2 === 0 ? '#fff' : '#F8FAFC'}">
       <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.date}</td>
       <td style="padding:5px 8px;border-bottom:1px solid #F3F4F6;font-size:12px">${r.bank}</td>
@@ -3197,58 +3197,67 @@ async function exportStatementPDF() {
     </table>`;
   }
 
-  const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:20px 24px;max-width:750px">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:3px solid ${accent};margin-bottom:16px">
-      <img src="assets/logo.png" style="height:48px;width:auto" onerror="this.style.display='none'">
+  const pdfContent = `<div style="font-family:Arial,'Segoe UI',sans-serif;color:#1F2937;padding:20px 24px;max-width:750px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px">
+      <img src="assets/logo.png" style="width:227px;height:auto" onerror="this.style.display='none'">
       <div style="text-align:right">
-        <div style="font-size:20px;font-weight:800;color:${accent}">${name}對帳單</div>
-        <div style="font-size:12px;color:#9CA3AF;margin-top:2px">帳單月份：${_stmtYM.replace('/', '-')}</div>
+        <div style="font-size:30px;font-weight:800;color:${accent};line-height:1.1">${name}</div>
+        <div style="font-size:13px;color:#4B5563;letter-spacing:.06em;margin-top:2px">信用卡費用對帳單</div>
+        <div style="margin-top:5px;height:3px;background:linear-gradient(to right,transparent,${accent});border-radius:2px;min-width:160px"></div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:4px">帳單月份：${_stmtYM.replace('/', '-')}</div>
       </div>
     </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">應繳摘要</div>
-      <div style="background:${bgLight};border-radius:8px;padding:12px 16px;margin-bottom:8px">
-        <div style="font-size:11px;color:#9CA3AF;margin-bottom:3px">${name} 本期應付總金額</div>
-        <div style="font-size:28px;font-weight:800;color:${accent};line-height:1.1">${fmtN(totalDue)}</div>
+    <div style="height:4px;background:linear-gradient(to right,${accent},rgba(255,255,255,0));border-radius:2px;margin-bottom:16px"></div>
+    <div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px">
+      <div style="padding:12px 16px">
+        <div style="font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">應繳摘要</div>
+        <div style="background:${bgLight};border-radius:8px;padding:12px 16px;margin-bottom:8px">
+          <div style="font-size:11px;color:#9CA3AF;margin-bottom:3px">${name} 本期應付總金額</div>
+          <div style="font-size:28px;font-weight:800;color:${accent};line-height:1.1">${fmtN(totalDue)}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">${name} 自付金額</div>
+            <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(personalSum)}</div>
+          </div>
+          <div style="background:#F0FDF4;border-radius:7px;padding:8px 10px">
+            <div style="font-size:10px;color:#14532D;font-weight:600;margin-bottom:2px">共同支付原始總額</div>
+            <div style="font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
+          </div>
+          <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
+            <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤金額</div>
+            <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
+          </div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-        <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
-          <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">${name} 自付金額</div>
-          <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(personalSum)}</div>
-        </div>
-        <div style="background:#F0FDF4;border-radius:7px;padding:8px 10px">
-          <div style="font-size:10px;color:#14532D;font-weight:600;margin-bottom:2px">共同支付原始總額</div>
-          <div style="font-size:14px;font-weight:800;color:#15803D">${fmtN(commonSum)}</div>
-        </div>
-        <div style="background:${bgLight};border-radius:7px;padding:8px 10px">
-          <div style="font-size:10px;color:${labelClr};font-weight:600;margin-bottom:2px">個人分攤金額</div>
-          <div style="font-size:14px;font-weight:800;color:${accent}">${fmtN(myShare)}</div>
+      <div style="height:1px;background:#E5E7EB"></div>
+      <div style="padding:12px 16px">
+        <div style="font-size:13px;font-weight:700;color:${accent};margin-bottom:8px">消費統計</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">自付消費筆數</div>
+            <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length} 筆</div>
+          </div>
+          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">最高單筆金額</div>
+            <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length ? fmtN(personalMax) : '—'}</div>
+          </div>
+          <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
+            <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">消費最多銀行</div>
+            <div style="font-size:14px;font-weight:800;color:#1F2937">${topBank ? topBank[0] : '—'}</div>
+          </div>
         </div>
       </div>
     </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">消費統計</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">自付消費筆數</div>
-          <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length} 筆</div>
-        </div>
-        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">最高單筆金額</div>
-          <div style="font-size:15px;font-weight:800;color:#1F2937">${personalTx.length ? fmtN(personalMax) : '—'}</div>
-        </div>
-        <div style="background:#F9FAFB;border-radius:7px;padding:8px;text-align:center;border:1px solid #E5E7EB">
-          <div style="font-size:10px;color:#9CA3AF;margin-bottom:2px">消費最多銀行</div>
-          <div style="font-size:14px;font-weight:800;color:#1F2937">${topBank ? topBank[0] : '—'}</div>
-        </div>
+    <div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px">
+      <div style="padding:12px 16px 8px">
+        <div style="font-size:13px;font-weight:700;color:${accent}">${name} 自付明細</div>
       </div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">${name} 自付明細</div>
       ${pdfTable(personalTx, '自付小計', personalSum, null, null)}
-    </div>
-    <div style="margin-bottom:20px">
-      <div style="font-size:13px;font-weight:700;color:#1F2937;margin-bottom:8px">共同支付明細</div>
+      <div style="height:1px;background:#E5E7EB;margin-top:8px"></div>
+      <div style="padding:12px 16px 8px">
+        <div style="font-size:13px;font-weight:700;color:${accent}">共同支付明細</div>
+      </div>
       ${pdfTable(commonTx, '原始小計', commonSum, '個人分攤' + splitNote, myShare)}
     </div>
     <div style="border-top:1px solid #E5E7EB;padding-top:8px;text-align:center;font-size:10px;color:#9CA3AF">
