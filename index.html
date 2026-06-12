@@ -2272,10 +2272,11 @@ async function loadKPI(month) {
     [['creditcard','信用卡'],['linepay','LINE Pay'],['easycard','悠遊卡'],
      ['easywallet','悠遊付'],['carmoji','車麻吉'],['icashpay','iCASH Pay']
     ].forEach(([key]) => {
+      const tool = pt[key];
       const c = document.getElementById(`pt-${key}`);
-      if (c) c.textContent = pt[key] != null ? pt[key] + ' 筆' : '-';
+      if (c) c.textContent = tool != null ? tool.count + ' 筆' : '-';
       const a = document.getElementById(`pt-amt-${key}`);
-      if (a) a.textContent = '-';
+      if (a) a.textContent = tool != null ? '$' + tool.amount.toLocaleString() : '-';
     });
 
     // 消費行為參考
