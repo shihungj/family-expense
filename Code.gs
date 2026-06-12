@@ -343,7 +343,7 @@ function getKPI(params) {
   }
 
   let shihong = 0, huifeng = 0, common = 0, total = 0;
-  let totalLastMonth = 0;
+  let shihongLM = 0, huifengLM = 0, commonLM = 0, totalLastMonth = 0;
   let transactionCount = 0, unclassifiedCount = 0, maxSingleAmount = 0;
   const importedBankSet = new Set();
   const bankAmountMap   = {};  // bankName -> total amount
@@ -358,9 +358,12 @@ function getKPI(params) {
     const amount   = parseAmount(row[4]);
     const attr     = String(row[5]);
 
-    // Accumulate last month total
+    // Accumulate last month totals
     if (lastMonth && rowMonth === lastMonth) {
       totalLastMonth += amount;
+      if      (attr === '世鴻應付') shihongLM += amount;
+      else if (attr === '慧鳳應付') huifengLM += amount;
+      else if (attr === '共同支付') commonLM  += amount;
     }
 
     if (billingMonth && rowMonth !== billingMonth) continue;
@@ -414,11 +417,14 @@ function getKPI(params) {
   }
 
   return {
-    shihong:           (Math.round(shihong) + Math.ceil(common / 2))  || 0,
-    huifeng:           (Math.round(huifeng) + Math.floor(common / 2)) || 0,
-    common:            Math.round(common)          || 0,
-    total:             Math.round(total)            || 0,
-    totalLastMonth:    Math.round(totalLastMonth)   || 0,
+    shihong:           (Math.round(shihong) + Math.ceil(common / 2))        || 0,
+    huifeng:           (Math.round(huifeng) + Math.floor(common / 2))       || 0,
+    common:            Math.round(common)                                    || 0,
+    total:             Math.round(total)                                     || 0,
+    shihongLastMonth:  (Math.round(shihongLM) + Math.ceil(commonLM / 2))   || 0,
+    huifengLastMonth:  (Math.round(huifengLM) + Math.floor(commonLM / 2))  || 0,
+    commonLastMonth:   Math.round(commonLM)                                  || 0,
+    totalLastMonth:    Math.round(totalLastMonth)                            || 0,
     transactionCount:  transactionCount,
     unclassifiedCount: unclassifiedCount,
     importedBanks:     importedBanks,
@@ -551,26 +557,42 @@ function deleteMerchantRule(data) {
 
 // ── System Info ───────────────────────────────────────────────
 function getSystemInfo() {
-  // Read SystemSettings as key-value map
-  const settingsSheet = getSheet(SHEET_SYSTEM_SETTINGS);
-  const settingsData  = settingsSheet.getDataRange().getValues();
-  const settingsMap   = {};
-  for (let i = 1; i < settingsData.length; i++) {
-    const k = String(settingsData[i][0] || '').trim();
-    const v = String(settingsData[i][1] || '').trim();
-    if (k) settingsMap[k] = v;
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = getSheet(SHEET_SYSTEM_SETTINGS);
+
+  // frontendVersion: 直接讀取 D2 儲存格（C1=frontendVersion 標題，D2 為對應值）
+  const frontendVersion = String(sheet.getRange(2, 4).getValue() || '').trim();
+
+  // lastUpdated: 試用 getLastUpdated()，不支援時 fallback 現在時間
+  let lastUpdatedDate;
+  try {
+    lastUpdatedDate = ss.getLastUpdated();
+  } catch (e) {
+    lastUpdatedDate = new Date();
+  }
+  const lu = lastUpdatedDate;
+  const lastUpdated =
+    lu.getFullYear() + '/' +
+    String(lu.getMonth() + 1).padStart(2, '0') + '/' +
+    String(lu.getDate()).padStart(2, '0') + ' ' +
+    String(lu.getHours()).padStart(2, '0') + ':' +
+    String(lu.getMinutes()).padStart(2, '0') + ':' +
+    String(lu.getSeconds()).padStart(2, '0');
+
+  const txSheet = getSheet(SHEET_TRANSACTIONS);
+  const txData  = txSheet.getDataRange().getValues();
+  const months  = new Set();
+  for (let i = 1; i < txData.length; i++) {
+    const m = String(txData[i][6] || '');
+    if (m) months.add(m);
   }
 
-  const txSheet   = getSheet(SHEET_TRANSACTIONS);
-  const ruleSheet = getSheet(SHEET_MERCHANT_RULES);
-  const bankSheet = getSheet(SHEET_BANK_SETTINGS);
-
   return {
-    frontendVersion:  settingsMap['frontendVersion']  || '',
-    deployedAt:       settingsMap['deployedAt']        || '',
-    transactionCount: Math.max(0, txSheet.getLastRow()   - 1),
-    ruleCount:        Math.max(0, ruleSheet.getLastRow() - 1),
-    bankCount:        Math.max(0, bankSheet.getLastRow() - 1),
+    frontendVersion,
+    lastUpdated,
+    sheetName:        ss.getName(),
+    transactionCount: Math.max(0, txData.length - 1),
+    billingMonths:    months.size,
   };
 }
 

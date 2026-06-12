@@ -23,13 +23,13 @@
     --radius: 12px;
     --row-hover: #EBF3FD;
     --row-selected: #BFDBFE;
-    --sidebar-bg: #1E293B;
+    --sidebar-bg: #1A2335;
     --sidebar-w: 240px;
-    --sidebar-active: #F97316;
+    --sidebar-active: rgba(255,255,255,0.08);
     --topbar-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #E8EEF7; color: var(--gray-800); min-height: 100vh; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #F0F2F5; color: var(--gray-800); min-height: 100vh; }
 
   /* ── Login ── */
   #login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--gray-50); }
@@ -43,7 +43,7 @@
 
   /* ── App Layout ── */
   #main-app { display: none; min-height: 100vh; }
-  #app-layout { display: flex; min-height: 100vh; max-width: 1280px; margin: 0 auto; background: #F7F9FC; position: relative; }
+  #app-layout { display: flex; min-height: 100vh; max-width: 1280px; margin: 0 auto; background: #F0F2F5; position: relative; }
 
   /* ── Sidebar ── */
   #sidebar {
@@ -96,7 +96,7 @@
     text-align: left;
   }
   .sidebar-item:hover { background: rgba(255,255,255,.07); color: #fff; }
-  .sidebar-item.active { background: var(--sidebar-active); color: #fff; }
+  .sidebar-item.active { background: var(--sidebar-active); color: rgba(255,255,255,0.85); }
   .sidebar-item .chevron { margin-left: auto; transition: transform .2s; flex-shrink: 0; }
   .sidebar-item.submenu-open .chevron { transform: rotate(180deg); }
   .sidebar-divider { height: 1px; background: rgba(255,255,255,.07); margin: .5rem .85rem; }
@@ -120,7 +120,7 @@
     text-align: left;
   }
   .sidebar-subitem:hover { background: rgba(255,255,255,.07); color: #fff; }
-  .sidebar-subitem.active { color: #FB923C; font-weight: 600; }
+  .sidebar-subitem.active { color: rgba(255,255,255,0.85); font-weight: 600; }
   .sidebar-subitem::before {
     content: '';
     display: inline-block;
@@ -140,7 +140,7 @@
   }
 
   /* ── Main Content ── */
-  #main-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: #F7F9FC; }
+  #main-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: #F0F2F5; }
 
   /* ── Top Bar ── */
   #top-bar {
@@ -200,12 +200,6 @@
   .picker-month-btn.disabled { opacity: .3; cursor: not-allowed; }
   .picker-month-btn.disabled:hover { background: #fff; border-color: var(--gray-200); color: var(--gray-700); }
   .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: .65rem; }
-  .bell-btn {
-    background: none; border: none; cursor: pointer;
-    padding: .45rem; border-radius: 8px; color: var(--gray-600);
-    display: flex; align-items: center; transition: background .15s;
-  }
-  .bell-btn:hover { background: var(--gray-100); }
   .top-divider { width: 1px; height: 24px; background: var(--gray-200); }
   .top-username { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
   .logout-btn-top {
@@ -224,33 +218,39 @@
   h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
   h3 { font-size: 1rem; font-weight: 600; margin-bottom: .75rem; }
 
-  /* ── KPI Cards (new design) ── */
+  /* ── KPI Cards ── */
   .kpi-grid-new { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
   .kpi-card-new {
-    border-radius: var(--radius); padding: 1.35rem 1.25rem;
-    display: flex; align-items: center; gap: 1rem;
+    background: #F5F7FF;
+    border: 1px solid #DAE0F6;
+    border-radius: var(--radius);
+    padding: 1.25rem;
     box-shadow: var(--shadow);
   }
-  .kpi-card-new.blue  { background: #EFF6FF; }
-  .kpi-card-new.pink  { background: #FDF2F8; }
-  .kpi-card-new.green { background: #F0FDF4; }
-  .kpi-icon {
-    width: 48px; height: 48px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  .kpi-name { font-size: .8rem; font-weight: 700; color: #4A63C8; margin-bottom: .35rem; text-transform: none; }
+  .kpi-amt  { font-size: 1.6rem; font-weight: 800; color: #1E3A8A; line-height: 1.1; margin-bottom: .75rem; }
+  .kpi-detail-row {
+    display: flex; gap: .5rem;
+    background: rgba(59,91,219,0.06);
+    border-radius: 8px;
+    padding: .55rem .75rem;
   }
-  .blue  .kpi-icon { background: #DBEAFE; color: #1D4ED8; }
-  .pink  .kpi-icon { background: #FCE7F3; color: #BE185D; }
-  .green .kpi-icon { background: #DCFCE7; color: #15803D; }
-  .kpi-info { flex: 1; min-width: 0; }
-  .kpi-name { font-size: .875rem; font-weight: 700; margin-bottom: .1rem; }
-  .blue  .kpi-name { color: #1E40AF; }
-  .pink  .kpi-name { color: #9D174D; }
-  .green .kpi-name { color: #14532D; }
-  .kpi-sub { font-size: .73rem; color: var(--gray-400); margin-bottom: .4rem; }
-  .kpi-amt { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
-  .blue  .kpi-amt { color: #1D4ED8; }
-  .pink  .kpi-amt { color: #BE185D; }
-  .green .kpi-amt { color: #15803D; }
+  .kpi-detail-item { flex: 1; min-width: 0; }
+  .kpi-detail-label { font-size: .68rem; color: #718096; margin-bottom: .15rem; }
+  .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #4A63C8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── Comparison Table ── */
+  .cmp-section { margin-bottom: 1.25rem; }
+  .cmp-table-wrap { border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .cmp-table { width: 100%; border-collapse: collapse; background: #fff; font-size: .875rem; }
+  .cmp-table th, .cmp-table td { padding: .7rem 1rem; text-align: right; border: 1px solid #DAE0F6; }
+  .cmp-table th:first-child, .cmp-table td:first-child { text-align: left; font-weight: 600; color: var(--gray-700); white-space: nowrap; width: 5rem; }
+  .cmp-table thead tr { background: #F5F7FF; }
+  .cmp-table thead th { font-weight: 700; color: #4A63C8; }
+  .cmp-table .cmp-row-current td, .cmp-table .cmp-row-diff td { background: #FAFBFC; }
+  .cmp-num-up   { color: #C53030; font-weight: 700; }
+  .cmp-num-down { color: #276749; font-weight: 700; }
+  .cmp-num-neutral { color: var(--gray-600); }
 
   /* ── Dashboard bottom grid ── */
   .dashboard-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
@@ -306,10 +306,10 @@
   tbody tr:hover:not(.row-selected) { background: var(--row-hover); }
   tbody tr.row-selected { background: var(--row-selected); }
   .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
-  .badge-shihong { background: #F0F6FF; color: #1E75EC; }
-  .badge-huifeng { background: #FFECEB; color: #E53935; }
-  .badge-common  { background: #E8F7EC; color: #1B9A40; }
-  .badge-unclass { background: #FFF5F2; color: #DD6B20; }
+  .badge-shihong { background: #EEF2FF; color: #3B5BDB; border: 1px solid #C5D0FA; }
+  .badge-huifeng { background: #FFF0F6; color: #C2255C; border: 1px solid #FBBAD4; }
+  .badge-common  { background: #F0FFF4; color: #276749; border: 1px solid #9AE6B4; }
+  .badge-unclass { background: #F7F8FA; color: #718096; border: 1px solid #CBD5E0; }
 
   input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary); }
 
@@ -317,10 +317,14 @@
   .btn { padding: .5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: .875rem; font-weight: 600; transition: opacity .15s; }
   .btn:hover:not(:disabled) { opacity: .85; }
   .btn:disabled { cursor: not-allowed; opacity: .5; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-danger  { background: var(--danger);  color: #fff; }
-  .btn-success { background: var(--success); color: #fff; }
-  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-primary   { background: #3B5BDB; color: #fff; }
+  .btn-secondary { background: #C5D0FA; color: #3B5BDB; }
+  .btn-danger    { background: #FEB2B2; color: #C53030; }
+  .btn-ghost     { background: #CBD5E0; color: #4A5568; }
+  .btn-success   { background: var(--success); color: #fff; }
+  .btn-warning   { background: var(--warning); color: #fff; }
+  .btn-outline-edit   { background: #fff; border: 1px solid #3B5BDB; color: #3B5BDB; }
+  .btn-outline-delete { background: #fff; border: 1px solid #E53E3E; color: #E53E3E; }
   .btn-sm { padding: .3rem .65rem; font-size: .8rem; }
   .btn-full { width: 100%; }
 
@@ -445,14 +449,27 @@
   }
   .help-tip-icon { flex-shrink: 0; font-size: .9rem; }
 
+  /* ── Stats Reference ── */
+  .stats-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+  .stats-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .25rem; }
+  .stats-table th { font-size: .75rem; font-weight: 600; color: var(--gray-600); padding: .45rem .6rem; border-bottom: 1px solid #DAE0F6; }
+  .stats-table th:not(:first-child), .stats-table td:not(:first-child) { text-align: right; }
+  .stats-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+  .stats-table tr:last-child td { border-bottom: none; }
+  .stats-table td:first-child { font-weight: 500; color: var(--gray-600); }
+  .behavior-ref-item { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid var(--gray-100); }
+  .behavior-ref-item:last-child { border-bottom: none; }
+  .behavior-ref-label { font-size: .8rem; color: #718096; }
+  .behavior-ref-value { font-size: .875rem; font-weight: 700; color: var(--gray-800); }
+
   /* ── Bank Import Progress ── */
-  .bank-import-section { margin-top: 1.25rem; }
-  .bank-import-header { display: flex; align-items: center; margin-bottom: .75rem; }
-  .bank-import-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; }
-  .bank-import-card {
+  .bank-import-inline {
+    display: flex; align-items: center; justify-content: space-between;
     background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
-    padding: .9rem 1.1rem; display: flex; align-items: center; gap: .75rem;
+    padding: .85rem 1.25rem; margin-bottom: 1.25rem;
   }
+  .bank-import-inline-label { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
+  .bank-import-inline-value { font-size: .875rem; font-weight: 700; color: #3B5BDB; }
 
   /* ── Payment Tools List ── */
   .tools-list { list-style: none; }
@@ -544,7 +561,7 @@
     .sidebar-header { justify-content: center; padding: .85rem .5rem; }
     .sidebar-item { justify-content: center; padding: .65rem; }
     .kpi-grid-new { grid-template-columns: 1fr; }
-    .dashboard-bottom { grid-template-columns: 1fr; }
+    .cmp-table th, .cmp-table td { padding: .5rem .6rem; font-size: .8rem; }
   }
   @media (max-width: 640px) {
     .kpi-amt { font-size: 1.25rem; }
@@ -838,14 +855,6 @@
     </div>
 
     <div class="top-bar-right">
-      <!-- Notification bell -->
-      <button class="bell-btn" title="通知">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 01-3.46 0"/>
-        </svg>
-      </button>
-      <div class="top-divider"></div>
       <span class="top-username" id="nav-username"></span>
       <button class="logout-btn-top" onclick="doLogout()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -868,182 +877,164 @@
 
     <!-- KPI Cards (3 cards) -->
     <div class="kpi-grid-new">
-      <!-- 世鴻支付 -->
-      <div class="kpi-card-new blue">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        </div>
-        <div class="kpi-info">
-          <div class="kpi-name">世鴻消費金額</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-shihong">-</div>
+      <!-- 世鴻應付 -->
+      <div class="kpi-card-new">
+        <div class="kpi-name">世鴻應付</div>
+        <div class="kpi-amt" id="kpi-shihong">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-sh-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-sh-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-sh-max">-</div>
+          </div>
         </div>
       </div>
 
-      <!-- 慧鳳支付 -->
-      <div class="kpi-card-new pink">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        </div>
-        <div class="kpi-info">
-          <div class="kpi-name">慧鳳消費金額</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-huifeng">-</div>
+      <!-- 慧鳳應付 -->
+      <div class="kpi-card-new">
+        <div class="kpi-name">慧鳳應付</div>
+        <div class="kpi-amt" id="kpi-huifeng">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-hf-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-hf-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-hf-max">-</div>
+          </div>
         </div>
       </div>
 
       <!-- 共同支付 -->
-      <div class="kpi-card-new green">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-          </svg>
-        </div>
-        <div class="kpi-info">
-          <div class="kpi-name">共同消費</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-common">-</div>
+      <div class="kpi-card-new">
+        <div class="kpi-name">共同支付</div>
+        <div class="kpi-amt" id="kpi-common">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-cm-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-cm-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-cm-max">-</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- hidden total for compat -->
+    <!-- hidden spans for compat -->
     <span id="kpi-total" style="display:none">-</span>
+    <span id="bill-month-display" style="display:none">-</span>
 
-    <!-- Dashboard bottom: 帳單焦點總覽 + 支付工具統計 + 消費行為統計 -->
-    <div class="dashboard-bottom">
-
-      <!-- 左欄：帳單焦點總覽 -->
-      <div class="card">
-        <div class="section-title">帳單焦點總覽</div>
-        <div class="bill-total-label">本期總支出</div>
-        <div style="font-size:2.15rem;font-weight:800;color:#1A202C;line-height:1.1;margin-bottom:.5rem" id="bill-total-display">-</div>
-        <div id="bill-diff" style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;min-height:1.3em">
-          <span style="color:#718096;font-weight:500">較上期資料載入中</span>
-        </div>
-        <div style="font-size:.875rem;color:#718096" id="bill-count">- 筆交易</div>
-        <div style="font-size:.875rem;color:#DD6B20;cursor:pointer;margin-top:.3rem" id="bill-unclassified" onclick="goToUnclassified()">- 筆待分類</div>
-        <span id="bill-month-display" style="display:none">-</span>
+    <!-- 本期 vs 上期對比表格 -->
+    <div class="cmp-section">
+      <div class="section-title">本期 vs 上期對比</div>
+      <div class="cmp-table-wrap">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>世鴻應付</th>
+              <th>慧鳳應付</th>
+              <th>共同支付</th>
+              <th>家庭總支出</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cmp-row-current">
+              <td>本期</td>
+              <td id="cmp-sh-curr">-</td>
+              <td id="cmp-hf-curr">-</td>
+              <td id="cmp-cm-curr">-</td>
+              <td id="cmp-total-curr">-</td>
+            </tr>
+            <tr class="cmp-row-last">
+              <td>上期</td>
+              <td id="cmp-sh-last">-</td>
+              <td id="cmp-hf-last">-</td>
+              <td id="cmp-cm-last">-</td>
+              <td id="cmp-total-last">-</td>
+            </tr>
+            <tr class="cmp-row-diff">
+              <td>差異</td>
+              <td id="cmp-sh-diff">-</td>
+              <td id="cmp-hf-diff">-</td>
+              <td id="cmp-cm-diff">-</td>
+              <td id="cmp-total-diff">-</td>
+            </tr>
+            <tr class="cmp-row-pct">
+              <td>增減幅</td>
+              <td id="cmp-sh-pct">-</td>
+              <td id="cmp-hf-pct">-</td>
+              <td id="cmp-cm-pct">-</td>
+              <td id="cmp-total-pct">-</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- 中欄：支付工具統計 -->
+    <!-- 統計參考 -->
+    <div class="stats-ref-grid">
+      <!-- 左欄：支付工具統計 -->
       <div class="card">
         <div class="section-title">支付工具統計</div>
-        <ul class="tools-list">
-          <li class="tools-item"><span class="tools-item-name">LINE Pay</span><span class="tools-item-count" id="pt-linepay">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">iCASH Pay</span><span class="tools-item-count" id="pt-icashpay">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">悠遊卡</span><span class="tools-item-count" id="pt-easycard">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">悠遊付</span><span class="tools-item-count" id="pt-easywallet">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">車麻吉</span><span class="tools-item-count" id="pt-carmoji">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">信用卡</span><span class="tools-item-count" id="pt-creditcard">-</span></li>
-        </ul>
+        <table class="stats-table">
+          <thead><tr><th>工具</th><th>筆數</th><th>金額</th></tr></thead>
+          <tbody>
+            <tr><td>信用卡</td>   <td id="pt-creditcard">-</td> <td id="pt-amt-creditcard">-</td></tr>
+            <tr><td>LINE Pay</td> <td id="pt-linepay">-</td>    <td id="pt-amt-linepay">-</td></tr>
+            <tr><td>悠遊卡</td>   <td id="pt-easycard">-</td>   <td id="pt-amt-easycard">-</td></tr>
+            <tr><td>悠遊付</td>   <td id="pt-easywallet">-</td> <td id="pt-amt-easywallet">-</td></tr>
+            <tr><td>車麻吉</td>   <td id="pt-carmoji">-</td>    <td id="pt-amt-carmoji">-</td></tr>
+            <tr><td>iCASH Pay</td><td id="pt-icashpay">-</td>   <td id="pt-amt-icashpay">-</td></tr>
+          </tbody>
+        </table>
       </div>
-
-      <!-- 右欄：消費行為統計 -->
+      <!-- 右欄：消費行為參考 -->
       <div class="card">
-        <div class="section-title">消費行為統計</div>
-        <div class="behavior-item" onclick="goToMaxTransaction()">
-          <div>
-            <div class="behavior-item-label">最高單筆消費</div>
-            <div class="behavior-item-value" id="bs-max-amount">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="section-title">消費行為參考</div>
+        <div class="behavior-ref-item">
+          <span class="behavior-ref-label">日均消費</span>
+          <span class="behavior-ref-value" id="bs-daily-avg">-</span>
         </div>
-        <div class="behavior-item" id="bs-top-bank-amount-item">
-          <div>
-            <div class="behavior-item-label">最高消費額發卡銀行</div>
-            <div class="behavior-item-value" id="bs-top-bank-amount">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="behavior-ref-item" id="bs-top-bank-amount-item" style="cursor:pointer">
+          <span class="behavior-ref-label">最高消費額銀行</span>
+          <span class="behavior-ref-value" id="bs-top-bank-amount">-</span>
         </div>
-        <div class="behavior-item" id="bs-top-bank-count-item">
-          <div>
-            <div class="behavior-item-label">最多消費次數發卡銀行</div>
-            <div class="behavior-item-value" id="bs-top-bank-count">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="behavior-ref-item" id="bs-top-bank-count-item" style="cursor:pointer">
+          <span class="behavior-ref-label">最多消費次數銀行</span>
+          <span class="behavior-ref-value" id="bs-top-bank-count">-</span>
+        </div>
+        <div class="behavior-ref-item">
+          <span class="behavior-ref-label">分類完成度</span>
+          <span class="behavior-ref-value" id="bs-classify-rate">-</span>
         </div>
       </div>
-
-    </div><!-- /.dashboard-bottom -->
+    </div>
 
     <!-- 帳單匯入進度 -->
-    <div class="bank-import-section">
-      <div class="bank-import-header">
-        <div class="section-title" style="margin-bottom:0">帳單匯入進度</div>
-      </div>
-      <div id="bank-import-cards" class="bank-import-grid">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
+    <div class="bank-import-inline">
+      <span class="bank-import-inline-label">帳單匯入進度</span>
+      <span id="bank-import-summary" class="bank-import-inline-value">載入中…</span>
     </div>
 
-    <!-- 快捷卡片 -->
-    <div class="quick-cards">
-      <!-- 帳單匯入 -->
-      <div class="quick-card" onclick="showPage('import')">
-        <div class="quick-card-icon orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="17,8 12,3 7,8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">帳單匯入</div>
-          <div class="quick-card-desc">匯入信用卡帳單</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-
-      <!-- 分類規則管理 -->
-      <div class="quick-card" onclick="showPage('rules')">
-        <div class="quick-card-icon green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-            <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">分類規則管理</div>
-          <div class="quick-card-desc">建立／調整自動分類規則</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-
-      <!-- 帳單預覽 -->
-      <div class="quick-card" onclick="showPage('statement')">
-        <div class="quick-card-icon purple">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10,9 9,9 8,9"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">帳單預覽</div>
-          <div class="quick-card-desc">對帳單預覽／匯出 PDF</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-    </div>
 
   </div><!-- /#page-dashboard -->
 
@@ -1097,8 +1088,8 @@
     </div>
     <div class="tx-batch-bar" id="tx-batch-bar">
       <span class="tx-batch-info" id="tx-batch-info">已選取 0 筆</span>
-      <button class="btn btn-primary btn-sm" onclick="openBatchAttrModal()">修改歸屬</button>
-      <button class="btn btn-danger btn-sm" onclick="openBatchDeleteModal()">刪除勾選</button>
+      <button class="btn btn-outline-edit btn-sm" onclick="openBatchAttrModal()">修改歸屬</button>
+      <button class="btn btn-outline-delete btn-sm" onclick="openBatchDeleteModal()">刪除勾選</button>
     </div>
     <div class="tx-table-outer" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
   </div>
@@ -1116,7 +1107,7 @@
 
     <div class="card" style="margin-bottom:1rem">
       <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-        <button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)"
+        <button class="btn btn-ghost btn-sm"
                 onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
         <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
                 onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
@@ -1137,8 +1128,8 @@
       <div id="import-result" class="import-result"></div>
       <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
       <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
-        <button id="btn-confirm-import" class="btn btn-success" onclick="submitImport()">確認匯入</button>
-        <button id="btn-cancel-import" class="btn" style="background:var(--gray-200);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+        <button id="btn-confirm-import" class="btn btn-primary" onclick="submitImport()">確認匯入</button>
+        <button id="btn-cancel-import" class="btn btn-ghost" onclick="cancelImport()">取消</button>
       </div>
       <div id="preview-info" style="font-size:.875rem;color:var(--gray-600);font-weight:500;margin-bottom:.5rem"></div>
       <div class="table-wrap" id="preview-table" style="max-height:360px;overflow-y:auto"></div>
@@ -1293,7 +1284,7 @@
             ⚠️ 還原後原有資料將被覆蓋，此操作無法復原，請確認備份檔來源正確。
           </div>
           <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFileSelected(this.files[0])">
-          <button class="btn" style="background:var(--gray-100);color:var(--gray-700)"
+          <button class="btn btn-ghost"
                   onclick="document.getElementById('restore-file').click()">選擇備份檔</button>
           <div id="restore-msg" style="display:none;margin-top:.75rem;font-size:.82rem"></div>
         </div>
@@ -1569,7 +1560,7 @@
         <input type="text" id="stmt-link-shihong" readonly
                style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
                onclick="this.select()">
-        <button class="btn btn-sm" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;white-space:nowrap;position:relative"
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
                 onclick="copyStmtLink('shihong')">
           複製
           <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
@@ -1585,7 +1576,7 @@
         <input type="text" id="stmt-link-huifeng" readonly
                style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
                onclick="this.select()">
-        <button class="btn btn-sm" style="background:#FEF2F2;color:#E53935;border:1px solid #FCA5A5;white-space:nowrap;position:relative"
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
                 onclick="copyStmtLink('huifeng')">
           複製
           <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
@@ -1593,7 +1584,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeStmtLinkModal()">關閉</button>
+      <button class="btn btn-ghost" onclick="closeStmtLinkModal()">關閉</button>
     </div>
   </div>
 </div>
@@ -1607,8 +1598,8 @@
       您選擇的帳單月份較舊，請確認是否正確
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="cancelOldMonth()">取消</button>
-      <button class="btn btn-warning" style="min-width:88px" onclick="confirmOldMonth()">確認</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="cancelOldMonth()">取消</button>
+      <button class="btn btn-secondary" style="min-width:88px" onclick="confirmOldMonth()">確認</button>
     </div>
   </div>
 </div>
@@ -1656,7 +1647,7 @@
     </div>
     <div id="add-tx-error" class="modal-error"></div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeAddTxModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeAddTxModal()">取消</button>
       <button class="btn btn-primary" onclick="submitAddTx()">新增</button>
     </div>
   </div>
@@ -1680,7 +1671,7 @@
       </select>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeRuleModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeRuleModal()">取消</button>
       <button class="btn btn-primary" onclick="submitRuleModal()">儲存</button>
     </div>
   </div>
@@ -1692,7 +1683,7 @@
     <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">確認刪除</p>
     <p id="rule-delete-msg" style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">確定刪除此規則？此操作無法復原</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeRuleDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeRuleDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmRuleDelete()">刪除</button>
     </div>
   </div>
@@ -1721,7 +1712,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeAddBankModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeAddBankModal()">取消</button>
       <button class="btn btn-primary" onclick="addBankSetting()">新增</button>
     </div>
   </div>
@@ -1747,7 +1738,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeEditBankModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeEditBankModal()">取消</button>
       <button class="btn btn-primary" onclick="submitEditBank()">儲存</button>
     </div>
   </div>
@@ -1761,7 +1752,7 @@
       確定刪除此筆資料？此操作無法復原
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeSingleDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeSingleDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmSingleDelete()">刪除</button>
     </div>
   </div>
@@ -1775,7 +1766,7 @@
       確定刪除 0 筆資料？此操作無法復原
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeBatchDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeBatchDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmBatchDelete()">確定刪除</button>
     </div>
   </div>
@@ -1787,7 +1778,7 @@
     <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">確認刪除</p>
     <p id="bank-delete-msg" style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">確定刪除此銀行設定？此操作無法復原</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeBankDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeBankDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmBankDelete()">刪除</button>
     </div>
   </div>
@@ -1800,7 +1791,7 @@
     <p style="font-weight:700;font-size:1rem;text-align:center;margin-bottom:.5rem;color:#92400E">確認還原資料</p>
     <p id="restore-confirm-msg" style="font-size:.875rem;color:var(--gray-600);text-align:center;line-height:1.6;margin-bottom:1.5rem">—</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeRestoreModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeRestoreModal()">取消</button>
       <button class="btn btn-danger" id="btn-restore-confirm" style="min-width:88px" onclick="confirmRestore()">確認還原</button>
     </div>
   </div>
@@ -1819,7 +1810,7 @@
       </select>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeBatchAttrModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeBatchAttrModal()">取消</button>
       <button class="btn btn-primary" onclick="submitBatchAttr()">確認修改</button>
     </div>
   </div>
@@ -2174,109 +2165,123 @@ async function loadDashboard() {
 }
 
 function renderBankImportCards(importedBanks, notImportedBanks) {
-  const container = document.getElementById('bank-import-cards');
-  if (!container) return;
-
-  const importedSet = new Set(importedBanks);
-  const banks = _bankSettings.length ? _bankSettings
-    : [...importedBanks, ...notImportedBanks].map(b => ({ bank: b }));
-
-  if (!banks.length) {
-    container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">無銀行資料</div>';
-    return;
-  }
-
-  const today  = new Date();
-  const month  = document.getElementById('dash-month-select').value;
-  const [yr, mo] = month
-    ? month.split('/').map(Number)
-    : [today.getFullYear(), today.getMonth() + 1];
-
-  const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>`;
-  const clockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`;
-  const alertSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>`;
-
-  container.innerHTML = banks.map(b => {
-    const bankName = b.bank || b;
-    const imported = importedSet.has(bankName);
-    let cls, icon, label;
-
-    if (imported) {
-      cls = 'ok'; icon = checkSvg; label = '已匯入';
-    } else if (b.cutoffDay) {
-      const closing  = new Date(yr, mo - 1, b.cutoffDay);
-      const daysDiff = Math.floor((today - closing) / 86400000);
-      if (daysDiff <= 0)      { cls = 'neutral'; icon = clockSvg; label = '待匯入'; }
-      else if (daysDiff <= 3) { cls = 'warn';    icon = clockSvg; label = '尚未匯入'; }
-      else                    { cls = 'urgent';  icon = alertSvg; label = '盡速匯入'; }
-    } else {
-      cls = 'urgent'; icon = alertSvg; label = '尚未匯入';
-    }
-
-    return `<div class="bank-import-card">
-      <div class="bank-import-icon ${cls}">${icon}</div>
-      <div>
-        <div class="bank-import-name">${bankName}</div>
-        <div class="bank-import-status ${cls}">${label}</div>
-      </div>
-    </div>`;
-  }).join('');
+  const el = document.getElementById('bank-import-summary');
+  if (!el) return;
+  const total = (importedBanks.length || 0) + (notImportedBanks.length || 0);
+  el.textContent = `${importedBanks.length} / ${total} 已完成`;
 }
 
 async function loadKPI(month) {
   try {
     const d = await api('getKPI', { billingMonth: month });
 
-    // KPI 卡片
+    // KPI 卡片金額
     document.getElementById('kpi-shihong').textContent = fmt(d.shihong);
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
 
-    // 帳單焦點總覽
-    document.getElementById('bill-total-display').textContent = fmt(d.total);
-    document.getElementById('bill-count').textContent = (d.transactionCount || 0) + ' 筆交易';
-    const unclEl = document.getElementById('bill-unclassified');
-    if (unclEl) unclEl.textContent = (d.unclassifiedCount || 0) + ' 筆待分類';
-
-    const diff   = (d.total || 0) - (d.totalLastMonth || 0);
-    const pct    = d.totalLastMonth ? ((diff / d.totalLastMonth) * 100).toFixed(1) : null;
-    const diffEl = document.getElementById('bill-diff');
-    if (diffEl) {
-      if (pct !== null) {
-        const sign  = diff >= 0 ? '▲' : '▼';
-        const color = diff >= 0 ? '#E53935' : '#1B9A40';
-        const absFmt = '$ ' + Math.abs(diff).toLocaleString('zh-TW');
-        diffEl.innerHTML = `<span style="color:${color}">${sign} ${diff >= 0 ? '+' : ''}${absFmt}（${Math.abs(pct)}%）</span>`;
-      } else {
-        diffEl.innerHTML = '<span style="color:#718096;font-weight:500">暫無上期資料</span>';
+    // KPI 詳細欄位（逐人較上期）
+    const countText = (d.transactionCount || 0) + ' 筆';
+    const maxAmt = d.maxSingleAmount != null ? d.maxSingleAmount : (d.maxAmount != null ? d.maxAmount : null);
+    const maxText = maxAmt != null ? fmt(maxAmt) : '-';
+    [['sh', d.shihong, d.shihongLastMonth],
+     ['hf', d.huifeng, d.huifengLastMonth],
+     ['cm', d.common,  d.commonLastMonth]
+    ].forEach(([k, curr, last]) => {
+      const dl = document.getElementById(`kpi-${k}-delta`);
+      const ct = document.getElementById(`kpi-${k}-count`);
+      const mx = document.getElementById(`kpi-${k}-max`);
+      if (dl) {
+        if (last) {
+          const diff = (curr || 0) - last;
+          const pct  = ((diff / last) * 100).toFixed(1);
+          dl.textContent = `${diff >= 0 ? '▲' : '▼'} ${Math.abs(pct)}%`;
+          dl.className = diff > 0 ? 'kpi-detail-value cmp-num-up'
+                       : diff < 0 ? 'kpi-detail-value cmp-num-down'
+                       : 'kpi-detail-value cmp-num-neutral';
+        } else { dl.textContent = '-'; dl.className = 'kpi-detail-value'; }
       }
-    }
+      if (ct) ct.textContent = countText;
+      if (mx) mx.textContent = maxText;
+    });
+
+    // 對比表格
+    const setCell = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setDiffCell = (id, curr, last) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!last) { el.textContent = '-'; el.className = ''; return; }
+      const d2 = (curr || 0) - last;
+      el.textContent = (d2 >= 0 ? '+' : '') + d2.toLocaleString('zh-TW');
+      el.className = d2 > 0 ? 'cmp-num-up' : d2 < 0 ? 'cmp-num-down' : 'cmp-num-neutral';
+    };
+    const setPctCell = (id, curr, last) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!last) { el.textContent = '-'; el.className = ''; return; }
+      const p = (((curr || 0) - last) / last * 100).toFixed(1);
+      el.textContent = (p > 0 ? '+' : '') + p + '%';
+      el.className = p > 0 ? 'cmp-num-up' : p < 0 ? 'cmp-num-down' : 'cmp-num-neutral';
+    };
+
+    setCell('cmp-sh-curr',    fmt(d.shihong));
+    setCell('cmp-hf-curr',    fmt(d.huifeng));
+    setCell('cmp-cm-curr',    fmt(d.common));
+    setCell('cmp-total-curr', fmt(d.total));
+
+    setCell('cmp-sh-last',    d.shihongLastMonth ? fmt(d.shihongLastMonth) : '-');
+    setCell('cmp-hf-last',    d.huifengLastMonth ? fmt(d.huifengLastMonth) : '-');
+    setCell('cmp-cm-last',    d.commonLastMonth  ? fmt(d.commonLastMonth)  : '-');
+    setCell('cmp-total-last', d.totalLastMonth   ? fmt(d.totalLastMonth)   : '-');
+
+    setDiffCell('cmp-sh-diff',    d.shihong, d.shihongLastMonth);
+    setDiffCell('cmp-hf-diff',    d.huifeng, d.huifengLastMonth);
+    setDiffCell('cmp-cm-diff',    d.common,  d.commonLastMonth);
+    setDiffCell('cmp-total-diff', d.total,   d.totalLastMonth);
+
+    setPctCell('cmp-sh-pct',    d.shihong, d.shihongLastMonth);
+    setPctCell('cmp-hf-pct',    d.huifeng, d.huifengLastMonth);
+    setPctCell('cmp-cm-pct',    d.common,  d.commonLastMonth);
+    setPctCell('cmp-total-pct', d.total,   d.totalLastMonth);
 
     // 支付工具統計
     const pt = d.paymentTools || {};
-    [['pt-linepay', pt.linepay], ['pt-icashpay', pt.icashpay],
-     ['pt-easycard', pt.easycard], ['pt-easywallet', pt.easywallet],
-     ['pt-carmoji', pt.carmoji], ['pt-creditcard', pt.creditcard]
-    ].forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = val != null ? val + ' 筆' : '-';
+    [['creditcard','信用卡'],['linepay','LINE Pay'],['easycard','悠遊卡'],
+     ['easywallet','悠遊付'],['carmoji','車麻吉'],['icashpay','iCASH Pay']
+    ].forEach(([key]) => {
+      const c = document.getElementById(`pt-${key}`);
+      if (c) c.textContent = pt[key] != null ? pt[key] + ' 筆' : '-';
+      const a = document.getElementById(`pt-amt-${key}`);
+      if (a) a.textContent = '-';
     });
 
-    // 消費行為統計
+    // 消費行為參考
     _topBankByAmount = d.topBankByAmount || '';
     _topBankByCount  = d.topBankByCount  || '';
-    const bsMax = document.getElementById('bs-max-amount');
-    const bsAmt = document.getElementById('bs-top-bank-amount');
-    const bsCnt = document.getElementById('bs-top-bank-count');
-    const maxAmt = d.maxSingleAmount != null ? d.maxSingleAmount : (d.maxAmount != null ? d.maxAmount : null);
-    if (bsMax) bsMax.textContent = maxAmt != null ? fmt(maxAmt) : '-';
+    const bsAmt  = document.getElementById('bs-top-bank-amount');
+    const bsCnt  = document.getElementById('bs-top-bank-count');
+    const bsRate = document.getElementById('bs-classify-rate');
+    const bsDay  = document.getElementById('bs-daily-avg');
     if (bsAmt) bsAmt.textContent = _topBankByAmount || '-';
     if (bsCnt) bsCnt.textContent = _topBankByCount  || '-';
-
     const topAmtItem = document.getElementById('bs-top-bank-amount-item');
     const topCntItem = document.getElementById('bs-top-bank-count-item');
     if (topAmtItem) topAmtItem.onclick = () => goToTopBankAmount(_topBankByAmount);
     if (topCntItem) topCntItem.onclick = () => goToTopBankCount(_topBankByCount);
+    if (bsDay) {
+      const selMonth = document.getElementById('dash-month-select').value;
+      if (selMonth && d.total) {
+        const [y, m] = selMonth.split('/').map(Number);
+        const days = new Date(y, m, 0).getDate();
+        bsDay.textContent = fmt(Math.round(d.total / days)) + ' / 日';
+      } else { bsDay.textContent = '-'; }
+    }
+    if (bsRate && d.transactionCount > 0) {
+      const classified = d.transactionCount - (d.unclassifiedCount || 0);
+      const rate = ((classified / d.transactionCount) * 100).toFixed(1);
+      bsRate.textContent = rate + '%（' + classified + ' / ' + d.transactionCount + '）';
+      bsRate.style.color = rate >= 90 ? '#276749' : rate >= 70 ? '#DD6B20' : '#C53030';
+    } else if (bsRate) { bsRate.textContent = '-'; }
 
     // 帳單匯入進度
     renderBankImportCards(d.importedBanks || [], d.notImportedBanks || []);
@@ -2424,7 +2429,7 @@ function buildTxTable(rows, banks, months, attrs) {
     <td>${r.detail}</td>
     <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
-    <td style="text-align:center"><button class="btn btn-danger btn-sm" style="min-width:60px;white-space:nowrap" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
+    <td style="text-align:center"><button class="btn btn-outline-delete btn-sm" style="min-width:60px;white-space:nowrap" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
   </tr>`).join('');
 
   return `<table>${header}<tbody>${body}</tbody></table>`;
@@ -2767,8 +2772,8 @@ async function loadRules() {
       <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px">${r.keyword}</code></td>
       <td style="white-space:nowrap">${attrBadge(r.attribution)}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-primary btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
-        <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">刪除</button>
+        <button class="btn btn-outline-edit btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
+        <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">刪除</button>
       </td>
     </tr>`).join('');
     wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
@@ -2850,13 +2855,17 @@ async function loadSystemInfo() {
   const ids = ['sysinfo-version','sysinfo-deployed-at','sysinfo-tx-count','sysinfo-rule-count','sysinfo-bank-count'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '…'; });
   try {
-    const d = await api('getSystemInfo');
+    const [d, rules, banks] = await Promise.all([
+      api('getSystemInfo'),
+      api('getMerchantRules'),
+      api('getBankSettings'),
+    ]);
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('sysinfo-version',     d.frontendVersion || '（未設定）');
-    set('sysinfo-deployed-at', d.deployedAt       || '（未設定）');
+    set('sysinfo-deployed-at', d.lastUpdated      || '（未設定）');
     set('sysinfo-tx-count',    Number(d.transactionCount ?? 0).toLocaleString('zh-TW'));
-    set('sysinfo-rule-count',  Number(d.ruleCount  ?? 0));
-    set('sysinfo-bank-count',  Number(d.bankCount  ?? 0));
+    set('sysinfo-rule-count',  (rules.rules  || []).length);
+    set('sysinfo-bank-count',  (banks.banks  || []).length);
   } catch(e) { toast('載入系統資訊失敗：' + e.message, 'error'); }
 }
 
@@ -2957,8 +2966,8 @@ async function loadBankSettingsTable() {
     <td>${b.cutoffDay} 日</td>
     <td><code style="background:var(--gray-100);padding:.1rem .35rem;border-radius:4px">${b.bankCode || '—'}</code></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-primary btn-sm" onclick="openEditBankModal(${b.rowIndex})">編輯</button>
-      <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})">刪除</button>
+      <button class="btn btn-outline-edit btn-sm" onclick="openEditBankModal(${b.rowIndex})">編輯</button>
+      <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})">刪除</button>
     </td>
   </tr>`).join('');
   wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
