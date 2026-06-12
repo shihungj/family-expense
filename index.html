@@ -3871,7 +3871,7 @@ function renderStatementPanel(monthTx) {
       <div class="stmt-summary-label">${name} 本期應付總金額</div>
       <div class="stmt-summary-amount ${colorCls}">${fmt(totalDue)}</div>
       <div class="stmt-sub-grid">
-        <div class="stmt-sub-cell ${colorCls}">
+        <div class="stmt-sub-cell sh">
           <div class="stmt-sub-cell-label">${name} 消費金額</div>
           <div class="stmt-sub-cell-value">${fmt(personalSum)}</div>
         </div>
@@ -3932,12 +3932,12 @@ function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, acce
 
   let footHtml = `<tr>
     <td colspan="3" style="text-align:right;color:#9CA3AF;font-weight:500">${sub1Label}</td>
-    <td style="text-align:right;color:#1F2937;font-weight:600">${fmt(sub1Amt)}</td>
+    <td style="text-align:right;color:${sub2Label ? '#2CC58E' : '#1F2937'};font-weight:600">${fmt(sub1Amt)}</td>
   </tr>`;
   if (sub2Label) {
     footHtml += `<tr class="stmt-split-row">
       <td colspan="3" style="text-align:right">${sub2Label}</td>
-      <td style="text-align:right;font-size:1rem;color:#FF8A3D;font-weight:600">${fmt(sub2Amt)}</td>
+      <td style="text-align:right;font-size:1rem;color:#7C6CFF;font-weight:600">${fmt(sub2Amt)}</td>
     </tr>`;
   }
 
