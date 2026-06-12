@@ -4,36 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>家庭每月支出明細系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #4F46E5;
-    --primary-light: #EEF2FF;
+    --primary: #FF8A3D;
+    --primary-light: #FFF5EE;
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
     --gray-50: #F9FAFB;
     --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
+    --gray-200: #E9E2DB;
     --gray-400: #9CA3AF;
-    --gray-600: #4B5563;
+    --gray-500: #6B7280;
+    --gray-600: #6B7280;
     --gray-700: #374151;
     --gray-800: #1F2937;
-    --shadow: 0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
     --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
     --radius: 12px;
-    --row-hover: #EBF3FD;
-    --row-selected: #BFDBFE;
-    --sidebar-bg: #1E293B;
+    --row-hover: #FFF5EE;
+    --row-selected: #FFE5CC;
+    --sidebar-bg: #FFFFFF;
     --sidebar-w: 240px;
-    --sidebar-active: #F97316;
+    --sidebar-active: #FFF5EE;
     --topbar-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #E8EEF7; color: var(--gray-800); min-height: 100vh; }
+  body { font-family: 'Noto Sans TC', 'Segoe UI', system-ui, sans-serif; background: #FAF7F2; color: #1F2937; min-height: 100vh; }
 
   /* ── Login ── */
-  #login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--gray-50); }
-  .login-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-md); padding: 2.5rem 2rem; width: 100%; max-width: 380px; }
+  #login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #FAF7F2; }
+  .login-card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 2.5rem 2rem; width: 100%; max-width: 380px; }
   .login-logo { text-align: center; margin-bottom: 1.75rem; }
   .login-logo img { width: 100%; height: auto; display: block; }
   .login-logo h1 { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-top: .6rem; }
@@ -43,13 +47,13 @@
 
   /* ── App Layout ── */
   #main-app { display: none; min-height: 100vh; }
-  #app-layout { display: flex; min-height: 100vh; max-width: 1280px; margin: 0 auto; background: #F7F9FC; position: relative; }
+  #app-layout { display: flex; min-height: 100vh; max-width: 1280px; margin: 0 auto; background: #FAF7F2; position: relative; }
 
   /* ── Sidebar ── */
   #sidebar {
     width: var(--sidebar-w);
-    background: var(--sidebar-bg);
-    color: #fff;
+    background: #FFFFFF;
+    color: #6B7280;
     position: sticky;
     top: 0;
     height: 100vh;
@@ -58,23 +62,24 @@
     z-index: 200;
     overflow-y: auto;
     flex-shrink: 0;
+    border-right: 1px solid #E9E2DB;
   }
   .sidebar-header {
     padding: .85rem 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid #E9E2DB;
     flex-shrink: 0;
   }
-  .sidebar-header img { width: calc(var(--sidebar-w) - 2rem); height: auto; object-fit: contain; border-radius: 0; }
+  .sidebar-header img { width: 180px; height: auto; object-fit: contain; border-radius: 0; }
   .sidebar-logo-placeholder {
     width: 36px; height: 36px; border-radius: 8px;
-    background: linear-gradient(135deg, #F97316, #FB923C);
+    background: linear-gradient(135deg, #FF8A3D, #FFB380);
     display: flex; align-items: center; justify-content: center;
     font-size: 1.1rem; flex-shrink: 0;
   }
-  .sidebar-header .sys-name { font-size: .76rem; font-weight: 700; line-height: 1.45; color: rgba(255,255,255,.88); }
+  .sidebar-header .sys-name { font-size: .76rem; font-weight: 700; line-height: 1.45; color: #1F2937; }
   .sidebar-nav { flex: 1; padding: .65rem .65rem; }
   .sidebar-item {
     display: flex;
@@ -83,7 +88,7 @@
     padding: .6rem .85rem;
     border-radius: 8px;
     cursor: pointer;
-    color: rgba(255,255,255,.65);
+    color: #6B7280;
     font-size: .875rem;
     font-weight: 500;
     transition: background .15s, color .15s;
@@ -95,11 +100,11 @@
     width: 100%;
     text-align: left;
   }
-  .sidebar-item:hover { background: rgba(255,255,255,.07); color: #fff; }
-  .sidebar-item.active { background: var(--sidebar-active); color: #fff; }
+  .sidebar-item:hover { background: rgba(255,138,61,0.08); color: #FF8A3D; }
+  .sidebar-item.active { background: #FFF5EE; color: #FF8A3D; border-left: 3px solid #FF8A3D; padding-left: calc(.85rem - 3px); }
   .sidebar-item .chevron { margin-left: auto; transition: transform .2s; flex-shrink: 0; }
   .sidebar-item.submenu-open .chevron { transform: rotate(180deg); }
-  .sidebar-divider { height: 1px; background: rgba(255,255,255,.07); margin: .5rem .85rem; }
+  .sidebar-divider { height: 1px; background: #E9E2DB; margin: .5rem .85rem; }
   .sidebar-submenu { display: none; padding-left: .85rem; }
   .sidebar-submenu.open { display: block; }
   .sidebar-subitem {
@@ -109,7 +114,7 @@
     padding: .45rem .85rem;
     border-radius: 8px;
     cursor: pointer;
-    color: rgba(255,255,255,.55);
+    color: #6B7280;
     font-size: .825rem;
     transition: background .15s, color .15s;
     margin-bottom: .05rem;
@@ -119,8 +124,8 @@
     width: 100%;
     text-align: left;
   }
-  .sidebar-subitem:hover { background: rgba(255,255,255,.07); color: #fff; }
-  .sidebar-subitem.active { color: #FB923C; font-weight: 600; }
+  .sidebar-subitem:hover { background: rgba(255,138,61,0.08); color: #FF8A3D; }
+  .sidebar-subitem.active { color: #FF8A3D; font-weight: 600; }
   .sidebar-subitem::before {
     content: '';
     display: inline-block;
@@ -130,23 +135,25 @@
     flex-shrink: 0;
     opacity: .7;
   }
+  .sidebar-sofa { flex-shrink: 0; }
+  .sidebar-sofa img { width: 100%; height: auto; object-fit: contain; display: block; }
   .sidebar-footer {
     padding: .9rem 1rem;
-    border-top: 1px solid rgba(255,255,255,.07);
+    border-top: 1px solid #E9E2DB;
     font-size: .7rem;
-    color: rgba(255,255,255,.3);
+    color: #9CA3AF;
     line-height: 1.7;
     flex-shrink: 0;
   }
 
   /* ── Main Content ── */
-  #main-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: #F7F9FC; }
+  #main-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: #FAF7F2; }
 
   /* ── Top Bar ── */
   #top-bar {
     height: var(--topbar-h);
-    background: #fff;
-    border-bottom: 1px solid var(--gray-200);
+    background: #FFFFFF;
+    border-bottom: 1px solid #E9E2DB;
     display: flex;
     align-items: center;
     padding: 0 1.5rem;
@@ -169,11 +176,11 @@
   .month-nav-btn:hover { background: var(--gray-200); }
   .month-display-btn {
     background: none; border: none; cursor: pointer;
-    font-size: 1rem; font-weight: 700; color: var(--gray-800);
+    font-size: 1rem; font-weight: 700; color: #1F2937;
     padding: .25rem .75rem; border-radius: 6px;
     transition: background .15s; min-width: 110px; text-align: center;
   }
-  .month-display-btn:hover { background: var(--gray-100); }
+  .month-display-btn:hover { background: #F5EFE8; }
   /* Month picker popup */
   .month-picker-popup {
     display: none;
@@ -200,19 +207,13 @@
   .picker-month-btn.disabled { opacity: .3; cursor: not-allowed; }
   .picker-month-btn.disabled:hover { background: #fff; border-color: var(--gray-200); color: var(--gray-700); }
   .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: .65rem; }
-  .bell-btn {
-    background: none; border: none; cursor: pointer;
-    padding: .45rem; border-radius: 8px; color: var(--gray-600);
-    display: flex; align-items: center; transition: background .15s;
-  }
-  .bell-btn:hover { background: var(--gray-100); }
   .top-divider { width: 1px; height: 24px; background: var(--gray-200); }
   .top-username { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
   .logout-btn-top {
     display: flex; align-items: center; gap: .35rem;
     padding: .4rem .9rem;
-    background: var(--gray-100); border: none; border-radius: 8px;
-    cursor: pointer; font-size: .8rem; font-weight: 600; color: var(--gray-600);
+    background: #F5EFE8; border: none; border-radius: 8px;
+    cursor: pointer; font-size: .8rem; font-weight: 600; color: #6B7280;
     transition: background .15s, color .15s;
   }
   .logout-btn-top:hover { background: #FEE2E2; color: var(--danger); }
@@ -224,38 +225,62 @@
   h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
   h3 { font-size: 1rem; font-weight: 600; margin-bottom: .75rem; }
 
-  /* ── KPI Cards (new design) ── */
-  .kpi-grid-new { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+  /* ── KPI Cards ── */
+  .kpi-grid-new { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
   .kpi-card-new {
-    border-radius: var(--radius); padding: 1.35rem 1.25rem;
-    display: flex; align-items: center; gap: 1rem;
-    box-shadow: var(--shadow);
+    background: #FFFFFF;
+    border: 1px solid #E9E2DB;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .kpi-card-new.blue  { background: #EFF6FF; }
-  .kpi-card-new.pink  { background: #FDF2F8; }
-  .kpi-card-new.green { background: #F0FDF4; }
-  .kpi-icon {
-    width: 48px; height: 48px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  .kpi-card-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .85rem; }
+  .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .kpi-name { font-size: .82rem; font-weight: 600; color: #6B7280; }
+  .kpi-amt  { font-size: 1.55rem; font-weight: 800; line-height: 1.1; margin-bottom: .75rem; }
+  .kpi-card-sh    .kpi-amt { color: #FF8A3D; }
+  .kpi-card-hf    .kpi-amt { color: #A78BFA; }
+  .kpi-card-cm    .kpi-amt { color: #4CAF7D; }
+  .kpi-card-total .kpi-amt { color: #FF8A3D; }
+  .kpi-detail-row {
+    display: flex; gap: .5rem;
+    background: #FAF7F2;
+    border-radius: 8px;
+    padding: .55rem .75rem;
   }
-  .blue  .kpi-icon { background: #DBEAFE; color: #1D4ED8; }
-  .pink  .kpi-icon { background: #FCE7F3; color: #BE185D; }
-  .green .kpi-icon { background: #DCFCE7; color: #15803D; }
-  .kpi-info { flex: 1; min-width: 0; }
-  .kpi-name { font-size: .875rem; font-weight: 700; margin-bottom: .1rem; }
-  .blue  .kpi-name { color: #1E40AF; }
-  .pink  .kpi-name { color: #9D174D; }
-  .green .kpi-name { color: #14532D; }
-  .kpi-sub { font-size: .73rem; color: var(--gray-400); margin-bottom: .4rem; }
-  .kpi-amt { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
-  .blue  .kpi-amt { color: #1D4ED8; }
-  .pink  .kpi-amt { color: #BE185D; }
-  .green .kpi-amt { color: #15803D; }
+  .kpi-detail-item { flex: 1; min-width: 0; }
+  .kpi-detail-label { font-size: .68rem; color: #9CA3AF; margin-bottom: .15rem; }
+  .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* 筆數（第 2 個 detail item）全卡片統一橘色 */
+  .kpi-detail-item:nth-child(2) .kpi-detail-value { color: #FF8A3D; }
+  /* 最高單筆（第 3 個）依卡片主色 */
+  .kpi-card-sh    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
+  .kpi-card-hf    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #A78BFA; }
+  .kpi-card-cm    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #4CAF7D; }
+  .kpi-card-total .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
+
+  /* ── Comparison Cards ── */
+  .cmp-section { margin-bottom: 1.25rem; }
+  .cmp-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .cmp-card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1rem 1.25rem; }
+  .cmp-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .cmp-card-label { font-size: .875rem; font-weight: 600; color: #6B7280; }
+  .cmp-card-label-dark { color: #1F2937 !important; }
+  .cmp-card-divider { height: 1px; background: #E9E2DB; margin: .625rem 0; }
+  .cmp-card-curr { font-size: 1.25rem; font-weight: 700; color: #6B7280; }
+  .cmp-card-curr-dark { color: #1F2937 !important; }
+  .cmp-card-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: .25rem; }
+  .cmp-card-last { font-size: .75rem; color: #9CA3AF; }
+  .cmp-card-diff { font-size: .75rem; font-weight: 600; }
+  .cmp-card-pct  { font-size: .75rem; font-weight: 600; }
+  .cmp-num-up   { color: #EF4444; font-weight: 700; }
+  .cmp-num-down { color: #22C55E; font-weight: 700; }
+  .cmp-num-neutral { color: #9CA3AF; }
 
   /* ── Dashboard bottom grid ── */
   .dashboard-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-  .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; }
-  .section-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; }
+  .card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1.25rem; }
+  .section-title { font-size: 1rem; font-weight: 600; color: #1F2937; margin-bottom: 1rem; }
 
   /* 帳單預覽 */
   .bill-total-label { font-size: .78rem; color: var(--gray-400); margin-bottom: .2rem; }
@@ -290,7 +315,7 @@
 
   /* ── Bank countdown grid ── */
   .bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
-  .bank-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1rem; text-align: center; }
+  .bank-card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1rem; text-align: center; }
   .bank-name { font-size: .8rem; color: var(--gray-400); margin-bottom: .4rem; }
   .bank-days { font-size: 2rem; font-weight: 800; color: var(--primary); }
   .bank-days.urgent { color: var(--danger); }
@@ -298,18 +323,23 @@
   .bank-sub  { font-size: .75rem; color: var(--gray-400); margin-top: .2rem; }
 
   /* ── Table ── */
-  .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #E9E2DB; overflow: hidden; }
   table { width: 100%; border-collapse: collapse; background: #fff; font-size: .875rem; }
-  thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
-  tbody td { padding: .6rem .9rem; border-bottom: 1px solid var(--gray-100); }
+  thead th { background: #FAF7F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; border-bottom: 1px solid #E9E2DB; white-space: nowrap; }
+  tbody td { padding: .6rem .9rem; border-bottom: 1px solid #E9E2DB; }
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover:not(.row-selected) { background: var(--row-hover); }
+  tbody tr:hover:not(.row-selected) { background: #FFF8F3; }
   tbody tr.row-selected { background: var(--row-selected); }
+  .td-amount { text-align: right; font-weight: 600; color: #1F2937; }
   .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
-  .badge-shihong { background: #F0F6FF; color: #1E75EC; }
-  .badge-huifeng { background: #FFECEB; color: #E53935; }
-  .badge-common  { background: #E8F7EC; color: #1B9A40; }
-  .badge-unclass { background: #FFF5F2; color: #DD6B20; }
+  .badge-shihong { background: #FFF3E8; color: #FF8A3D; border: 1px solid #FFD4A8; }
+  .badge-huifeng { background: #F3F0FF; color: #A78BFA; border: 1px solid #DDD6FE; }
+  .badge-common  { background: #E8F8EF; color: #4CAF7D; border: 1px solid #A7F3C4; }
+  .badge-unclass { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
+  /* 關鍵字 tag（分類規則管理頁）*/
+  .kw-tag { display: inline-flex; align-items: center; gap: .25rem; background: #FFF3E8; color: #FF8A3D; border: 1px solid #FFD4A8; border-radius: 999px; padding: .15rem .6rem; font-size: .78rem; font-weight: 600; }
+  .kw-tag-x { cursor: pointer; opacity: .65; font-size: .85rem; line-height: 1; }
+  .kw-tag-x:hover { opacity: 1; }
 
   input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary); }
 
@@ -317,18 +347,27 @@
   .btn { padding: .5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: .875rem; font-weight: 600; transition: opacity .15s; }
   .btn:hover:not(:disabled) { opacity: .85; }
   .btn:disabled { cursor: not-allowed; opacity: .5; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-danger  { background: var(--danger);  color: #fff; }
-  .btn-success { background: var(--success); color: #fff; }
-  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-primary   { background: #FF8A3D; color: #FFFFFF; }
+  .btn-secondary { background: #F3F0FF; color: #A78BFA; }
+  .btn-danger    { background: #FEE2E2; color: #EF4444; }
+  .btn-ghost     { background: #F3F4F6; color: #6B7280; }
+  .btn-success   { background: var(--success); color: #fff; }
+  .btn-warning   { background: var(--warning); color: #fff; }
+  .btn-outline-edit   { background: #FFFFFF; border: 1px solid #FF8A3D; color: #FF8A3D; border-radius: 999px; }
+  .btn-outline-delete { background: #FFFFFF; border: 1px solid #EF4444; color: #EF4444; border-radius: 999px; }
   .btn-sm { padding: .3rem .65rem; font-size: .8rem; }
   .btn-full { width: 100%; }
 
   select, input[type=text], input[type=password], input[type=file] {
-    padding: .45rem .75rem; border-radius: 8px; border: 1px solid var(--gray-200);
-    font-size: .875rem; background: #fff; outline: none; color: var(--gray-800);
+    padding: .45rem .75rem; border-radius: 8px; border: 1px solid #E9E2DB;
+    font-size: .875rem; background: #FFFFFF; outline: none; color: #1F2937;
+    font-family: inherit;
   }
-  select:focus, input[type=text]:focus, input[type=password]:focus { border-color: var(--primary); }
+  select:focus, input[type=text]:focus, input[type=password]:focus {
+    border-color: #FF8A3D;
+    box-shadow: 0 0 0 3px rgba(255,138,61,0.15);
+  }
+  ::placeholder { color: #9CA3AF; }
 
   /* ── Filter bar ── */
   .filter-bar { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
@@ -336,14 +375,14 @@
 
   /* ── Rule table ── */
   .rule-row td { vertical-align: middle; }
-  #rules-table td, #rules-table th { border-right: 1px solid #ECEFF5; }
+  #rules-table td, #rules-table th { border-right: 1px solid #E9E2DB; }
   #rules-table td:last-child, #rules-table th:last-child { border-right: none; }
-  .rules-table-outer { overflow-y: auto; max-height: 480px; border-radius: var(--radius); box-shadow: var(--shadow); background: #fff; }
+  .rules-table-outer { overflow-y: auto; max-height: 480px; border-radius: 12px; border: 1px solid #E9E2DB; overflow: hidden; background: #fff; }
   .rules-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-  .rules-table-outer thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); white-space: nowrap; box-shadow: inset 0 -1px 0 var(--gray-200); position: sticky; top: 0; z-index: 10; }
-  .rules-table-outer tbody td { padding: .6rem .9rem; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  .rules-table-outer thead th { background: #FAF7F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #E9E2DB; position: sticky; top: 0; z-index: 10; }
+  .rules-table-outer tbody td { padding: .6rem .9rem; border-bottom: 1px solid #E9E2DB; vertical-align: middle; }
   .rules-table-outer tbody tr:last-child td { border-bottom: none; }
-  .rules-table-outer tbody tr:hover { background: var(--row-hover); }
+  .rules-table-outer tbody tr:hover { background: #FFF8F3; }
 
   /* ── Drop zone ── */
   .drop-zone {
@@ -359,7 +398,7 @@
   .import-result.error     { background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; }
   .import-result.warn-msg  { background: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
   .import-progress { display: none; height: 4px; background: var(--gray-200); border-radius: 2px; overflow: hidden; margin-bottom: .75rem; position: relative; }
-  .import-progress-inner { position: absolute; top: 0; left: -40%; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, var(--primary), transparent); animation: import-slide 1.2s ease-in-out infinite; }
+  .import-progress-inner { position: absolute; top: 0; left: -40%; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, #FF8A3D, transparent); animation: import-slide 1.2s ease-in-out infinite; }
   @keyframes import-slide { 0% { left: -40%; } 100% { left: 110%; } }
 
   /* ── Modal ── */
@@ -412,7 +451,7 @@
   .help-block-title-icon.setup   { background: #F0FDF4; color: #15803D; }
   .help-steps { display: flex; flex-direction: column; gap: .75rem; }
   .help-step-card {
-    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     padding: 1.1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start;
     border-left: 3px solid transparent;
     transition: box-shadow .15s;
@@ -445,14 +484,28 @@
   }
   .help-tip-icon { flex-shrink: 0; font-size: .9rem; }
 
+  /* ── Stats Reference ── */
+  .stats-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+  .stats-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .25rem; }
+  .stats-table th { font-size: .75rem; font-weight: 600; color: #6B7280; padding: .45rem .6rem; border-bottom: 1px solid #E9E2DB; }
+  .stats-table th:not(:first-child), .stats-table td:not(:first-child) { text-align: right; }
+  .stats-table td { padding: .5rem .6rem; border-bottom: 1px solid #E9E2DB; color: #1F2937; }
+  .stats-table tr:last-child td { border-bottom: none; }
+  .stats-table td:first-child { font-weight: 500; color: #6B7280; }
+  .stats-table td:nth-child(3) { font-weight: 600; }
+  .behavior-ref-item { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid var(--gray-100); }
+  .behavior-ref-item:last-child { border-bottom: none; }
+  .behavior-ref-label { font-size: .8rem; color: #6B7280; }
+  .behavior-ref-value { font-size: .875rem; font-weight: 700; color: #1F2937; }
+
   /* ── Bank Import Progress ── */
-  .bank-import-section { margin-top: 1.25rem; }
-  .bank-import-header { display: flex; align-items: center; margin-bottom: .75rem; }
-  .bank-import-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; }
-  .bank-import-card {
-    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
-    padding: .9rem 1.1rem; display: flex; align-items: center; gap: .75rem;
+  .bank-import-inline {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    padding: .85rem 1.25rem; margin-bottom: 1.25rem;
   }
+  .bank-import-inline-label { font-size: .875rem; font-weight: 600; color: #6B7280; }
+  .bank-import-inline-value { font-size: .875rem; font-weight: 700; color: #FF8A3D; }
 
   /* ── Payment Tools List ── */
   .tools-list { list-style: none; }
@@ -493,12 +546,12 @@
   /* ── Quick Action Cards ── */
   .quick-cards { display: flex; gap: 1rem; margin-top: 1.25rem; }
   .quick-card {
-    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem;
     cursor: pointer; transition: background .15s, box-shadow .15s, transform .1s;
-    flex: 1; text-decoration: none; border: none;
+    flex: 1; text-decoration: none;
   }
-  .quick-card:hover  { background: #F4F6FB; box-shadow: 0 6px 20px rgba(0,0,0,.10); }
+  .quick-card:hover  { background: #FFF5EE; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
   .quick-card:active { transform: scale(.98); }
   .quick-card-icon {
     width: 44px; height: 44px; border-radius: 10px;
@@ -513,29 +566,29 @@
   .quick-card-arrow { color: var(--gray-400); flex-shrink: 0; display: flex; align-items: center; }
 
   /* ── Transactions Table enhancements ── */
-  .tx-table-outer { overflow-y: auto; max-height: 600px; border-radius: var(--radius); box-shadow: var(--shadow); background: #fff; }
+  .tx-table-outer { overflow-y: auto; max-height: 600px; border-radius: 12px; border: 1px solid #E9E2DB; background: #fff; }
   .tx-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-  .tx-table-outer thead { background: var(--gray-50); }
-  .tx-table-outer thead th { background: var(--gray-50); padding: .65rem .9rem; text-align: left; font-weight: 600; color: var(--gray-600); white-space: nowrap; box-shadow: inset 0 -1px 0 var(--gray-200); position: sticky; top: 34px; z-index: 10; }
-  .tx-filter-row th { background: #FAFBFC !important; padding: .3rem .4rem !important; box-shadow: inset 0 -2px 0 var(--gray-200) !important; border-right: none !important; position: sticky !important; top: 0 !important; z-index: 11 !important; }
+  .tx-table-outer thead { background: #FAF7F2; }
+  .tx-table-outer thead th { background: #FAF7F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #E9E2DB; position: sticky; top: 34px; z-index: 10; }
+  .tx-filter-row th { background: #FAF7F2 !important; padding: .3rem .4rem !important; box-shadow: inset 0 -2px 0 #E9E2DB !important; border-right: none !important; position: sticky !important; top: 0 !important; z-index: 11 !important; }
   .th-sort { cursor: pointer; user-select: none; }
-  .th-sort:hover { background: #EAECF0 !important; }
+  .th-sort:hover { background: #F5EDE3 !important; }
   .sort-icon { font-size: .65rem; margin-left: .25rem; opacity: .3; vertical-align: middle; }
-  .sort-icon.active { opacity: 1; color: var(--primary); }
+  .sort-icon.active { opacity: 1; color: #FF8A3D; }
   .tx-filter-select, .tx-filter-input {
     width: 100%; font-size: .75rem; padding: .2rem .35rem;
-    border-radius: 5px; border: 1px solid var(--gray-200); background: #fff; color: var(--gray-800); outline: none;
+    border-radius: 5px; border: 1px solid #E9E2DB; background: #fff; color: #1F2937; outline: none;
   }
-  .tx-filter-select:focus, .tx-filter-input:focus { border-color: var(--primary); }
-  .tx-table-outer td, .tx-table-outer th { border-right: 1px solid #ECEFF5; }
+  .tx-filter-select:focus, .tx-filter-input:focus { border-color: #FF8A3D; }
+  .tx-table-outer td, .tx-table-outer th { border-right: 1px solid #E9E2DB; }
   .tx-table-outer td:last-child, .tx-table-outer th:last-child { border-right: none; }
   .tx-batch-bar {
     display: none; align-items: center; gap: .75rem;
-    padding: .6rem .85rem; background: #EFF6FF;
-    border: 1px solid #BFDBFE; border-radius: 8px; margin-bottom: .75rem;
+    padding: .6rem .85rem; background: #FFF5EE;
+    border: 1px solid #FFD4A8; border-radius: 8px; margin-bottom: .75rem;
   }
   .tx-batch-bar.visible { display: flex; }
-  .tx-batch-info { font-size: .875rem; color: #1D4ED8; font-weight: 600; flex: 1; }
+  .tx-batch-info { font-size: .875rem; color: #FF8A3D; font-weight: 600; flex: 1; }
 
   /* ── Responsive ── */
   @media (max-width: 900px) {
@@ -543,8 +596,8 @@
     .sidebar-header .sys-name, .sidebar-item span:not(.chevron), .sidebar-submenu, .sidebar-footer { display: none; }
     .sidebar-header { justify-content: center; padding: .85rem .5rem; }
     .sidebar-item { justify-content: center; padding: .65rem; }
-    .kpi-grid-new { grid-template-columns: 1fr; }
-    .dashboard-bottom { grid-template-columns: 1fr; }
+    .kpi-grid-new { grid-template-columns: repeat(2, 1fr); }
+    .cmp-cards-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     .kpi-amt { font-size: 1.25rem; }
@@ -586,15 +639,15 @@
   .stmt-sub-cell.gn .stmt-sub-cell-label { color:#14532D; }
   .stmt-sub-cell.gn .stmt-sub-cell-value { color:#15803D; }
   .stmt-stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
-  .stmt-stat-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:1rem; text-align:center; }
+  .stmt-stat-card { background:#FFFFFF; border-radius:12px; border:1px solid #E9E2DB; box-shadow:0 1px 3px rgba(0,0,0,0.06); padding:1rem; text-align:center; }
   .stmt-stat-label { font-size:.75rem; color:var(--gray-400); margin-bottom:.3rem; font-weight:500; }
   .stmt-stat-value { font-size:1.2rem; font-weight:800; color:var(--gray-800); }
   .stmt-detail-table { width:100%; border-collapse:collapse; font-size:.875rem; }
-  .stmt-detail-table thead th { background:var(--gray-50); padding:.65rem .9rem; text-align:left; font-weight:600; color:var(--gray-600); border-bottom:2px solid var(--gray-200); }
-  .stmt-detail-table tbody tr:nth-child(even) { background:#F8FAFC; }
-  .stmt-detail-table tbody td { padding:.55rem .9rem; border-bottom:1px solid var(--gray-100); }
-  .stmt-detail-table tfoot td { padding:.65rem .9rem; font-weight:700; border-top:2px solid var(--gray-200); background:var(--gray-50); }
-  .stmt-table-wrap { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  .stmt-detail-table thead th { background:#FAF7F2; padding:.65rem .9rem; text-align:left; font-weight:600; color:#6B7280; border-bottom:2px solid #E9E2DB; }
+  .stmt-detail-table tbody tr:nth-child(even) { background:#FAF7F2; }
+  .stmt-detail-table tbody td { padding:.55rem .9rem; border-bottom:1px solid #E9E2DB; }
+  .stmt-detail-table tfoot td { padding:.65rem .9rem; font-weight:700; border-top:2px solid #E9E2DB; background:#FAF7F2; }
+  .stmt-table-wrap { border-radius:12px; overflow:hidden; border:1px solid #E9E2DB; }
   .stmt-export-bar { display:flex; justify-content:flex-end; margin-top:1.5rem; padding-bottom:1rem; }
 
   /* ── Statement Link Copy Hint ── */
@@ -621,6 +674,63 @@
   .stmt-pwd-err { background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; border-radius:8px; padding:.45rem .65rem; font-size:.82rem; margin-top:.4rem; margin-bottom:.25rem; }
   .stmt-pwd-link-btn { background:none; border:none; color:var(--primary); font-size:.82rem; cursor:pointer; text-decoration:underline; padding:0; margin-top:.85rem; }
   .stmt-pwd-link-btn:hover { color:#1558b0; }
+
+  /* ── Login loading modal ── */
+  #login-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  #login-modal.show { display: flex; }
+  .login-modal-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.25rem;
+    min-width: 260px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  .login-modal-title {
+    font-size: .95rem;
+    font-weight: 600;
+    color: #1A202C;
+    margin-bottom: 1.25rem;
+  }
+  .login-modal-track {
+    width: 100%;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .login-modal-bar {
+    height: 100%;
+    width: 40%;
+    background: #FF8A3D;
+    border-radius: 99px;
+    animation: loginBarSlide 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes loginBarSlide {
+    0%   { margin-left: 0%;   width: 40%; }
+    100% { margin-left: 60%;  width: 40%; }
+  }
+
+  /* ── Top progress bar ── */
+  #nprogress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 3px;
+    background: #FF8A3D;
+    z-index: 9999;
+    opacity: 0;
+    transition: width .25s ease, opacity .4s ease;
+    pointer-events: none;
+  }
 </style>
 
 <style>
@@ -681,11 +791,13 @@
 </head>
 <body>
 
+<div id="nprogress-bar"></div>
+
 <!-- ─────────────────── LOGIN PAGE ─────────────────────────── -->
 <div id="login-page">
   <div class="login-card">
     <div class="login-logo">
-      <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
+      <img src="assets/login.png" alt="Logo" onerror="this.style.display='none'">
     </div>
     <div class="form-group">
       <label for="login-username">帳號</label>
@@ -699,6 +811,14 @@
     </div>
     <div class="login-error" id="login-error">帳號或密碼錯誤，請重新輸入</div>
     <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()">登入</button>
+  </div>
+</div>
+
+<!-- ─────────────────── LOGIN MODAL ────────────────────────── -->
+<div id="login-modal">
+  <div class="login-modal-box">
+    <div class="login-modal-title">登入中，請稍候...</div>
+    <div class="login-modal-track"><div class="login-modal-bar"></div></div>
   </div>
 </div>
 
@@ -798,6 +918,10 @@
     </button>
   </nav>
 
+  <div class="sidebar-sofa">
+    <img src="assets/sofa.png" alt="" onerror="this.parentElement.style.display='none'">
+  </div>
+
   <div class="sidebar-footer">
     <div>© 2026 家庭每月支出明細系統</div>
     <div>v1.0.0</div>
@@ -838,14 +962,6 @@
     </div>
 
     <div class="top-bar-right">
-      <!-- Notification bell -->
-      <button class="bell-btn" title="通知">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 01-3.46 0"/>
-        </svg>
-      </button>
-      <div class="top-divider"></div>
       <span class="top-username" id="nav-username"></span>
       <button class="logout-btn-top" onclick="doLogout()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -866,184 +982,234 @@
     <!-- Hidden legacy select for API compat -->
     <select id="dash-month-select" onchange="onDashMonthChange()"></select>
 
-    <!-- KPI Cards (3 cards) -->
+    <!-- KPI Cards (4 cards) -->
     <div class="kpi-grid-new">
-      <!-- 世鴻支付 -->
-      <div class="kpi-card-new blue">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        </div>
-        <div class="kpi-info">
+      <!-- 世鴻消費金額 -->
+      <div class="kpi-card-new kpi-card-sh">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#FFF3E8;color:#FF8A3D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="8" r="3.5"/>
+              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </div>
           <div class="kpi-name">世鴻消費金額</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-shihong">-</div>
+        </div>
+        <div class="kpi-amt" id="kpi-shihong">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-sh-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-sh-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-sh-max">-</div>
+          </div>
         </div>
       </div>
 
-      <!-- 慧鳳支付 -->
-      <div class="kpi-card-new pink">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        </div>
-        <div class="kpi-info">
+      <!-- 慧鳳消費金額 -->
+      <div class="kpi-card-new kpi-card-hf">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#F3F0FF;color:#A78BFA">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="8" r="3.5"/>
+              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </div>
           <div class="kpi-name">慧鳳消費金額</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-huifeng">-</div>
+        </div>
+        <div class="kpi-amt" id="kpi-huifeng">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-hf-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-hf-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-hf-max">-</div>
+          </div>
         </div>
       </div>
 
-      <!-- 共同支付 -->
-      <div class="kpi-card-new green">
-        <div class="kpi-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-          </svg>
+      <!-- 共同支出金額 -->
+      <div class="kpi-card-new kpi-card-cm">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#E8F8EF;color:#4CAF7D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="8.5" cy="8" r="3"/>
+              <path d="M2 20c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6"/>
+              <circle cx="17" cy="8" r="3" opacity=".7"/>
+              <path d="M14 20c.5-3.2 3-5.5 6-5.5" opacity=".7"/>
+            </svg>
+          </div>
+          <div class="kpi-name">共同支出金額</div>
         </div>
-        <div class="kpi-info">
-          <div class="kpi-name">共同消費</div>
-          <div class="kpi-sub">本期支出</div>
-          <div class="kpi-amt" id="kpi-common">-</div>
+        <div class="kpi-amt" id="kpi-common">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-cm-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">筆數</div>
+            <div class="kpi-detail-value" id="kpi-cm-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-cm-max">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 家庭總支出 -->
+      <div class="kpi-card-new kpi-card-total">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#FFF3E8;color:#FF8A3D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10l9-7 9 7v10a1 1 0 01-1 1H4a1 1 0 01-1-1z"/>
+              <polyline points="9,21 9,13 15,13 15,21"/>
+            </svg>
+          </div>
+          <div class="kpi-name">家庭總支出</div>
+        </div>
+        <div class="kpi-amt" id="kpi-total">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-total-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">總筆數</div>
+            <div class="kpi-detail-value" id="kpi-total-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-total-max">-</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- hidden total for compat -->
-    <span id="kpi-total" style="display:none">-</span>
+    <!-- hidden spans for compat -->
+    <span id="bill-month-display" style="display:none">-</span>
 
-    <!-- Dashboard bottom: 帳單焦點總覽 + 支付工具統計 + 消費行為統計 -->
-    <div class="dashboard-bottom">
-
-      <!-- 左欄：帳單焦點總覽 -->
-      <div class="card">
-        <div class="section-title">帳單焦點總覽</div>
-        <div class="bill-total-label">本期總支出</div>
-        <div style="font-size:2.15rem;font-weight:800;color:#1A202C;line-height:1.1;margin-bottom:.5rem" id="bill-total-display">-</div>
-        <div id="bill-diff" style="font-size:.875rem;font-weight:600;margin-bottom:.75rem;min-height:1.3em">
-          <span style="color:#718096;font-weight:500">較上期資料載入中</span>
+    <!-- 本期 vs 上期對比卡片 -->
+    <div class="cmp-section">
+      <div class="section-title">本期 vs 上期對比</div>
+      <div class="cmp-cards-grid">
+        <!-- 世鴻消費金額 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label" style="color:#FF8A3D">世鴻消費金額</span>
+            <span class="cmp-card-pct" id="cmp-sh-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" style="color:#FF8A3D" id="cmp-sh-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-sh-last">-</span>
+            <span class="cmp-card-diff" id="cmp-sh-diff">-</span>
+          </div>
         </div>
-        <div style="font-size:.875rem;color:#718096" id="bill-count">- 筆交易</div>
-        <div style="font-size:.875rem;color:#DD6B20;cursor:pointer;margin-top:.3rem" id="bill-unclassified" onclick="goToUnclassified()">- 筆待分類</div>
-        <span id="bill-month-display" style="display:none">-</span>
+        <!-- 慧鳳消費金額 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label" style="color:#A78BFA">慧鳳消費金額</span>
+            <span class="cmp-card-pct" id="cmp-hf-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" style="color:#A78BFA" id="cmp-hf-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-hf-last">-</span>
+            <span class="cmp-card-diff" id="cmp-hf-diff">-</span>
+          </div>
+        </div>
+        <!-- 共同支出金額 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label" style="color:#4CAF7D">共同支出金額</span>
+            <span class="cmp-card-pct" id="cmp-cm-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" style="color:#4CAF7D" id="cmp-cm-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-cm-last">-</span>
+            <span class="cmp-card-diff" id="cmp-cm-diff">-</span>
+          </div>
+        </div>
+        <!-- 家庭總支出 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label" style="color:#1F2937">家庭總支出</span>
+            <span class="cmp-card-pct" id="cmp-total-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" style="color:#1F2937" id="cmp-total-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-total-last">-</span>
+            <span class="cmp-card-diff" id="cmp-total-diff">-</span>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <!-- 中欄：支付工具統計 -->
+    <!-- 統計參考 -->
+    <div class="stats-ref-grid">
+      <!-- 左欄：支付工具統計 -->
       <div class="card">
         <div class="section-title">支付工具統計</div>
-        <ul class="tools-list">
-          <li class="tools-item"><span class="tools-item-name">LINE Pay</span><span class="tools-item-count" id="pt-linepay">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">iCASH Pay</span><span class="tools-item-count" id="pt-icashpay">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">悠遊卡</span><span class="tools-item-count" id="pt-easycard">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">悠遊付</span><span class="tools-item-count" id="pt-easywallet">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">車麻吉</span><span class="tools-item-count" id="pt-carmoji">-</span></li>
-          <li class="tools-item"><span class="tools-item-name">信用卡</span><span class="tools-item-count" id="pt-creditcard">-</span></li>
-        </ul>
+        <table class="stats-table">
+          <thead><tr><th>工具</th><th>筆數</th><th>金額</th></tr></thead>
+          <tbody>
+            <tr><td>信用卡</td>   <td id="pt-creditcard">-</td> <td id="pt-amt-creditcard">-</td></tr>
+            <tr><td>LINE Pay</td> <td id="pt-linepay">-</td>    <td id="pt-amt-linepay">-</td></tr>
+            <tr><td>悠遊卡</td>   <td id="pt-easycard">-</td>   <td id="pt-amt-easycard">-</td></tr>
+            <tr><td>悠遊付</td>   <td id="pt-easywallet">-</td> <td id="pt-amt-easywallet">-</td></tr>
+            <tr><td>車麻吉</td>   <td id="pt-carmoji">-</td>    <td id="pt-amt-carmoji">-</td></tr>
+            <tr><td>iCASH Pay</td><td id="pt-icashpay">-</td>   <td id="pt-amt-icashpay">-</td></tr>
+          </tbody>
+        </table>
       </div>
-
-      <!-- 右欄：消費行為統計 -->
+      <!-- 右欄：消費行為參考 -->
       <div class="card">
-        <div class="section-title">消費行為統計</div>
-        <div class="behavior-item" onclick="goToMaxTransaction()">
-          <div>
-            <div class="behavior-item-label">最高單筆消費</div>
-            <div class="behavior-item-value" id="bs-max-amount">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="section-title">消費行為參考</div>
+        <div class="behavior-ref-item">
+          <span class="behavior-ref-label">日均消費</span>
+          <span class="behavior-ref-value" id="bs-daily-avg">-</span>
         </div>
-        <div class="behavior-item" id="bs-top-bank-amount-item">
-          <div>
-            <div class="behavior-item-label">最高消費額發卡銀行</div>
-            <div class="behavior-item-value" id="bs-top-bank-amount">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="behavior-ref-item" id="bs-top-bank-amount-item" style="cursor:pointer">
+          <span class="behavior-ref-label">最高消費額銀行</span>
+          <span class="behavior-ref-value" id="bs-top-bank-amount">-</span>
         </div>
-        <div class="behavior-item" id="bs-top-bank-count-item">
-          <div>
-            <div class="behavior-item-label">最多消費次數發卡銀行</div>
-            <div class="behavior-item-value" id="bs-top-bank-count">-</div>
-          </div>
-          <div class="behavior-item-arrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </div>
+        <div class="behavior-ref-item" id="bs-top-bank-count-item" style="cursor:pointer">
+          <span class="behavior-ref-label">最多消費次數銀行</span>
+          <span class="behavior-ref-value" id="bs-top-bank-count">-</span>
+        </div>
+        <div class="behavior-ref-item">
+          <span class="behavior-ref-label">分類完成度</span>
+          <span class="behavior-ref-value" id="bs-classify-rate">-</span>
         </div>
       </div>
-
-    </div><!-- /.dashboard-bottom -->
+    </div>
 
     <!-- 帳單匯入進度 -->
-    <div class="bank-import-section">
-      <div class="bank-import-header">
-        <div class="section-title" style="margin-bottom:0">帳單匯入進度</div>
-      </div>
-      <div id="bank-import-cards" class="bank-import-grid">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
+    <div class="bank-import-inline">
+      <span class="bank-import-inline-label">帳單匯入進度</span>
+      <span id="bank-import-summary" class="bank-import-inline-value">載入中…</span>
     </div>
 
-    <!-- 快捷卡片 -->
-    <div class="quick-cards">
-      <!-- 帳單匯入 -->
-      <div class="quick-card" onclick="showPage('import')">
-        <div class="quick-card-icon orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="17,8 12,3 7,8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">帳單匯入</div>
-          <div class="quick-card-desc">匯入信用卡帳單</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-
-      <!-- 分類規則管理 -->
-      <div class="quick-card" onclick="showPage('rules')">
-        <div class="quick-card-icon green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-            <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">分類規則管理</div>
-          <div class="quick-card-desc">建立／調整自動分類規則</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-
-      <!-- 帳單預覽 -->
-      <div class="quick-card" onclick="showPage('statement')">
-        <div class="quick-card-icon purple">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10,9 9,9 8,9"/>
-          </svg>
-        </div>
-        <div class="quick-card-body">
-          <div class="quick-card-title">帳單預覽</div>
-          <div class="quick-card-desc">對帳單預覽／匯出 PDF</div>
-        </div>
-        <div class="quick-card-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-        </div>
-      </div>
-    </div>
 
   </div><!-- /#page-dashboard -->
 
@@ -1097,8 +1263,8 @@
     </div>
     <div class="tx-batch-bar" id="tx-batch-bar">
       <span class="tx-batch-info" id="tx-batch-info">已選取 0 筆</span>
-      <button class="btn btn-primary btn-sm" onclick="openBatchAttrModal()">修改歸屬</button>
-      <button class="btn btn-danger btn-sm" onclick="openBatchDeleteModal()">刪除勾選</button>
+      <button class="btn btn-outline-edit btn-sm" onclick="openBatchAttrModal()">修改歸屬</button>
+      <button class="btn btn-outline-delete btn-sm" onclick="openBatchDeleteModal()">刪除勾選</button>
     </div>
     <div class="tx-table-outer" id="tx-table"><div class="loading"><div class="spinner"></div></div></div>
   </div>
@@ -1116,7 +1282,7 @@
 
     <div class="card" style="margin-bottom:1rem">
       <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-        <button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)"
+        <button class="btn btn-ghost btn-sm"
                 onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
         <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
                 onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
@@ -1137,8 +1303,8 @@
       <div id="import-result" class="import-result"></div>
       <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
       <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
-        <button id="btn-confirm-import" class="btn btn-success" onclick="submitImport()">確認匯入</button>
-        <button id="btn-cancel-import" class="btn" style="background:var(--gray-200);color:var(--gray-600)" onclick="cancelImport()">取消</button>
+        <button id="btn-confirm-import" class="btn btn-primary" onclick="submitImport()">確認匯入</button>
+        <button id="btn-cancel-import" class="btn btn-ghost" onclick="cancelImport()">取消</button>
       </div>
       <div id="preview-info" style="font-size:.875rem;color:var(--gray-600);font-weight:500;margin-bottom:.5rem"></div>
       <div class="table-wrap" id="preview-table" style="max-height:360px;overflow-y:auto"></div>
@@ -1293,7 +1459,7 @@
             ⚠️ 還原後原有資料將被覆蓋，此操作無法復原，請確認備份檔來源正確。
           </div>
           <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFileSelected(this.files[0])">
-          <button class="btn" style="background:var(--gray-100);color:var(--gray-700)"
+          <button class="btn btn-ghost"
                   onclick="document.getElementById('restore-file').click()">選擇備份檔</button>
           <div id="restore-msg" style="display:none;margin-top:.75rem;font-size:.82rem"></div>
         </div>
@@ -1304,66 +1470,67 @@
     <!-- 密碼設定 -->
     <div id="settings-section-password" class="settings-section">
 
-      <!-- 說明區塊 -->
-      <div class="card" style="margin-bottom:1rem">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">密碼設定注意事項</div>
+      <!-- 左右兩欄配置 -->
+      <div style="display:flex;gap:1.25rem;align-items:flex-start;flex-wrap:wrap">
+
+        <!-- 左欄：網站登入密碼 -->
+        <div style="flex:1;min-width:280px">
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">網站登入密碼</h3>
+          <div class="card" style="margin-bottom:.75rem">
             <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
               🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
-              🔑&ensp;<strong>新密碼規則</strong>：新密碼至少需8碼，且須包含英文字母與數字<br>
+              🔑&ensp;<strong>新密碼規則</strong>：至少 8 碼，且須包含英文字母與數字<br>
               ⚠️&ensp;<strong>變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 表單卡片 -->
-      <div class="card" style="max-width:440px;padding:0;overflow:hidden">
-        <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
-        <div style="padding:1.5rem">
-          <div class="form-group">
-            <label for="pwd-current">目前密碼</label>
-            <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
-          </div>
-          <div class="form-group">
-            <label for="pwd-new">新密碼</label>
-            <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
-          </div>
-          <div class="form-group">
-            <label for="pwd-confirm">確認新密碼</label>
-            <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-          </div>
-          <div class="settings-msg" id="settings-msg"></div>
-          <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
-        </div>
-      </div>
-
-      <!-- 對帳單檢視密碼 -->
-      <div style="margin-top:1.5rem">
-        <h3 style="margin-bottom:.85rem">對帳單檢視密碼</h3>
-        <div class="card" style="margin-bottom:.65rem">
-          <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-            🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
-            🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
-            ⚠️&ensp;可直接重設，無需輸入舊密碼
-          </div>
-        </div>
-        <div class="card" style="max-width:440px;padding:0;overflow:hidden">
-          <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
-          <div style="padding:1.5rem">
-            <div class="form-group">
-              <label for="pwd-stmt-new">新的對帳單密碼</label>
-              <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
+            <div style="padding:1.5rem">
+              <div class="form-group">
+                <label for="pwd-current">目前密碼</label>
+                <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+              </div>
+              <div class="form-group">
+                <label for="pwd-new">新密碼</label>
+                <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
+              </div>
+              <div class="form-group">
+                <label for="pwd-confirm">確認新密碼</label>
+                <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+              </div>
+              <div class="settings-msg" id="settings-msg"></div>
+              <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
             </div>
-            <div class="form-group">
-              <label for="pwd-stmt-confirm">確認新密碼</label>
-              <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-            </div>
-            <div class="settings-msg" id="pwd-stmt-msg"></div>
-            <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
           </div>
         </div>
+
+        <!-- 右欄：對帳單檢視密碼 -->
+        <div style="flex:1;min-width:280px">
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">對帳單檢視密碼</h3>
+          <div class="card" style="margin-bottom:.75rem">
+            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
+              🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
+              🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
+              ⚠️&ensp;可直接重設，無需輸入舊密碼
+            </div>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
+            <div style="padding:1.5rem">
+              <div class="form-group">
+                <label for="pwd-stmt-new">新的對帳單密碼</label>
+                <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+              </div>
+              <div class="form-group">
+                <label for="pwd-stmt-confirm">確認新密碼</label>
+                <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+              </div>
+              <div class="settings-msg" id="pwd-stmt-msg"></div>
+              <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1569,7 +1736,7 @@
         <input type="text" id="stmt-link-shihong" readonly
                style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
                onclick="this.select()">
-        <button class="btn btn-sm" style="background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;white-space:nowrap;position:relative"
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
                 onclick="copyStmtLink('shihong')">
           複製
           <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
@@ -1585,7 +1752,7 @@
         <input type="text" id="stmt-link-huifeng" readonly
                style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
                onclick="this.select()">
-        <button class="btn btn-sm" style="background:#FEF2F2;color:#E53935;border:1px solid #FCA5A5;white-space:nowrap;position:relative"
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
                 onclick="copyStmtLink('huifeng')">
           複製
           <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
@@ -1593,7 +1760,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeStmtLinkModal()">關閉</button>
+      <button class="btn btn-ghost" onclick="closeStmtLinkModal()">關閉</button>
     </div>
   </div>
 </div>
@@ -1607,8 +1774,8 @@
       您選擇的帳單月份較舊，請確認是否正確
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="cancelOldMonth()">取消</button>
-      <button class="btn btn-warning" style="min-width:88px" onclick="confirmOldMonth()">確認</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="cancelOldMonth()">取消</button>
+      <button class="btn btn-secondary" style="min-width:88px" onclick="confirmOldMonth()">確認</button>
     </div>
   </div>
 </div>
@@ -1656,7 +1823,7 @@
     </div>
     <div id="add-tx-error" class="modal-error"></div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeAddTxModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeAddTxModal()">取消</button>
       <button class="btn btn-primary" onclick="submitAddTx()">新增</button>
     </div>
   </div>
@@ -1680,7 +1847,7 @@
       </select>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeRuleModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeRuleModal()">取消</button>
       <button class="btn btn-primary" onclick="submitRuleModal()">儲存</button>
     </div>
   </div>
@@ -1692,7 +1859,7 @@
     <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">確認刪除</p>
     <p id="rule-delete-msg" style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">確定刪除此規則？此操作無法復原</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeRuleDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeRuleDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmRuleDelete()">刪除</button>
     </div>
   </div>
@@ -1721,7 +1888,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeAddBankModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeAddBankModal()">取消</button>
       <button class="btn btn-primary" onclick="addBankSetting()">新增</button>
     </div>
   </div>
@@ -1747,7 +1914,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeEditBankModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeEditBankModal()">取消</button>
       <button class="btn btn-primary" onclick="submitEditBank()">儲存</button>
     </div>
   </div>
@@ -1761,7 +1928,7 @@
       確定刪除此筆資料？此操作無法復原
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeSingleDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeSingleDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmSingleDelete()">刪除</button>
     </div>
   </div>
@@ -1775,7 +1942,7 @@
       確定刪除 0 筆資料？此操作無法復原
     </p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeBatchDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeBatchDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmBatchDelete()">確定刪除</button>
     </div>
   </div>
@@ -1787,7 +1954,7 @@
     <p style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem">確認刪除</p>
     <p id="bank-delete-msg" style="font-size:.875rem;color:var(--gray-600);line-height:1.6;margin-bottom:1.5rem">確定刪除此銀行設定？此操作無法復原</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeBankDeleteModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeBankDeleteModal()">取消</button>
       <button class="btn btn-danger" style="min-width:88px" onclick="confirmBankDelete()">刪除</button>
     </div>
   </div>
@@ -1800,7 +1967,7 @@
     <p style="font-weight:700;font-size:1rem;text-align:center;margin-bottom:.5rem;color:#92400E">確認還原資料</p>
     <p id="restore-confirm-msg" style="font-size:.875rem;color:var(--gray-600);text-align:center;line-height:1.6;margin-bottom:1.5rem">—</p>
     <div class="modal-footer" style="justify-content:center">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600);min-width:88px" onclick="closeRestoreModal()">取消</button>
+      <button class="btn btn-ghost" style="min-width:88px" onclick="closeRestoreModal()">取消</button>
       <button class="btn btn-danger" id="btn-restore-confirm" style="min-width:88px" onclick="confirmRestore()">確認還原</button>
     </div>
   </div>
@@ -1819,7 +1986,7 @@
       </select>
     </div>
     <div class="modal-footer">
-      <button class="btn" style="background:var(--gray-100);color:var(--gray-600)" onclick="closeBatchAttrModal()">取消</button>
+      <button class="btn btn-ghost" onclick="closeBatchAttrModal()">取消</button>
       <button class="btn btn-primary" onclick="submitBatchAttr()">確認修改</button>
     </div>
   </div>
@@ -1858,6 +2025,32 @@ let _txInlineFilters    = { bank: '', detail: '', attr: '', billingMonth: '' };
 let _txSort             = { col: null, dir: 'asc' };
 let _pendingSingleDeleteRow = null;
 
+// ── Progress bar ────────────────────────────────────────────────
+let _npTimer = null;
+function _npStart() {
+  const bar = document.getElementById('nprogress-bar');
+  if (!bar) return;
+  clearTimeout(_npTimer);
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  bar.style.opacity = '1';
+  requestAnimationFrame(() => {
+    bar.style.transition = 'width 8s cubic-bezier(0.1, 0.05, 0, 1)';
+    bar.style.width = '85%';
+  });
+}
+function _npDone() {
+  const bar = document.getElementById('nprogress-bar');
+  if (!bar) return;
+  bar.style.transition = 'width .15s ease';
+  bar.style.width = '100%';
+  _npTimer = setTimeout(() => {
+    bar.style.transition = 'opacity .4s ease';
+    bar.style.opacity = '0';
+    setTimeout(() => { bar.style.width = '0%'; }, 420);
+  }, 150);
+}
+
 // ── API ─────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
   const url = new URL(GAS_URL);
@@ -1867,10 +2060,15 @@ async function api(action, params = {}, body = null) {
   const opts = body
     ? { method: 'POST', body: JSON.stringify({ action, apiKey: API_KEY, ...body }) }
     : { method: 'GET' };
-  const res  = await fetch(url.toString(), opts);
-  const json = await res.json();
-  if (json.error) throw new Error(json.error);
-  return json;
+  _npStart();
+  try {
+    const res  = await fetch(url.toString(), opts);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json;
+  } finally {
+    _npDone();
+  }
 }
 
 // ── Toast ────────────────────────────────────────────────────────
@@ -1905,6 +2103,9 @@ async function doLogin() {
     errEl.textContent = '請輸入帳號與密碼'; errEl.style.display = 'block'; return;
   }
   btn.disabled = true; btn.textContent = '驗證中…';
+  const loginModal = document.getElementById('login-modal');
+  loginModal.classList.add('show');
+  let loginError = null;
   try {
     const result = await api('login', {}, { username, password });
     if (result.success) {
@@ -1926,13 +2127,19 @@ async function doLogin() {
         loadDashboard();
       }
     } else {
-      errEl.textContent = '帳號或密碼錯誤，請重新輸入'; errEl.style.display = 'block';
+      loginError = '帳號或密碼錯誤，請重新輸入';
+    }
+  } catch(e) {
+    loginError = '連線失敗，請稍後再試';
+  } finally {
+    loginModal.classList.remove('show');
+    btn.disabled = false; btn.textContent = '登入';
+    if (loginError) {
+      errEl.textContent = loginError; errEl.style.display = 'block';
       document.getElementById('login-password').value = '';
       document.getElementById('login-password').focus();
     }
-  } catch(e) {
-    errEl.textContent = '連線失敗，請稍後再試'; errEl.style.display = 'block';
-  } finally { btn.disabled = false; btn.textContent = '登入'; }
+  }
 }
 
 function doLogout() {
@@ -2174,109 +2381,128 @@ async function loadDashboard() {
 }
 
 function renderBankImportCards(importedBanks, notImportedBanks) {
-  const container = document.getElementById('bank-import-cards');
-  if (!container) return;
-
-  const importedSet = new Set(importedBanks);
-  const banks = _bankSettings.length ? _bankSettings
-    : [...importedBanks, ...notImportedBanks].map(b => ({ bank: b }));
-
-  if (!banks.length) {
-    container.innerHTML = '<div style="color:var(--gray-400);font-size:.875rem;padding:.5rem">無銀行資料</div>';
-    return;
-  }
-
-  const today  = new Date();
-  const month  = document.getElementById('dash-month-select').value;
-  const [yr, mo] = month
-    ? month.split('/').map(Number)
-    : [today.getFullYear(), today.getMonth() + 1];
-
-  const checkSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>`;
-  const clockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>`;
-  const alertSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-linecap="round" stroke-width="3"/></svg>`;
-
-  container.innerHTML = banks.map(b => {
-    const bankName = b.bank || b;
-    const imported = importedSet.has(bankName);
-    let cls, icon, label;
-
-    if (imported) {
-      cls = 'ok'; icon = checkSvg; label = '已匯入';
-    } else if (b.cutoffDay) {
-      const closing  = new Date(yr, mo - 1, b.cutoffDay);
-      const daysDiff = Math.floor((today - closing) / 86400000);
-      if (daysDiff <= 0)      { cls = 'neutral'; icon = clockSvg; label = '待匯入'; }
-      else if (daysDiff <= 3) { cls = 'warn';    icon = clockSvg; label = '尚未匯入'; }
-      else                    { cls = 'urgent';  icon = alertSvg; label = '盡速匯入'; }
-    } else {
-      cls = 'urgent'; icon = alertSvg; label = '尚未匯入';
-    }
-
-    return `<div class="bank-import-card">
-      <div class="bank-import-icon ${cls}">${icon}</div>
-      <div>
-        <div class="bank-import-name">${bankName}</div>
-        <div class="bank-import-status ${cls}">${label}</div>
-      </div>
-    </div>`;
-  }).join('');
+  const el = document.getElementById('bank-import-summary');
+  if (!el) return;
+  const total = (importedBanks.length || 0) + (notImportedBanks.length || 0);
+  el.textContent = `${importedBanks.length} / ${total} 已完成`;
 }
 
 async function loadKPI(month) {
   try {
     const d = await api('getKPI', { billingMonth: month });
 
-    // KPI 卡片
+    // KPI 卡片金額
     document.getElementById('kpi-shihong').textContent = fmt(d.shihong);
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
+    document.getElementById('kpi-total').textContent   = fmt(d.total);
 
-    // 帳單焦點總覽
-    document.getElementById('bill-total-display').textContent = fmt(d.total);
-    document.getElementById('bill-count').textContent = (d.transactionCount || 0) + ' 筆交易';
-    const unclEl = document.getElementById('bill-unclassified');
-    if (unclEl) unclEl.textContent = (d.unclassifiedCount || 0) + ' 筆待分類';
-
-    const diff   = (d.total || 0) - (d.totalLastMonth || 0);
-    const pct    = d.totalLastMonth ? ((diff / d.totalLastMonth) * 100).toFixed(1) : null;
-    const diffEl = document.getElementById('bill-diff');
-    if (diffEl) {
-      if (pct !== null) {
-        const sign  = diff >= 0 ? '▲' : '▼';
-        const color = diff >= 0 ? '#E53935' : '#1B9A40';
-        const absFmt = '$ ' + Math.abs(diff).toLocaleString('zh-TW');
-        diffEl.innerHTML = `<span style="color:${color}">${sign} ${diff >= 0 ? '+' : ''}${absFmt}（${Math.abs(pct)}%）</span>`;
-      } else {
-        diffEl.innerHTML = '<span style="color:#718096;font-weight:500">暫無上期資料</span>';
+    // KPI 詳細欄位（逐人較上期）
+    const countText = (d.transactionCount || 0) + ' 筆';
+    const maxAmt = d.maxSingleAmount != null ? d.maxSingleAmount : (d.maxAmount != null ? d.maxAmount : null);
+    const maxText = maxAmt != null ? fmt(maxAmt) : '-';
+    [['sh', d.shihong, d.shihongLastMonth],
+     ['hf', d.huifeng, d.huifengLastMonth],
+     ['cm', d.common,  d.commonLastMonth],
+     ['total', d.total, d.totalLastMonth]
+    ].forEach(([k, curr, last]) => {
+      const dl = document.getElementById(`kpi-${k}-delta`);
+      const ct = document.getElementById(`kpi-${k}-count`);
+      const mx = document.getElementById(`kpi-${k}-max`);
+      if (dl) {
+        if (last) {
+          const diff = (curr || 0) - last;
+          const pct  = ((diff / last) * 100).toFixed(1);
+          dl.textContent = `${diff >= 0 ? '▲' : '▼'} ${Math.abs(pct)}%`;
+          dl.className = diff > 0 ? 'kpi-detail-value cmp-num-up'
+                       : diff < 0 ? 'kpi-detail-value cmp-num-down'
+                       : 'kpi-detail-value cmp-num-neutral';
+        } else { dl.textContent = '-'; dl.className = 'kpi-detail-value'; }
       }
-    }
+      if (ct) ct.textContent = countText;
+      if (mx) mx.textContent = maxText;
+    });
+
+    // 對比卡片
+    const setCell = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setDiffCell = (id, curr, last) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
+      if (!last) { el.textContent = '-'; return; }
+      const d2 = (curr || 0) - last;
+      el.textContent = (d2 >= 0 ? '+' : '') + d2.toLocaleString('zh-TW');
+      el.classList.add(d2 > 0 ? 'cmp-num-up' : d2 < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
+    };
+    const setPctCell = (id, curr, last) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
+      if (!last) { el.textContent = '-'; return; }
+      const p = (((curr || 0) - last) / last * 100).toFixed(1);
+      el.textContent = (p > 0 ? '+' : '') + p + '%';
+      el.classList.add(p > 0 ? 'cmp-num-up' : p < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
+    };
+
+    setCell('cmp-sh-curr',    fmt(d.shihong));
+    setCell('cmp-hf-curr',    fmt(d.huifeng));
+    setCell('cmp-cm-curr',    fmt(d.common));
+    setCell('cmp-total-curr', fmt(d.total));
+
+    setCell('cmp-sh-last',    '上期：' + (d.shihongLastMonth ? fmt(d.shihongLastMonth) : '-'));
+    setCell('cmp-hf-last',    '上期：' + (d.huifengLastMonth ? fmt(d.huifengLastMonth) : '-'));
+    setCell('cmp-cm-last',    '上期：' + (d.commonLastMonth  ? fmt(d.commonLastMonth)  : '-'));
+    setCell('cmp-total-last', '上期：' + (d.totalLastMonth   ? fmt(d.totalLastMonth)   : '-'));
+
+    setDiffCell('cmp-sh-diff',    d.shihong, d.shihongLastMonth);
+    setDiffCell('cmp-hf-diff',    d.huifeng, d.huifengLastMonth);
+    setDiffCell('cmp-cm-diff',    d.common,  d.commonLastMonth);
+    setDiffCell('cmp-total-diff', d.total,   d.totalLastMonth);
+
+    setPctCell('cmp-sh-pct',    d.shihong, d.shihongLastMonth);
+    setPctCell('cmp-hf-pct',    d.huifeng, d.huifengLastMonth);
+    setPctCell('cmp-cm-pct',    d.common,  d.commonLastMonth);
+    setPctCell('cmp-total-pct', d.total,   d.totalLastMonth);
 
     // 支付工具統計
     const pt = d.paymentTools || {};
-    [['pt-linepay', pt.linepay], ['pt-icashpay', pt.icashpay],
-     ['pt-easycard', pt.easycard], ['pt-easywallet', pt.easywallet],
-     ['pt-carmoji', pt.carmoji], ['pt-creditcard', pt.creditcard]
-    ].forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = val != null ? val + ' 筆' : '-';
+    [['creditcard','信用卡'],['linepay','LINE Pay'],['easycard','悠遊卡'],
+     ['easywallet','悠遊付'],['carmoji','車麻吉'],['icashpay','iCASH Pay']
+    ].forEach(([key]) => {
+      const tool = pt[key];
+      const c = document.getElementById(`pt-${key}`);
+      if (c) c.textContent = tool != null ? tool.count + ' 筆' : '-';
+      const a = document.getElementById(`pt-amt-${key}`);
+      if (a) a.textContent = tool != null ? '$' + tool.amount.toLocaleString() : '-';
     });
 
-    // 消費行為統計
+    // 消費行為參考
     _topBankByAmount = d.topBankByAmount || '';
     _topBankByCount  = d.topBankByCount  || '';
-    const bsMax = document.getElementById('bs-max-amount');
-    const bsAmt = document.getElementById('bs-top-bank-amount');
-    const bsCnt = document.getElementById('bs-top-bank-count');
-    const maxAmt = d.maxSingleAmount != null ? d.maxSingleAmount : (d.maxAmount != null ? d.maxAmount : null);
-    if (bsMax) bsMax.textContent = maxAmt != null ? fmt(maxAmt) : '-';
+    const bsAmt  = document.getElementById('bs-top-bank-amount');
+    const bsCnt  = document.getElementById('bs-top-bank-count');
+    const bsRate = document.getElementById('bs-classify-rate');
+    const bsDay  = document.getElementById('bs-daily-avg');
     if (bsAmt) bsAmt.textContent = _topBankByAmount || '-';
     if (bsCnt) bsCnt.textContent = _topBankByCount  || '-';
-
     const topAmtItem = document.getElementById('bs-top-bank-amount-item');
     const topCntItem = document.getElementById('bs-top-bank-count-item');
     if (topAmtItem) topAmtItem.onclick = () => goToTopBankAmount(_topBankByAmount);
     if (topCntItem) topCntItem.onclick = () => goToTopBankCount(_topBankByCount);
+    if (bsDay) {
+      const selMonth = document.getElementById('dash-month-select').value;
+      if (selMonth && d.total) {
+        const [y, m] = selMonth.split('/').map(Number);
+        const days = new Date(y, m, 0).getDate();
+        bsDay.textContent = fmt(Math.round(d.total / days)) + ' / 日';
+      } else { bsDay.textContent = '-'; }
+    }
+    if (bsRate && d.transactionCount > 0) {
+      const classified = d.transactionCount - (d.unclassifiedCount || 0);
+      const rate = ((classified / d.transactionCount) * 100).toFixed(1);
+      bsRate.textContent = rate + '%（' + classified + ' / ' + d.transactionCount + '）';
+      bsRate.style.color = '#22C55E';
+    } else if (bsRate) { bsRate.textContent = '-'; }
 
     // 帳單匯入進度
     renderBankImportCards(d.importedBanks || [], d.notImportedBanks || []);
@@ -2422,9 +2648,9 @@ function buildTxTable(rows, banks, months, attrs) {
     <td>${r.bank}</td>
     <td>${r.date}</td>
     <td>${r.detail}</td>
-    <td style="text-align:right;font-weight:600">${Number(r.amount).toLocaleString()}</td>
+    <td class="td-amount">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
-    <td style="text-align:center"><button class="btn btn-danger btn-sm" style="min-width:60px;white-space:nowrap" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
+    <td style="text-align:center"><button class="btn btn-outline-delete btn-sm" style="min-width:60px;white-space:nowrap" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
   </tr>`).join('');
 
   return `<table>${header}<tbody>${body}</tbody></table>`;
@@ -2692,7 +2918,7 @@ function showPreview(rows) {
   </tr></thead>`;
   const body = rows.map(r => `<tr>
     <td>${r.postingDate}</td><td>${r.date}</td><td>${r.bank}</td><td>${r.detail}</td>
-    <td style="text-align:right">${r.amount.toLocaleString()}</td>
+    <td class="td-amount">${r.amount.toLocaleString()}</td>
   </tr>`).join('');
   document.getElementById('preview-table').innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
   document.getElementById('preview-section').style.display = 'block';
@@ -2764,11 +2990,11 @@ async function loadRules() {
     </tr></thead>`;
     const body   = data.rules.map((r, i) => `<tr class="rule-row" data-row="${r.rowIndex}">
       <td style="color:var(--gray-400);font-size:.8rem;text-align:center">${i+1}</td>
-      <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px">${r.keyword}</code></td>
+      <td><span class="kw-tag">${r.keyword}<span class="kw-tag-x" onclick="event.stopPropagation();openRuleDeleteModal(${r.rowIndex})">×</span></span></td>
       <td style="white-space:nowrap">${attrBadge(r.attribution)}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-primary btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
-        <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">刪除</button>
+        <button class="btn btn-outline-edit btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
+        <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">刪除</button>
       </td>
     </tr>`).join('');
     wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
@@ -2961,8 +3187,8 @@ async function loadBankSettingsTable() {
     <td>${b.cutoffDay} 日</td>
     <td><code style="background:var(--gray-100);padding:.1rem .35rem;border-radius:4px">${b.bankCode || '—'}</code></td>
     <td style="white-space:nowrap">
-      <button class="btn btn-primary btn-sm" onclick="openEditBankModal(${b.rowIndex})">編輯</button>
-      <button class="btn btn-danger btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})">刪除</button>
+      <button class="btn btn-outline-edit btn-sm" onclick="openEditBankModal(${b.rowIndex})">編輯</button>
+      <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="deleteBankSetting(${b.rowIndex})">刪除</button>
     </td>
   </tr>`).join('');
   wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
@@ -3414,7 +3640,7 @@ function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, acce
     <td>${r.date}</td>
     <td>${r.bank}</td>
     <td>${r.detail}</td>
-    <td style="text-align:right;font-weight:600">${Number(parseFloat(r.amount) || 0).toLocaleString()}</td>
+    <td class="td-amount">${Number(parseFloat(r.amount) || 0).toLocaleString()}</td>
   </tr>`).join('');
 
   let footHtml = `<tr>
