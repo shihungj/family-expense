@@ -2792,7 +2792,7 @@ function buildTxTable(rows, banks, months, attrs) {
         <th><input type="text" class="tx-filter-input" placeholder="關鍵字" value="${_txInlineFilters.detail.replace(/"/g,'&quot;')}" oninput="updateTxFilter('detail',this.value)"></th>
         <th></th>
         <th><select class="tx-filter-select" onchange="updateTxFilter('attr',this.value)">${selOpts(attrs,_txInlineFilters.attr)}</select></th>
-        <th></th>
+        <th style="text-align:right"><button class="btn btn-primary btn-sm" onclick="openAddTxModal()">新增交易</button></th>
       </tr>
       <tr>
         <th style="width:30px;text-align:center">
@@ -2805,12 +2805,12 @@ function buildTxTable(rows, banks, months, attrs) {
         <th>消費明細</th>
         <th class="th-sort" style="text-align:right" onclick="setTxSort('amount')">金額${sortIcon('amount')}</th>
         <th>歸屬</th>
-        <th style="text-align:center"><button class="btn btn-primary btn-sm" onclick="openAddTxModal()">＋ 新增交易</button></th>
+        <th></th>
       </tr>
     </thead>`;
 
   const body = !rows.length
-    ? `<tr><td colspan="9" style="text-align:center;color:var(--gray-400);padding:2rem 0;font-size:.875rem">無資料</td></tr>`
+    ? `<tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:2rem 0;font-size:.875rem">無資料</td></tr>`
     : rows.map((r, i) => `<tr data-row-index="${r.rowIndex}">
     <td style="text-align:center"><input type="checkbox" class="tx-check" value="${r.rowIndex}" onchange="onTxCheckChange()"></td>
     <td style="text-align:center;color:var(--gray-400);font-size:.8rem">${i + 1}</td>
@@ -2820,7 +2820,7 @@ function buildTxTable(rows, banks, months, attrs) {
     <td>${r.detail}</td>
     <td class="td-amount">${Number(r.amount).toLocaleString()}</td>
     <td>${attrSelect(r.rowIndex, r.attribution, 'saveAttr')}</td>
-    <td style="text-align:center"><button class="btn btn-outline-delete btn-sm" style="min-width:60px;white-space:nowrap" onclick="openSingleDeleteModal(${r.rowIndex})">刪除</button></td>
+    <td></td>
   </tr>`).join('');
 
   return `<table>${header}<tbody>${body}</tbody></table>`;
