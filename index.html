@@ -3206,12 +3206,23 @@ async function loadRecentImports() {
       </table>`;
       return;
     }
+    const fmtImportedAt = v => {
+      if (!v) return '—';
+      if (/^\d{4}\/\d{2}\/\d{2}/.test(v)) return v;
+      const d = new Date(v);
+      if (isNaN(d)) return v;
+      return d.getFullYear() + '/' +
+        String(d.getMonth()+1).padStart(2,'0') + '/' +
+        String(d.getDate()).padStart(2,'0') + ' ' +
+        String(d.getHours()).padStart(2,'0') + ':' +
+        String(d.getMinutes()).padStart(2,'0');
+    };
     const rows = d.records.map((r, i) => `<tr>
       <td style="color:#9B9287;font-size:.8rem">${i + 1}</td>
       <td>${r.bankName}</td>
       <td>${r.billingMonth}</td>
       <td class="num">${r.count}</td>
-      <td class="num">${r.importedAt || '—'}</td>
+      <td class="num">${fmtImportedAt(r.importedAt)}</td>
     </tr>`).join('');
     el.innerHTML = `<table class="imp-recent-table">
       <thead><tr>
