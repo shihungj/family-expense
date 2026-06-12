@@ -643,6 +643,19 @@
   .stmt-pwd-err { background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; border-radius:8px; padding:.45rem .65rem; font-size:.82rem; margin-top:.4rem; margin-bottom:.25rem; }
   .stmt-pwd-link-btn { background:none; border:none; color:var(--primary); font-size:.82rem; cursor:pointer; text-decoration:underline; padding:0; margin-top:.85rem; }
   .stmt-pwd-link-btn:hover { color:#1558b0; }
+
+  /* ── Top progress bar ── */
+  #nprogress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 3px;
+    background: #3B5BDB;
+    z-index: 9999;
+    opacity: 0;
+    transition: width .25s ease, opacity .4s ease;
+    pointer-events: none;
+  }
 </style>
 
 <style>
@@ -702,6 +715,8 @@
 </style>
 </head>
 <body>
+
+<div id="nprogress-bar"></div>
 
 <!-- ─────────────────── LOGIN PAGE ─────────────────────────── -->
 <div id="login-page">
@@ -1870,6 +1885,32 @@ let _txInlineFilters    = { bank: '', detail: '', attr: '', billingMonth: '' };
 let _txSort             = { col: null, dir: 'asc' };
 let _pendingSingleDeleteRow = null;
 
+// ── Progress bar ────────────────────────────────────────────────
+let _npTimer = null;
+function _npStart() {
+  const bar = document.getElementById('nprogress-bar');
+  if (!bar) return;
+  clearTimeout(_npTimer);
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  bar.style.opacity = '1';
+  requestAnimationFrame(() => {
+    bar.style.transition = 'width 8s cubic-bezier(0.1, 0.05, 0, 1)';
+    bar.style.width = '85%';
+  });
+}
+function _npDone() {
+  const bar = document.getElementById('nprogress-bar');
+  if (!bar) return;
+  bar.style.transition = 'width .15s ease';
+  bar.style.width = '100%';
+  _npTimer = setTimeout(() => {
+    bar.style.transition = 'opacity .4s ease';
+    bar.style.opacity = '0';
+    setTimeout(() => { bar.style.width = '0%'; }, 420);
+  }, 150);
+}
+
 // ── API ─────────────────────────────────────────────────────────
 async function api(action, params = {}, body = null) {
   const url = new URL(GAS_URL);
@@ -1879,10 +1920,15 @@ async function api(action, params = {}, body = null) {
   const opts = body
     ? { method: 'POST', body: JSON.stringify({ action, apiKey: API_KEY, ...body }) }
     : { method: 'GET' };
-  const res  = await fetch(url.toString(), opts);
-  const json = await res.json();
-  if (json.error) throw new Error(json.error);
-  return json;
+  _npStart();
+  try {
+    const res  = await fetch(url.toString(), opts);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json;
+  } finally {
+    _npDone();
+  }
 }
 
 // ── Toast ────────────────────────────────────────────────────────
