@@ -3851,7 +3851,7 @@ function renderStatementPanel(monthTx) {
     ? Math.max(...personalTx.map(r => parseFloat(r.amount) || 0)) : 0;
 
   const bankCounts = {};
-  monthTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
+  personalTx.forEach(r => { bankCounts[r.bank] = (bankCounts[r.bank] || 0) + 1; });
   const topBank = Object.entries(bankCounts).sort((a, b) => b[1] - a[1])[0];
 
   const splitLabel = `個人分攤 50%（${isShihong ? '無條件進位' : '無條件捨去'}）`;
