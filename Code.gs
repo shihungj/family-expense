@@ -6,6 +6,7 @@ const SHEET_TRANSACTIONS    = 'Transactions';
 const SHEET_BANK_SETTINGS   = 'BankSettings';
 const SHEET_MERCHANT_RULES  = 'MerchantRules';
 const SHEET_SYSTEM_SETTINGS = 'SystemSettings';
+const SHEET_IMPORT_LOG      = 'ImportLog';
 
 const EXPECTED_API_KEY = 'family-expense-2026';
 
@@ -58,6 +59,7 @@ function handleRequest(e) {
       case 'getStatementData':          result = getStatementData(postData);          break;
       case 'verifyStatementPassword':   result = verifyStatementPassword(postData);   break;
       case 'saveStatementPassword':     result = saveStatementPassword(postData);     break;
+      case 'getRecentImports':   result = getRecentImports();           break;
       case 'getSystemInfo':      result = getSystemInfo();              break;
       case 'backupData':         result = backupData();                 break;
       case 'restoreData':        result = restoreData(postData);        break;
@@ -123,6 +125,9 @@ function initSheet(sheet, name) {
       ['其他',              '未分類'],
     ];
     defaults.forEach(r => sheet.appendRow(r));
+
+  } else if (name === SHEET_IMPORT_LOG) {
+    sheet.appendRow(['批次編號', '銀行名稱', '帳單月份', '筆數', '匯入時間']);
 
   } else if (name === SHEET_SYSTEM_SETTINGS) {
     sheet.appendRow(['key', 'value']);
@@ -256,9 +261,15 @@ function addTransactions(data) {
     }
   }
 
+  // Compute per-batchId stats for import log
+  const batchStats = {};
   const rowsData = items.map(item => {
     const attribution = classifyMerchant(String(item.detail));
     const batchId     = getBatchId(String(item.bank), billingMonth, bankCodeMap);
+    if (!batchStats[batchId]) {
+      batchStats[batchId] = { bankName: String(item.bank), count: 0 };
+    }
+    batchStats[batchId].count += 1;
     return [
       String(item.postingDate), String(item.date), String(item.bank),
       String(item.detail), parseAmount(item.amount),
@@ -273,7 +284,27 @@ function addTransactions(data) {
   sheet.getRange(firstNewRow, 7, numRows, 1).setNumberFormat('@'); // 帳單月份
   sheet.getRange(firstNewRow, 1, numRows, 8).setValues(rowsData);
 
+  // Write one ImportLog entry per batchId
+  for (const batchId in batchStats) {
+    const { bankName, count } = batchStats[batchId];
+    writeImportLog(batchId, bankName, billingMonth, count);
+  }
+
   return { success: true, added: numRows };
+}
+
+// Write one row to ImportLog (newest first)
+function writeImportLog(batchId, bankName, billingMonth, count) {
+  const sheet = getSheet(SHEET_IMPORT_LOG);
+  const now   = new Date();
+  const importedAt =
+    now.getFullYear() + '/' +
+    String(now.getMonth() + 1).padStart(2, '0') + '/' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0');
+  sheet.insertRowBefore(2);
+  sheet.getRange(2, 1, 1, 5).setValues([[batchId, bankName, billingMonth, count, importedAt]]);
 }
 
 // [Bug2] 手動單筆新增
@@ -670,6 +701,26 @@ function restoreData(payload) {
   });
 
   return { success: true };
+}
+
+// ── Recent Imports ────────────────────────────────────────────
+// Reads from ImportLog sheet (newest first); returns top 5 with importedAt.
+function getRecentImports() {
+  const sheet = getSheet(SHEET_IMPORT_LOG);
+  const data  = sheet.getDataRange().getValues();
+
+  const records = [];
+  for (let i = 1; i < data.length && records.length < 5; i++) {
+    const batchId      = String(data[i][0] || '').trim();
+    const bankName     = String(data[i][1] || '').trim();
+    const billingMonth = String(data[i][2] || '').trim();
+    const count        = parseInt(data[i][3]) || 0;
+    const importedAt   = String(data[i][4] || '').trim();
+    if (!batchId) continue;
+    records.push({ batchId, bankName, billingMonth, count, importedAt });
+  }
+
+  return { records };
 }
 
 // ── Statement Data ────────────────────────────────────────────

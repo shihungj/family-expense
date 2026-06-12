@@ -3929,12 +3929,12 @@ function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, acce
 
   let footHtml = `<tr>
     <td colspan="3" style="text-align:right;color:#9CA3AF;font-weight:500">${sub1Label}</td>
-    <td style="text-align:right;color:${accentHex};font-weight:700">${fmt(sub1Amt)}</td>
+    <td style="text-align:right;color:#1F2937;font-weight:600">${fmt(sub1Amt)}</td>
   </tr>`;
   if (sub2Label) {
     footHtml += `<tr class="stmt-split-row">
       <td colspan="3" style="text-align:right">${sub2Label}</td>
-      <td style="text-align:right;font-size:1rem;color:${accentHex}">${fmt(sub2Amt)}</td>
+      <td style="text-align:right;font-size:1rem;color:#FF8A3D;font-weight:600">${fmt(sub2Amt)}</td>
     </tr>`;
   }
 
