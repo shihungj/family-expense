@@ -375,8 +375,8 @@
 
   /* ── Rule table ── */
   .rule-row td { vertical-align: middle; }
-  #rules-table td, #rules-table th { border-right: 1px solid #E9E2DB; }
-  #rules-table td:last-child, #rules-table th:last-child { border-right: none; }
+  #rules-table td { border-right: 1px solid #E9E2DB; }
+  #rules-table td:last-child { border-right: none; }
   .rules-table-outer { overflow-y: auto; max-height: 480px; border-radius: 12px; border: 1px solid #E9E2DB; overflow: hidden; background: #fff; }
   .rules-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
   .rules-table-outer thead th { background: #FAF7F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #E9E2DB; position: sticky; top: 0; z-index: 10; }
@@ -654,8 +654,8 @@
     font-size: 14px;
     color: #2D2A26;
   }
-  .tx-table-outer th { border-right: 1px solid #F1E7DA; }
-  .tx-table-outer td:last-child, .tx-table-outer th:last-child { border-right: none; }
+  .tx-table-outer th { border-right: none; }
+  .tx-table-outer td:last-child { border-right: none; }
   .tx-table-outer tbody tr:last-child td { border-bottom: none; }
   .tx-table-outer tbody tr:hover:not(.row-selected) { background: #FFF6EC; }
   .tx-table-outer tbody tr.row-selected { background: var(--row-selected); }
@@ -2812,7 +2812,7 @@ function buildTxTable(rows, banks, months, attrs) {
         </th>
         <th style="width:46px;text-align:center">項次</th>
         <th class="th-sort" style="width:90px" onclick="setTxSort('billingMonth')">帳單月份${sortIcon('billingMonth')}</th>
-        <th class="th-sort" style="width:80px" onclick="setTxSort('bank')">銀行${sortIcon('bank')}</th>
+        <th class="th-sort" style="width:110px;white-space:nowrap" onclick="setTxSort('bank')">銀行${sortIcon('bank')}</th>
         <th style="width:80px">消費日</th>
         <th>消費明細</th>
         <th class="th-sort" style="text-align:right;width:90px" onclick="setTxSort('amount')">金額${sortIcon('amount')}</th>
