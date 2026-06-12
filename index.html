@@ -1503,7 +1503,7 @@
             <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-unclass">尚未分類</span>消費明細包含關鍵字時，保留尚未分類狀態</div>
           </div>
         </div>
-        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddRuleModal()">＋ 新增規則</button>
+        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddRuleModal()">新增規則</button>
       </div>
     </div>
     <div class="card" style="padding:24px">
@@ -2288,7 +2288,10 @@ async function doLogin() {
   loginModal.classList.add('show');
   let loginError = null;
   try {
-    const result = await api('login', {}, { username, password });
+    const [result] = await Promise.all([
+      api('login', {}, { username, password }),
+      new Promise(r => setTimeout(r, 2000))
+    ]);
     if (result.success) {
       const wasPwdChanged = sessionStorage.getItem('pwdChanged');
       sessionStorage.setItem('authToken', btoa(username + ':' + Date.now()));
