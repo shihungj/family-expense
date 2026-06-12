@@ -1408,18 +1408,32 @@
   <div id="page-import" class="page">
     <h2>帳單匯入</h2>
 
-    <!-- 上方寬版卡片（35% : 65%） -->
+    <!-- 上方寬版卡片（45% : 55%） -->
     <div class="imp-card" style="margin-bottom:1.5rem;display:flex;align-items:stretch;padding:0;overflow:hidden;min-height:180px">
-      <!-- 左側：帳單月份 + 匯入按鈕 -->
-      <div style="flex:0 0 35%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;padding:1.5rem">
-        <div style="display:flex;align-items:center;gap:.65rem">
-          <label style="font-size:.875rem;font-weight:600;color:#1A202C;flex-shrink:0">帳單月份</label>
-          <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:120px"></select>
+      <!-- 左側：說明 + 帳單月份 + 匯入按鈕 + 注意事項 -->
+      <div style="flex:0 0 45%;display:flex;flex-direction:column;justify-content:center;gap:.85rem;padding:1.5rem 1.75rem">
+        <!-- 說明文字 -->
+        <div style="display:flex;align-items:flex-start;gap:.45rem">
+          <span style="font-size:14px;line-height:1.5">📅</span>
+          <span style="font-size:13px;color:#6B645E;line-height:1.5">請選擇帳單月份，再上傳對應的 CSV 檔案</span>
         </div>
-        <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
-                onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
-        <input type="file" id="csv-file" accept=".csv" style="display:none"
-               onchange="handleCSVFile(this.files[0])">
+        <!-- 帳單月份 + 匯入按鈕 -->
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.55rem">
+            <label style="font-size:.875rem;font-weight:600;color:#1A202C;flex-shrink:0">帳單月份</label>
+            <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:120px"></select>
+          </div>
+          <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
+                  onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+          <input type="file" id="csv-file" accept=".csv" style="display:none"
+                 onchange="handleCSVFile(this.files[0])">
+        </div>
+        <!-- 注意事項 -->
+        <div style="display:flex;flex-direction:column;gap:.3rem">
+          <div style="font-size:12px;color:#9B9287;display:flex;align-items:baseline;gap:.35rem"><span>⚠</span><span>重複匯入同一批次將被系統阻擋</span></div>
+          <div style="font-size:12px;color:#9B9287;display:flex;align-items:baseline;gap:.35rem"><span>⚠</span><span>帳單月份不可選擇當月</span></div>
+          <div style="font-size:12px;color:#9B9287;display:flex;align-items:baseline;gap:.35rem"><span>⚠</span><span>CSV 第一列為標題列，匯入時自動跳過</span></div>
+        </div>
       </div>
       <!-- 垂直分隔線 -->
       <div style="width:1px;flex-shrink:0;background:linear-gradient(to bottom,transparent 0%,#F1E7DA 18%,#F1E7DA 82%,transparent 100%)"></div>
