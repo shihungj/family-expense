@@ -2780,18 +2780,18 @@ function renderTxTable() {
 }
 
 function syncTxFilterBar(banks, months, attrs) {
-  function selOpts(arr, cur) {
-    return '<option value="">全部</option>' +
+  function selOpts(arr, cur, label) {
+    return `<option value="">${label}</option>` +
       arr.map(v => `<option value="${v}"${cur===v?' selected':''}>${v}</option>`).join('');
   }
   const bm = document.getElementById('txf-billingMonth');
   const bk = document.getElementById('txf-bank');
   const dt = document.getElementById('txf-detail');
   const at = document.getElementById('txf-attr');
-  if (bm) bm.innerHTML = selOpts(months, _txInlineFilters.billingMonth);
-  if (bk) bk.innerHTML = selOpts(banks, _txInlineFilters.bank);
+  if (bm) bm.innerHTML = selOpts(months, _txInlineFilters.billingMonth, '帳單月份');
+  if (bk) bk.innerHTML = selOpts(banks,  _txInlineFilters.bank,          '銀行');
   if (dt) dt.value = _txInlineFilters.detail;
-  if (at) at.innerHTML = selOpts(attrs, _txInlineFilters.attr);
+  if (at) at.innerHTML = selOpts(attrs,  _txInlineFilters.attr,          '歸屬分類');
 }
 
 function buildTxTable(rows, banks, months, attrs) {
