@@ -754,13 +754,16 @@
   .stmt-sub-cell-value { font-size:1.1rem; font-weight:800; }
   .stmt-sub-cell.sh { background:#FFF5EE; }
   .stmt-sub-cell.sh .stmt-sub-cell-label { color:#CC6F30; }
-  .stmt-sub-cell.sh .stmt-sub-cell-value { color:#FF8A3D; }
+  .stmt-sub-cell.sh .stmt-sub-cell-value { color:#1F2937; }
   .stmt-sub-cell.hf { background:#F3F0FF; }
   .stmt-sub-cell.hf .stmt-sub-cell-label { color:#7C5DC4; }
-  .stmt-sub-cell.hf .stmt-sub-cell-value { color:#A78BFA; }
+  .stmt-sub-cell.hf .stmt-sub-cell-value { color:#1F2937; }
   .stmt-sub-cell.gn { background:#E8F8EF; }
   .stmt-sub-cell.gn .stmt-sub-cell-label { color:#2E7D52; }
   .stmt-sub-cell.gn .stmt-sub-cell-value { color:#4CAF7D; }
+  .stmt-sub-cell.vi { background:#EEF0FF; }
+  .stmt-sub-cell.vi .stmt-sub-cell-label { color:#5048A0; }
+  .stmt-sub-cell.vi .stmt-sub-cell-value { color:#7C6CFF; }
   .stmt-stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
   .stmt-stat-card { background:#FFFFFF; border-radius:12px; border:1px solid #F1E7DA; box-shadow:0 2px 8px rgba(31,41,55,0.04); padding:1rem; text-align:center; }
   .stmt-stat-label { font-size:.75rem; color:var(--gray-400); margin-bottom:.3rem; font-weight:500; }
@@ -3876,7 +3879,7 @@ function renderStatementPanel(monthTx) {
           <div class="stmt-sub-cell-label">共同消費原始總額</div>
           <div class="stmt-sub-cell-value">${fmt(commonSum)}</div>
         </div>
-        <div class="stmt-sub-cell ${colorCls}">
+        <div class="stmt-sub-cell vi">
           <div class="stmt-sub-cell-label">${splitLabel}</div>
           <div class="stmt-sub-cell-value">${fmt(myShare)}</div>
         </div>
