@@ -2381,6 +2381,11 @@ function showPage(name) {
   const mnw = document.getElementById('month-nav-wrapper');
   if (mnw) mnw.style.display = name === 'dashboard' ? '' : 'none';
 
+  if (name !== 'statement') {
+    const mc = document.getElementById('main-content');
+    if (mc) mc.style.background = '';
+  }
+
   if (name === 'dashboard')    loadDashboard();
   if (name === 'transactions') loadTransactions();
   if (name === 'rules')        loadRules();
@@ -3838,6 +3843,8 @@ function renderStatementPanel(monthTx) {
   if (!content) return;
 
   const isShihong  = _stmtTab === 'shihong';
+  const mc = document.getElementById('main-content');
+  if (mc) mc.style.background = isShihong ? '#FFE4C8' : '#E5DEFF';
   const colorCls   = isShihong ? 'sh' : 'hf';
   const accentHex  = isShihong ? '#FF8A3D' : '#A78BFA';
   const name       = isShihong ? '世鴻' : '慧鳳';
