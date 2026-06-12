@@ -551,42 +551,26 @@ function deleteMerchantRule(data) {
 
 // ── System Info ───────────────────────────────────────────────
 function getSystemInfo() {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = getSheet(SHEET_SYSTEM_SETTINGS);
-
-  // frontendVersion: 直接讀取 D2 儲存格（C1=frontendVersion 標題，D2 為對應值）
-  const frontendVersion = String(sheet.getRange(2, 4).getValue() || '').trim();
-
-  // lastUpdated: 試用 getLastUpdated()，不支援時 fallback 現在時間
-  let lastUpdatedDate;
-  try {
-    lastUpdatedDate = ss.getLastUpdated();
-  } catch (e) {
-    lastUpdatedDate = new Date();
+  // Read SystemSettings as key-value map
+  const settingsSheet = getSheet(SHEET_SYSTEM_SETTINGS);
+  const settingsData  = settingsSheet.getDataRange().getValues();
+  const settingsMap   = {};
+  for (let i = 1; i < settingsData.length; i++) {
+    const k = String(settingsData[i][0] || '').trim();
+    const v = String(settingsData[i][1] || '').trim();
+    if (k) settingsMap[k] = v;
   }
-  const lu = lastUpdatedDate;
-  const lastUpdated =
-    lu.getFullYear() + '/' +
-    String(lu.getMonth() + 1).padStart(2, '0') + '/' +
-    String(lu.getDate()).padStart(2, '0') + ' ' +
-    String(lu.getHours()).padStart(2, '0') + ':' +
-    String(lu.getMinutes()).padStart(2, '0') + ':' +
-    String(lu.getSeconds()).padStart(2, '0');
 
-  const txSheet = getSheet(SHEET_TRANSACTIONS);
-  const txData  = txSheet.getDataRange().getValues();
-  const months  = new Set();
-  for (let i = 1; i < txData.length; i++) {
-    const m = String(txData[i][6] || '');
-    if (m) months.add(m);
-  }
+  const txSheet   = getSheet(SHEET_TRANSACTIONS);
+  const ruleSheet = getSheet(SHEET_MERCHANT_RULES);
+  const bankSheet = getSheet(SHEET_BANK_SETTINGS);
 
   return {
-    frontendVersion,
-    lastUpdated,
-    sheetName:        ss.getName(),
-    transactionCount: Math.max(0, txData.length - 1),
-    billingMonths:    months.size,
+    frontendVersion:  settingsMap['frontendVersion']  || '',
+    deployedAt:       settingsMap['deployedAt']        || '',
+    transactionCount: Math.max(0, txSheet.getLastRow()   - 1),
+    ruleCount:        Math.max(0, ruleSheet.getLastRow() - 1),
+    bankCount:        Math.max(0, bankSheet.getLastRow() - 1),
   };
 }
 

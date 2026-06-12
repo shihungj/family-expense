@@ -2850,17 +2850,13 @@ async function loadSystemInfo() {
   const ids = ['sysinfo-version','sysinfo-deployed-at','sysinfo-tx-count','sysinfo-rule-count','sysinfo-bank-count'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '…'; });
   try {
-    const [d, rules, banks] = await Promise.all([
-      api('getSystemInfo'),
-      api('getMerchantRules'),
-      api('getBankSettings'),
-    ]);
+    const d = await api('getSystemInfo');
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('sysinfo-version',     d.frontendVersion || '（未設定）');
-    set('sysinfo-deployed-at', d.lastUpdated      || '（未設定）');
+    set('sysinfo-deployed-at', d.deployedAt       || '（未設定）');
     set('sysinfo-tx-count',    Number(d.transactionCount ?? 0).toLocaleString('zh-TW'));
-    set('sysinfo-rule-count',  (rules.rules  || []).length);
-    set('sysinfo-bank-count',  (banks.banks  || []).length);
+    set('sysinfo-rule-count',  Number(d.ruleCount  ?? 0));
+    set('sysinfo-bank-count',  Number(d.bankCount  ?? 0));
   } catch(e) { toast('載入系統資訊失敗：' + e.message, 'error'); }
 }
 
