@@ -3213,9 +3213,7 @@ async function loadRecentImports() {
       if (isNaN(d)) return v;
       return d.getFullYear() + '/' +
         String(d.getMonth()+1).padStart(2,'0') + '/' +
-        String(d.getDate()).padStart(2,'0') + ' ' +
-        String(d.getHours()).padStart(2,'0') + ':' +
-        String(d.getMinutes()).padStart(2,'0');
+        String(d.getDate()).padStart(2,'0');
     };
     const rows = d.records.map((r, i) => `<tr>
       <td style="color:#9B9287;font-size:.8rem">${i + 1}</td>
