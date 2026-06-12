@@ -239,15 +239,20 @@
   .kpi-detail-label { font-size: .68rem; color: #718096; margin-bottom: .15rem; }
   .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #4A63C8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ── Comparison Table ── */
+  /* ── Comparison Cards ── */
   .cmp-section { margin-bottom: 1.25rem; }
-  .cmp-table-wrap { border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-  .cmp-table { width: 100%; border-collapse: collapse; background: #fff; font-size: .875rem; }
-  .cmp-table th, .cmp-table td { padding: .7rem 1rem; text-align: right; border: 1px solid #DAE0F6; }
-  .cmp-table th:first-child, .cmp-table td:first-child { text-align: left; font-weight: 600; color: var(--gray-700); white-space: nowrap; width: 5rem; }
-  .cmp-table thead tr { background: #F5F7FF; }
-  .cmp-table thead th { font-weight: 700; color: #4A63C8; }
-  .cmp-table .cmp-row-current td, .cmp-table .cmp-row-diff td { background: #FAFBFC; }
+  .cmp-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .cmp-card { background: #fff; border-radius: 12px; border: 0.5px solid #ECEFF5; padding: 1rem 1.25rem; }
+  .cmp-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .cmp-card-label { font-size: .875rem; font-weight: 600; color: #4A63C8; }
+  .cmp-card-label-dark { color: #2D3748 !important; }
+  .cmp-card-divider { height: 1px; background: #ECEFF5; margin: .625rem 0; }
+  .cmp-card-curr { font-size: 1.25rem; font-weight: 700; color: #1E3A8A; }
+  .cmp-card-curr-dark { color: #1A202C !important; }
+  .cmp-card-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: .25rem; }
+  .cmp-card-last { font-size: .75rem; color: #A0AEC0; }
+  .cmp-card-diff { font-size: .75rem; font-weight: 600; }
+  .cmp-card-pct  { font-size: .75rem; font-weight: 600; }
   .cmp-num-up   { color: #C53030; font-weight: 700; }
   .cmp-num-down { color: #276749; font-weight: 700; }
   .cmp-num-neutral { color: var(--gray-600); }
@@ -561,7 +566,7 @@
     .sidebar-header { justify-content: center; padding: .85rem .5rem; }
     .sidebar-item { justify-content: center; padding: .65rem; }
     .kpi-grid-new { grid-template-columns: 1fr; }
-    .cmp-table th, .cmp-table td { padding: .5rem .6rem; font-size: .8rem; }
+    .cmp-cards-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     .kpi-amt { font-size: 1.25rem; }
@@ -942,51 +947,66 @@
     <span id="kpi-total" style="display:none">-</span>
     <span id="bill-month-display" style="display:none">-</span>
 
-    <!-- 本期 vs 上期對比表格 -->
+    <!-- 本期 vs 上期對比卡片 -->
     <div class="cmp-section">
       <div class="section-title">本期 vs 上期對比</div>
-      <div class="cmp-table-wrap">
-        <table class="cmp-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>世鴻應付</th>
-              <th>慧鳳應付</th>
-              <th>共同支付</th>
-              <th>家庭總支出</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="cmp-row-current">
-              <td>本期</td>
-              <td id="cmp-sh-curr">-</td>
-              <td id="cmp-hf-curr">-</td>
-              <td id="cmp-cm-curr">-</td>
-              <td id="cmp-total-curr">-</td>
-            </tr>
-            <tr class="cmp-row-last">
-              <td>上期</td>
-              <td id="cmp-sh-last">-</td>
-              <td id="cmp-hf-last">-</td>
-              <td id="cmp-cm-last">-</td>
-              <td id="cmp-total-last">-</td>
-            </tr>
-            <tr class="cmp-row-diff">
-              <td>差異</td>
-              <td id="cmp-sh-diff">-</td>
-              <td id="cmp-hf-diff">-</td>
-              <td id="cmp-cm-diff">-</td>
-              <td id="cmp-total-diff">-</td>
-            </tr>
-            <tr class="cmp-row-pct">
-              <td>增減幅</td>
-              <td id="cmp-sh-pct">-</td>
-              <td id="cmp-hf-pct">-</td>
-              <td id="cmp-cm-pct">-</td>
-              <td id="cmp-total-pct">-</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="cmp-cards-grid">
+        <!-- 世鴻應付 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label">世鴻應付</span>
+            <span class="cmp-card-pct" id="cmp-sh-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" id="cmp-sh-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-sh-last">-</span>
+            <span class="cmp-card-diff" id="cmp-sh-diff">-</span>
+          </div>
+        </div>
+        <!-- 慧鳳應付 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label">慧鳳應付</span>
+            <span class="cmp-card-pct" id="cmp-hf-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" id="cmp-hf-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-hf-last">-</span>
+            <span class="cmp-card-diff" id="cmp-hf-diff">-</span>
+          </div>
+        </div>
+        <!-- 共同支付 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label">共同支付</span>
+            <span class="cmp-card-pct" id="cmp-cm-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr" id="cmp-cm-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-cm-last">-</span>
+            <span class="cmp-card-diff" id="cmp-cm-diff">-</span>
+          </div>
+        </div>
+        <!-- 家庭總支出 -->
+        <div class="cmp-card">
+          <div class="cmp-card-top">
+            <span class="cmp-card-label cmp-card-label-dark">家庭總支出</span>
+            <span class="cmp-card-pct" id="cmp-total-pct">-</span>
+          </div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-curr cmp-card-curr-dark" id="cmp-total-curr">-</div>
+          <div class="cmp-card-divider"></div>
+          <div class="cmp-card-meta">
+            <span class="cmp-card-last" id="cmp-total-last">-</span>
+            <span class="cmp-card-diff" id="cmp-total-diff">-</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2205,23 +2225,25 @@ async function loadKPI(month) {
       if (mx) mx.textContent = maxText;
     });
 
-    // 對比表格
+    // 對比卡片
     const setCell = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     const setDiffCell = (id, curr, last) => {
       const el = document.getElementById(id);
       if (!el) return;
-      if (!last) { el.textContent = '-'; el.className = ''; return; }
+      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
+      if (!last) { el.textContent = '-'; return; }
       const d2 = (curr || 0) - last;
       el.textContent = (d2 >= 0 ? '+' : '') + d2.toLocaleString('zh-TW');
-      el.className = d2 > 0 ? 'cmp-num-up' : d2 < 0 ? 'cmp-num-down' : 'cmp-num-neutral';
+      el.classList.add(d2 > 0 ? 'cmp-num-up' : d2 < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
     };
     const setPctCell = (id, curr, last) => {
       const el = document.getElementById(id);
       if (!el) return;
-      if (!last) { el.textContent = '-'; el.className = ''; return; }
+      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
+      if (!last) { el.textContent = '-'; return; }
       const p = (((curr || 0) - last) / last * 100).toFixed(1);
       el.textContent = (p > 0 ? '+' : '') + p + '%';
-      el.className = p > 0 ? 'cmp-num-up' : p < 0 ? 'cmp-num-down' : 'cmp-num-neutral';
+      el.classList.add(p > 0 ? 'cmp-num-up' : p < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
     };
 
     setCell('cmp-sh-curr',    fmt(d.shihong));
@@ -2229,10 +2251,10 @@ async function loadKPI(month) {
     setCell('cmp-cm-curr',    fmt(d.common));
     setCell('cmp-total-curr', fmt(d.total));
 
-    setCell('cmp-sh-last',    d.shihongLastMonth ? fmt(d.shihongLastMonth) : '-');
-    setCell('cmp-hf-last',    d.huifengLastMonth ? fmt(d.huifengLastMonth) : '-');
-    setCell('cmp-cm-last',    d.commonLastMonth  ? fmt(d.commonLastMonth)  : '-');
-    setCell('cmp-total-last', d.totalLastMonth   ? fmt(d.totalLastMonth)   : '-');
+    setCell('cmp-sh-last',    '上期：' + (d.shihongLastMonth ? fmt(d.shihongLastMonth) : '-'));
+    setCell('cmp-hf-last',    '上期：' + (d.huifengLastMonth ? fmt(d.huifengLastMonth) : '-'));
+    setCell('cmp-cm-last',    '上期：' + (d.commonLastMonth  ? fmt(d.commonLastMonth)  : '-'));
+    setCell('cmp-total-last', '上期：' + (d.totalLastMonth   ? fmt(d.totalLastMonth)   : '-'));
 
     setDiffCell('cmp-sh-diff',    d.shihong, d.shihongLastMonth);
     setDiffCell('cmp-hf-diff',    d.huifeng, d.huifengLastMonth);
