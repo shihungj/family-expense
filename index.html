@@ -3197,7 +3197,7 @@ async function loadRecentImports() {
       <td>${r.bankName}</td>
       <td>${r.billingMonth}</td>
       <td class="num">${r.count}</td>
-      <td class="num">—</td>
+      <td class="num">${r.importedAt || '—'}</td>
     </tr>`).join('');
     el.innerHTML = `<table class="imp-recent-table">
       <thead><tr>
