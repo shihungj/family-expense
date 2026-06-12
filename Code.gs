@@ -348,7 +348,14 @@ function getKPI(params) {
   const importedBankSet = new Set();
   const bankAmountMap   = {};  // bankName -> total amount
   const bankCountMap    = {};  // bankName -> transaction count
-  const paymentTools    = { linepay: 0, icashpay: 0, easycard: 0, easywallet: 0, carmoji: 0, creditcard: 0 };
+  const paymentTools    = {
+    linepay:    { count: 0, amount: 0 },
+    icashpay:   { count: 0, amount: 0 },
+    easycard:   { count: 0, amount: 0 },
+    easywallet: { count: 0, amount: 0 },
+    carmoji:    { count: 0, amount: 0 },
+    creditcard: { count: 0, amount: 0 }
+  };
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
@@ -387,12 +394,15 @@ function getKPI(params) {
 
     // Payment tool classification (case-insensitive)
     const detail = toHalfWidth(String(row[3] || '')).toLowerCase();
-    if      (detail.includes('連加') || detail.includes('連支'))            paymentTools.linepay    += 1;
-    else if (detail.includes('icash pay'))                                   paymentTools.icashpay   += 1;
-    else if (detail.includes('悠遊卡'))                                      paymentTools.easycard   += 1;
-    else if (detail.includes('悠遊付'))                                      paymentTools.easywallet += 1;
-    else if (detail.includes('中油條碼_autopass'))                           paymentTools.carmoji    += 1;
-    else                                                                     paymentTools.creditcard += 1;
+    let toolKey;
+    if      (detail.includes('連加') || detail.includes('連支')) toolKey = 'linepay';
+    else if (detail.includes('icash pay'))                        toolKey = 'icashpay';
+    else if (detail.includes('悠遊卡'))                           toolKey = 'easycard';
+    else if (detail.includes('悠遊付'))                           toolKey = 'easywallet';
+    else if (detail.includes('中油條碼_autopass'))                toolKey = 'carmoji';
+    else                                                          toolKey = 'creditcard';
+    paymentTools[toolKey].count  += 1;
+    paymentTools[toolKey].amount += amount;
   }
 
   // Build notImportedBanks from BankSettings
