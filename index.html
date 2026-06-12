@@ -882,9 +882,9 @@
 
     <!-- KPI Cards (3 cards) -->
     <div class="kpi-grid-new">
-      <!-- 世鴻應付 -->
+      <!-- 世鴻消費金額 -->
       <div class="kpi-card-new">
-        <div class="kpi-name">世鴻應付</div>
+        <div class="kpi-name">世鴻消費金額</div>
         <div class="kpi-amt" id="kpi-shihong">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -902,9 +902,9 @@
         </div>
       </div>
 
-      <!-- 慧鳳應付 -->
+      <!-- 慧鳳消費金額 -->
       <div class="kpi-card-new">
-        <div class="kpi-name">慧鳳應付</div>
+        <div class="kpi-name">慧鳳消費金額</div>
         <div class="kpi-amt" id="kpi-huifeng">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -922,9 +922,9 @@
         </div>
       </div>
 
-      <!-- 共同支付 -->
+      <!-- 共同支出金額 -->
       <div class="kpi-card-new">
-        <div class="kpi-name">共同支付</div>
+        <div class="kpi-name">共同支出金額</div>
         <div class="kpi-amt" id="kpi-common">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -951,10 +951,10 @@
     <div class="cmp-section">
       <div class="section-title">本期 vs 上期對比</div>
       <div class="cmp-cards-grid">
-        <!-- 世鴻應付 -->
+        <!-- 世鴻消費金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">世鴻應付</span>
+            <span class="cmp-card-label">世鴻消費金額</span>
             <span class="cmp-card-pct" id="cmp-sh-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
@@ -965,10 +965,10 @@
             <span class="cmp-card-diff" id="cmp-sh-diff">-</span>
           </div>
         </div>
-        <!-- 慧鳳應付 -->
+        <!-- 慧鳳消費金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">慧鳳應付</span>
+            <span class="cmp-card-label">慧鳳消費金額</span>
             <span class="cmp-card-pct" id="cmp-hf-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
@@ -979,10 +979,10 @@
             <span class="cmp-card-diff" id="cmp-hf-diff">-</span>
           </div>
         </div>
-        <!-- 共同支付 -->
+        <!-- 共同支出金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">共同支付</span>
+            <span class="cmp-card-label">共同支出金額</span>
             <span class="cmp-card-pct" id="cmp-cm-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
@@ -1315,66 +1315,67 @@
     <!-- 密碼設定 -->
     <div id="settings-section-password" class="settings-section">
 
-      <!-- 說明區塊 -->
-      <div class="card" style="margin-bottom:1rem">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">密碼設定注意事項</div>
+      <!-- 左右兩欄配置 -->
+      <div style="display:flex;gap:1.25rem;align-items:flex-start;flex-wrap:wrap">
+
+        <!-- 左欄：網站登入密碼 -->
+        <div style="flex:1;min-width:280px">
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">網站登入密碼</h3>
+          <div class="card" style="margin-bottom:.75rem">
             <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
               🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
-              🔑&ensp;<strong>新密碼規則</strong>：新密碼至少需8碼，且須包含英文字母與數字<br>
+              🔑&ensp;<strong>新密碼規則</strong>：至少 8 碼，且須包含英文字母與數字<br>
               ⚠️&ensp;<strong>變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- 表單卡片 -->
-      <div class="card" style="max-width:440px;padding:0;overflow:hidden">
-        <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
-        <div style="padding:1.5rem">
-          <div class="form-group">
-            <label for="pwd-current">目前密碼</label>
-            <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
-          </div>
-          <div class="form-group">
-            <label for="pwd-new">新密碼</label>
-            <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
-          </div>
-          <div class="form-group">
-            <label for="pwd-confirm">確認新密碼</label>
-            <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-          </div>
-          <div class="settings-msg" id="settings-msg"></div>
-          <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
-        </div>
-      </div>
-
-      <!-- 對帳單檢視密碼 -->
-      <div style="margin-top:1.5rem">
-        <h3 style="margin-bottom:.85rem">對帳單檢視密碼</h3>
-        <div class="card" style="margin-bottom:.65rem">
-          <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-            🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
-            🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
-            ⚠️&ensp;可直接重設，無需輸入舊密碼
-          </div>
-        </div>
-        <div class="card" style="max-width:440px;padding:0;overflow:hidden">
-          <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
-          <div style="padding:1.5rem">
-            <div class="form-group">
-              <label for="pwd-stmt-new">新的對帳單密碼</label>
-              <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
+            <div style="padding:1.5rem">
+              <div class="form-group">
+                <label for="pwd-current">目前密碼</label>
+                <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+              </div>
+              <div class="form-group">
+                <label for="pwd-new">新密碼</label>
+                <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
+              </div>
+              <div class="form-group">
+                <label for="pwd-confirm">確認新密碼</label>
+                <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+              </div>
+              <div class="settings-msg" id="settings-msg"></div>
+              <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
             </div>
-            <div class="form-group">
-              <label for="pwd-stmt-confirm">確認新密碼</label>
-              <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
-            </div>
-            <div class="settings-msg" id="pwd-stmt-msg"></div>
-            <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
           </div>
         </div>
+
+        <!-- 右欄：對帳單檢視密碼 -->
+        <div style="flex:1;min-width:280px">
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">對帳單檢視密碼</h3>
+          <div class="card" style="margin-bottom:.75rem">
+            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
+              🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
+              🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
+              ⚠️&ensp;可直接重設，無需輸入舊密碼
+            </div>
+          </div>
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
+            <div style="padding:1.5rem">
+              <div class="form-group">
+                <label for="pwd-stmt-new">新的對帳單密碼</label>
+                <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+              </div>
+              <div class="form-group">
+                <label for="pwd-stmt-confirm">確認新密碼</label>
+                <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+              </div>
+              <div class="settings-msg" id="pwd-stmt-msg"></div>
+              <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
