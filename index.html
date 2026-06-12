@@ -401,6 +401,26 @@
   .import-progress-inner { position: absolute; top: 0; left: -40%; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, #FF8A3D, transparent); animation: import-slide 1.2s ease-in-out infinite; }
   @keyframes import-slide { 0% { left: -40%; } 100% { left: 110%; } }
 
+  /* ── Import Page Cards ── */
+  .imp-card { background:#FFFFFF; border-radius:12px; border:1px solid #F1E7DA; box-shadow:0 1px 2px rgba(45,34,24,.03); padding:16px; }
+  .imp-view-all-btn { font-size:.78rem; font-weight:600; color:#6B645E; background:none; border:none; cursor:pointer; padding:0; transition:color .15s; }
+  .imp-view-all-btn:hover { color:#FF8A3D; }
+  .imp-scroll { max-height:220px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#E5DDD6 transparent; }
+  .imp-scroll::-webkit-scrollbar { width:6px; }
+  .imp-scroll::-webkit-scrollbar-track { background:transparent; }
+  .imp-scroll::-webkit-scrollbar-thumb { background:#E5DDD6; border-radius:3px; }
+  .imp-bank-row { display:flex; align-items:center; justify-content:space-between; height:40px; border-bottom:1px solid #F1E7DA; }
+  .imp-bank-row:last-child { border-bottom:none; }
+  .imp-recent-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+  .imp-recent-table thead tr { background:#FBF5EE; }
+  .imp-recent-table th { height:40px; padding:0 10px; font-weight:600; color:#6B645E; text-align:left; white-space:nowrap; }
+  .imp-recent-table th.num { text-align:right; }
+  .imp-recent-table td { height:40px; padding:0 10px; color:#1A202C; border-bottom:1px solid #F1E7DA; white-space:nowrap; }
+  .imp-recent-table td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .imp-recent-table tbody tr:nth-child(odd)  td { background:#FFFFFF; }
+  .imp-recent-table tbody tr:nth-child(even) td { background:#FBF7F2; }
+  .imp-recent-table tbody tr:last-child td { border-bottom:none; }
+
   /* ── Modal ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; align-items: center; justify-content: center; }
   .modal-box { background: #fff; border-radius: var(--radius); padding: 1.75rem; width: 90%; max-width: 500px; box-shadow: 0 16px 48px rgba(0,0,0,.2); max-height: 92vh; overflow-y: auto; }
@@ -1388,43 +1408,53 @@
   <div id="page-import" class="page">
     <h2>帳單匯入</h2>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
-      <!-- 左欄 -->
-      <div>
-        <div class="card" style="margin-bottom:1rem">
-          <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-            <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
-            <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
-          </div>
+    <!-- 上方寬版卡片（35% : 65%） -->
+    <div class="imp-card" style="margin-bottom:1.5rem;display:flex;align-items:stretch;padding:0;overflow:hidden;min-height:180px">
+      <!-- 左側：帳單月份 + 匯入按鈕 -->
+      <div style="flex:0 0 35%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;padding:1.5rem">
+        <div style="display:flex;align-items:center;gap:.65rem">
+          <label style="font-size:.875rem;font-weight:600;color:#1A202C;flex-shrink:0">帳單月份</label>
+          <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:120px"></select>
         </div>
-        <div class="card">
-          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">CSV 格式說明</div>
-          <p style="font-size:.82rem;color:var(--gray-600);line-height:1.9;margin-bottom:1rem">
-            欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
-            第一列為標題列，匯入時自動跳過<br>
-            日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
-            範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px;font-size:.75rem;word-break:break-all">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
-          </p>
-          <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
-                  onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
-          <input type="file" id="csv-file" accept=".csv" style="display:none"
-                 onchange="handleCSVFile(this.files[0])">
-        </div>
+        <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
+                onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+        <input type="file" id="csv-file" accept=".csv" style="display:none"
+               onchange="handleCSVFile(this.files[0])">
       </div>
-
-      <!-- 右欄 -->
-      <div>
-        <div class="card" style="margin-bottom:1rem">
-          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">本月匯入狀態</div>
-          <div id="import-bank-status"><div class="loading"><div class="spinner"></div></div></div>
-        </div>
-        <div class="card">
-          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">最近匯入記錄</div>
-          <div id="recent-imports"><div class="loading"><div class="spinner"></div></div></div>
-        </div>
+      <!-- 垂直分隔線 -->
+      <div style="width:1px;flex-shrink:0;background:linear-gradient(to bottom,transparent 0%,#F1E7DA 18%,#F1E7DA 82%,transparent 100%)"></div>
+      <!-- 右側：配圖 -->
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:1.25rem">
+        <img src="assets/csv_input.png" alt="CSV 匯入說明"
+             style="max-width:100%;max-height:150px;object-fit:contain;display:block">
       </div>
     </div>
 
+    <!-- 下方左右並排 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+
+      <!-- 左：本月匯入狀態 -->
+      <div class="imp-card">
+        <div style="font-size:.875rem;font-weight:700;color:#1A202C;margin-bottom:.5rem">本月匯入狀態</div>
+        <div id="import-bank-status" class="imp-scroll">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- 右：最近匯入記錄 -->
+      <div class="imp-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+          <span style="font-size:.875rem;font-weight:700;color:#1A202C">最近匯入記錄</span>
+          <button class="imp-view-all-btn" onclick="showPage('transactions')">查看全部</button>
+        </div>
+        <div id="recent-imports" class="imp-scroll">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 預覽區（全寬，匯入後顯示） -->
     <div id="preview-section" style="display:none;margin-top:1.5rem">
       <div id="import-result" class="import-result"></div>
       <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
@@ -3113,7 +3143,7 @@ function loadImportPage() {
 async function loadImportBankStatus(billingMonth) {
   const el = document.getElementById('import-bank-status');
   if (!billingMonth) {
-    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400);padding:.5rem 0">請選擇帳單月份</div>';
+    el.innerHTML = '<div style="font-size:.82rem;color:#9B9287;padding:.5rem 0">請選擇帳單月份</div>';
     return;
   }
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
@@ -3121,13 +3151,12 @@ async function loadImportBankStatus(billingMonth) {
   try {
     const d = await api('getKPI', { billingMonth });
     const imported = new Set(d.importedBanks || []);
-    el.innerHTML = ALL_BANKS.map((bank, i) => {
-      const ok      = imported.has(bank);
-      const color   = ok ? '#22C55E' : '#FF8A3D';
-      const label   = ok ? '已匯入' : '未匯入';
-      const border  = i < ALL_BANKS.length - 1 ? 'border-bottom:1px solid var(--gray-100);' : '';
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;${border}">
-        <span style="font-size:.875rem;color:var(--gray-800)">${bank}</span>
+    el.innerHTML = ALL_BANKS.map(bank => {
+      const ok    = imported.has(bank);
+      const color = ok ? '#22C55E' : '#FF8A3D';
+      const label = ok ? '已匯入' : '未匯入';
+      return `<div class="imp-bank-row">
+        <span style="font-size:.875rem;color:#1A202C">${bank}</span>
         <span style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:${color}">
           <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
           ${label}
@@ -3135,7 +3164,7 @@ async function loadImportBankStatus(billingMonth) {
       </div>`;
     }).join('');
   } catch(e) {
-    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400)">載入失敗</div>';
+    el.innerHTML = '<div style="font-size:.82rem;color:#9B9287">載入失敗</div>';
   }
 }
 
@@ -3145,26 +3174,40 @@ async function loadRecentImports() {
   try {
     const d = await api('getRecentImports', {});
     if (!d.records || !d.records.length) {
-      el.innerHTML = '<div style="text-align:center;padding:1.25rem 0;font-size:.875rem;color:var(--gray-400)">尚無匯入記錄</div>';
+      el.innerHTML = `<table class="imp-recent-table">
+        <thead><tr>
+          <th style="width:2rem">#</th><th>銀行</th><th>帳單月份</th>
+          <th class="num">筆數</th><th class="num">匯入時間</th>
+        </tr></thead>
+        <tbody><tr>
+          <td colspan="5" style="background:#F9FAFB;text-align:center;color:#9B9287;height:40px">
+            <span style="display:inline-flex;align-items:center;gap:.4rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9B9287" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="#9B9287"/>
+              </svg>
+              僅顯示最近5筆記錄
+            </span>
+          </td>
+        </tr></tbody>
+      </table>`;
       return;
     }
     const rows = d.records.map((r, i) => `<tr>
-      <td style="color:var(--gray-400);font-size:.8rem;width:2rem">${i + 1}</td>
+      <td style="color:#9B9287;font-size:.8rem">${i + 1}</td>
       <td>${r.bankName}</td>
       <td>${r.billingMonth}</td>
-      <td style="text-align:right;font-variant-numeric:tabular-nums">${r.count} 筆</td>
+      <td class="num">${r.count}</td>
+      <td class="num">—</td>
     </tr>`).join('');
-    el.innerHTML = `<div class="table-wrap"><table>
+    el.innerHTML = `<table class="imp-recent-table">
       <thead><tr>
-        <th style="width:2rem">#</th>
-        <th>銀行</th>
-        <th>帳單月份</th>
-        <th style="text-align:right">筆數</th>
+        <th style="width:2rem">#</th><th>銀行</th><th>帳單月份</th>
+        <th class="num">筆數</th><th class="num">匯入時間</th>
       </tr></thead>
       <tbody>${rows}</tbody>
-    </table></div>`;
+    </table>`;
   } catch(e) {
-    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400)">載入失敗</div>';
+    el.innerHTML = '<div style="font-size:.82rem;color:#9B9287">載入失敗</div>';
   }
 }
 
