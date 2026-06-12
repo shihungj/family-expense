@@ -226,48 +226,61 @@
   h3 { font-size: 1rem; font-weight: 600; margin-bottom: .75rem; }
 
   /* ── KPI Cards ── */
-  .kpi-grid-new { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+  .kpi-grid-new { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
   .kpi-card-new {
-    background: #F5F7FF;
-    border: 1px solid #DAE0F6;
-    border-radius: var(--radius);
+    background: #FFFFFF;
+    border: 1px solid #E9E2DB;
+    border-radius: 12px;
     padding: 1.25rem;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .kpi-name { font-size: .8rem; font-weight: 700; color: #4A63C8; margin-bottom: .35rem; text-transform: none; }
-  .kpi-amt  { font-size: 1.6rem; font-weight: 800; color: #1E3A8A; line-height: 1.1; margin-bottom: .75rem; }
+  .kpi-card-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .85rem; }
+  .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .kpi-name { font-size: .82rem; font-weight: 600; color: #6B7280; }
+  .kpi-amt  { font-size: 1.55rem; font-weight: 800; line-height: 1.1; margin-bottom: .75rem; }
+  .kpi-card-sh    .kpi-amt { color: #FF8A3D; }
+  .kpi-card-hf    .kpi-amt { color: #A78BFA; }
+  .kpi-card-cm    .kpi-amt { color: #4CAF7D; }
+  .kpi-card-total .kpi-amt { color: #FF8A3D; }
   .kpi-detail-row {
     display: flex; gap: .5rem;
-    background: rgba(59,91,219,0.06);
+    background: #FAF7F2;
     border-radius: 8px;
     padding: .55rem .75rem;
   }
   .kpi-detail-item { flex: 1; min-width: 0; }
-  .kpi-detail-label { font-size: .68rem; color: #718096; margin-bottom: .15rem; }
-  .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #4A63C8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-detail-label { font-size: .68rem; color: #9CA3AF; margin-bottom: .15rem; }
+  .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* 筆數（第 2 個 detail item）全卡片統一橘色 */
+  .kpi-detail-item:nth-child(2) .kpi-detail-value { color: #FF8A3D; }
+  /* 最高單筆（第 3 個）依卡片主色 */
+  .kpi-card-sh    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
+  .kpi-card-hf    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #A78BFA; }
+  .kpi-card-cm    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #4CAF7D; }
+  .kpi-card-total .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
 
   /* ── Comparison Cards ── */
   .cmp-section { margin-bottom: 1.25rem; }
   .cmp-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
   .cmp-card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1rem 1.25rem; }
   .cmp-card-top { display: flex; justify-content: space-between; align-items: center; }
-  .cmp-card-label { font-size: .875rem; font-weight: 600; color: #4A63C8; }
-  .cmp-card-label-dark { color: #2D3748 !important; }
-  .cmp-card-divider { height: 1px; background: #ECEFF5; margin: .625rem 0; }
-  .cmp-card-curr { font-size: 1.25rem; font-weight: 700; color: #1E3A8A; }
-  .cmp-card-curr-dark { color: #1A202C !important; }
+  .cmp-card-label { font-size: .875rem; font-weight: 600; color: #6B7280; }
+  .cmp-card-label-dark { color: #1F2937 !important; }
+  .cmp-card-divider { height: 1px; background: #E9E2DB; margin: .625rem 0; }
+  .cmp-card-curr { font-size: 1.25rem; font-weight: 700; color: #6B7280; }
+  .cmp-card-curr-dark { color: #1F2937 !important; }
   .cmp-card-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: .25rem; }
-  .cmp-card-last { font-size: .75rem; color: #A0AEC0; }
+  .cmp-card-last { font-size: .75rem; color: #9CA3AF; }
   .cmp-card-diff { font-size: .75rem; font-weight: 600; }
   .cmp-card-pct  { font-size: .75rem; font-weight: 600; }
-  .cmp-num-up   { color: #C53030; font-weight: 700; }
-  .cmp-num-down { color: #276749; font-weight: 700; }
-  .cmp-num-neutral { color: var(--gray-600); }
+  .cmp-num-up   { color: #EF4444; font-weight: 700; }
+  .cmp-num-down { color: #22C55E; font-weight: 700; }
+  .cmp-num-neutral { color: #9CA3AF; }
 
   /* ── Dashboard bottom grid ── */
   .dashboard-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
   .card { background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1.25rem; }
-  .section-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; }
+  .section-title { font-size: 1rem; font-weight: 600; color: #1F2937; margin-bottom: 1rem; }
 
   /* 帳單預覽 */
   .bill-total-label { font-size: .78rem; color: var(--gray-400); margin-bottom: .2rem; }
@@ -464,15 +477,15 @@
   /* ── Stats Reference ── */
   .stats-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
   .stats-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .25rem; }
-  .stats-table th { font-size: .75rem; font-weight: 600; color: var(--gray-600); padding: .45rem .6rem; border-bottom: 1px solid #DAE0F6; }
+  .stats-table th { font-size: .75rem; font-weight: 600; color: #6B7280; padding: .45rem .6rem; border-bottom: 1px solid #E9E2DB; }
   .stats-table th:not(:first-child), .stats-table td:not(:first-child) { text-align: right; }
-  .stats-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+  .stats-table td { padding: .5rem .6rem; border-bottom: 1px solid #E9E2DB; color: #1F2937; }
   .stats-table tr:last-child td { border-bottom: none; }
-  .stats-table td:first-child { font-weight: 500; color: var(--gray-600); }
+  .stats-table td:first-child { font-weight: 500; color: #6B7280; }
   .behavior-ref-item { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid var(--gray-100); }
   .behavior-ref-item:last-child { border-bottom: none; }
-  .behavior-ref-label { font-size: .8rem; color: #718096; }
-  .behavior-ref-value { font-size: .875rem; font-weight: 700; color: var(--gray-800); }
+  .behavior-ref-label { font-size: .8rem; color: #6B7280; }
+  .behavior-ref-value { font-size: .875rem; font-weight: 700; color: #1F2937; }
 
   /* ── Bank Import Progress ── */
   .bank-import-inline {
@@ -480,8 +493,8 @@
     background: #FFFFFF; border-radius: 12px; border: 1px solid #E9E2DB; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     padding: .85rem 1.25rem; margin-bottom: 1.25rem;
   }
-  .bank-import-inline-label { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
-  .bank-import-inline-value { font-size: .875rem; font-weight: 700; color: #3B5BDB; }
+  .bank-import-inline-label { font-size: .875rem; font-weight: 600; color: #6B7280; }
+  .bank-import-inline-value { font-size: .875rem; font-weight: 700; color: #FF8A3D; }
 
   /* ── Payment Tools List ── */
   .tools-list { list-style: none; }
@@ -572,7 +585,7 @@
     .sidebar-header .sys-name, .sidebar-item span:not(.chevron), .sidebar-submenu, .sidebar-footer { display: none; }
     .sidebar-header { justify-content: center; padding: .85rem .5rem; }
     .sidebar-item { justify-content: center; padding: .65rem; }
-    .kpi-grid-new { grid-template-columns: 1fr; }
+    .kpi-grid-new { grid-template-columns: repeat(2, 1fr); }
     .cmp-cards-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
@@ -958,11 +971,19 @@
     <!-- Hidden legacy select for API compat -->
     <select id="dash-month-select" onchange="onDashMonthChange()"></select>
 
-    <!-- KPI Cards (3 cards) -->
+    <!-- KPI Cards (4 cards) -->
     <div class="kpi-grid-new">
       <!-- 世鴻消費金額 -->
-      <div class="kpi-card-new">
-        <div class="kpi-name">世鴻消費金額</div>
+      <div class="kpi-card-new kpi-card-sh">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#FFF3E8;color:#FF8A3D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="8" r="3.5"/>
+              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </div>
+          <div class="kpi-name">世鴻消費金額</div>
+        </div>
         <div class="kpi-amt" id="kpi-shihong">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -981,8 +1002,16 @@
       </div>
 
       <!-- 慧鳳消費金額 -->
-      <div class="kpi-card-new">
-        <div class="kpi-name">慧鳳消費金額</div>
+      <div class="kpi-card-new kpi-card-hf">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#F3F0FF;color:#A78BFA">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="8" r="3.5"/>
+              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </div>
+          <div class="kpi-name">慧鳳消費金額</div>
+        </div>
         <div class="kpi-amt" id="kpi-huifeng">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -1001,8 +1030,18 @@
       </div>
 
       <!-- 共同支出金額 -->
-      <div class="kpi-card-new">
-        <div class="kpi-name">共同支出金額</div>
+      <div class="kpi-card-new kpi-card-cm">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#E8F8EF;color:#4CAF7D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="8.5" cy="8" r="3"/>
+              <path d="M2 20c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6"/>
+              <circle cx="17" cy="8" r="3" opacity=".7"/>
+              <path d="M14 20c.5-3.2 3-5.5 6-5.5" opacity=".7"/>
+            </svg>
+          </div>
+          <div class="kpi-name">共同支出金額</div>
+        </div>
         <div class="kpi-amt" id="kpi-common">-</div>
         <div class="kpi-detail-row">
           <div class="kpi-detail-item">
@@ -1019,10 +1058,37 @@
           </div>
         </div>
       </div>
+
+      <!-- 家庭總支出 -->
+      <div class="kpi-card-new kpi-card-total">
+        <div class="kpi-card-header">
+          <div class="kpi-icon" style="background:#FFF3E8;color:#FF8A3D">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10l9-7 9 7v10a1 1 0 01-1 1H4a1 1 0 01-1-1z"/>
+              <polyline points="9,21 9,13 15,13 15,21"/>
+            </svg>
+          </div>
+          <div class="kpi-name">家庭總支出</div>
+        </div>
+        <div class="kpi-amt" id="kpi-total">-</div>
+        <div class="kpi-detail-row">
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">較上期</div>
+            <div class="kpi-detail-value" id="kpi-total-delta">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">總筆數</div>
+            <div class="kpi-detail-value" id="kpi-total-count">-</div>
+          </div>
+          <div class="kpi-detail-item">
+            <div class="kpi-detail-label">最高單筆</div>
+            <div class="kpi-detail-value" id="kpi-total-max">-</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- hidden spans for compat -->
-    <span id="kpi-total" style="display:none">-</span>
     <span id="bill-month-display" style="display:none">-</span>
 
     <!-- 本期 vs 上期對比卡片 -->
@@ -1032,11 +1098,11 @@
         <!-- 世鴻消費金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">世鴻消費金額</span>
+            <span class="cmp-card-label" style="color:#FF8A3D">世鴻消費金額</span>
             <span class="cmp-card-pct" id="cmp-sh-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" id="cmp-sh-curr">-</div>
+          <div class="cmp-card-curr" style="color:#FF8A3D" id="cmp-sh-curr">-</div>
           <div class="cmp-card-divider"></div>
           <div class="cmp-card-meta">
             <span class="cmp-card-last" id="cmp-sh-last">-</span>
@@ -1046,11 +1112,11 @@
         <!-- 慧鳳消費金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">慧鳳消費金額</span>
+            <span class="cmp-card-label" style="color:#A78BFA">慧鳳消費金額</span>
             <span class="cmp-card-pct" id="cmp-hf-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" id="cmp-hf-curr">-</div>
+          <div class="cmp-card-curr" style="color:#A78BFA" id="cmp-hf-curr">-</div>
           <div class="cmp-card-divider"></div>
           <div class="cmp-card-meta">
             <span class="cmp-card-last" id="cmp-hf-last">-</span>
@@ -1060,11 +1126,11 @@
         <!-- 共同支出金額 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label">共同支出金額</span>
+            <span class="cmp-card-label" style="color:#4CAF7D">共同支出金額</span>
             <span class="cmp-card-pct" id="cmp-cm-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" id="cmp-cm-curr">-</div>
+          <div class="cmp-card-curr" style="color:#4CAF7D" id="cmp-cm-curr">-</div>
           <div class="cmp-card-divider"></div>
           <div class="cmp-card-meta">
             <span class="cmp-card-last" id="cmp-cm-last">-</span>
@@ -1074,11 +1140,11 @@
         <!-- 家庭總支出 -->
         <div class="cmp-card">
           <div class="cmp-card-top">
-            <span class="cmp-card-label cmp-card-label-dark">家庭總支出</span>
+            <span class="cmp-card-label" style="color:#1F2937">家庭總支出</span>
             <span class="cmp-card-pct" id="cmp-total-pct">-</span>
           </div>
           <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr cmp-card-curr-dark" id="cmp-total-curr">-</div>
+          <div class="cmp-card-curr" style="color:#1F2937" id="cmp-total-curr">-</div>
           <div class="cmp-card-divider"></div>
           <div class="cmp-card-meta">
             <span class="cmp-card-last" id="cmp-total-last">-</span>
@@ -2318,6 +2384,7 @@ async function loadKPI(month) {
     document.getElementById('kpi-shihong').textContent = fmt(d.shihong);
     document.getElementById('kpi-huifeng').textContent = fmt(d.huifeng);
     document.getElementById('kpi-common').textContent  = fmt(d.common);
+    document.getElementById('kpi-total').textContent   = fmt(d.total);
 
     // KPI 詳細欄位（逐人較上期）
     const countText = (d.transactionCount || 0) + ' 筆';
@@ -2325,7 +2392,8 @@ async function loadKPI(month) {
     const maxText = maxAmt != null ? fmt(maxAmt) : '-';
     [['sh', d.shihong, d.shihongLastMonth],
      ['hf', d.huifeng, d.huifengLastMonth],
-     ['cm', d.common,  d.commonLastMonth]
+     ['cm', d.common,  d.commonLastMonth],
+     ['total', d.total, d.totalLastMonth]
     ].forEach(([k, curr, last]) => {
       const dl = document.getElementById(`kpi-${k}-delta`);
       const ct = document.getElementById(`kpi-${k}-count`);
@@ -2422,7 +2490,7 @@ async function loadKPI(month) {
       const classified = d.transactionCount - (d.unclassifiedCount || 0);
       const rate = ((classified / d.transactionCount) * 100).toFixed(1);
       bsRate.textContent = rate + '%（' + classified + ' / ' + d.transactionCount + '）';
-      bsRate.style.color = rate >= 90 ? '#276749' : rate >= 70 ? '#DD6B20' : '#C53030';
+      bsRate.style.color = '#22C55E';
     } else if (bsRate) { bsRate.textContent = '-'; }
 
     // 帳單匯入進度
