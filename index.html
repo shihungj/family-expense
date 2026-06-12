@@ -375,11 +375,9 @@
 
   /* ── Rule table ── */
   .rule-row td { vertical-align: middle; }
-  #rules-table td { border-right: 1px solid #F1ECE6; }
-  #rules-table td:last-child { border-right: none; }
   .rules-table-outer { overflow-y: auto; max-height: 560px; border-radius: 12px; border: 1px solid #E9E2DB; background: #fff; }
-  .rules-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-  .rules-table-outer thead th { background: #F8F5F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #F1ECE6; position: sticky; top: 0; z-index: 10; }
+  .rules-table-outer table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .rules-table-outer thead th { background: #F8F5F2; padding: 0 .9rem; height: 52px; text-align: left; font-weight: 500; font-size: 14px; color: #6B645E; white-space: nowrap; box-shadow: inset 0 -1px 0 #F1ECE6; position: sticky; top: 0; z-index: 10; }
   .rules-table-outer tbody td { padding: 0 .9rem; height: 56px; border-bottom: 1px solid #F1ECE6; vertical-align: middle; }
   .rules-table-outer tbody tr:last-child td { border-bottom: none; }
   .rules-table-outer tbody tr:hover { background: #FFF8F3; }
@@ -1498,11 +1496,11 @@
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
         <div style="flex:1;min-width:0">
           <div style="font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:.6rem">歸屬對應規則說明</div>
-          <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-            <span class="badge badge-shihong">世鴻應付</span>&ensp;消費明細包含關鍵字時，自動歸屬為世鴻應付
-            &emsp;<span class="badge badge-huifeng">慧鳳應付</span>&ensp;消費明細包含關鍵字時，自動歸屬為慧鳳應付<br>
-            <span class="badge badge-common">共同支付</span>&ensp;消費明細包含關鍵字時，自動歸屬為共同支付
-            &emsp;<span class="badge badge-unclass">尚未分類</span>&ensp;消費明細包含關鍵字時，保留尚未分類狀態
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.5rem;font-size:.82rem;color:var(--gray-600)">
+            <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-shihong">世鴻應付</span>消費明細包含關鍵字時，自動歸屬為世鴻應付</div>
+            <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-huifeng">慧鳳應付</span>消費明細包含關鍵字時，自動歸屬為慧鳳應付</div>
+            <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-common">共同支付</span>消費明細包含關鍵字時，自動歸屬為共同支付</div>
+            <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-unclass">尚未分類</span>消費明細包含關鍵字時，保留尚未分類狀態</div>
           </div>
         </div>
         <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddRuleModal()">＋ 新增規則</button>
@@ -1510,7 +1508,7 @@
     </div>
     <div class="card" style="padding:24px">
       <div class="rules-table-outer" id="rules-table"><div class="loading"><div class="spinner"></div></div></div>
-      <div id="rules-count-text" style="margin-top:.75rem;font-size:.82rem;color:#6B7280;text-align:right"></div>
+      <div id="rules-count-text" style="margin-top:.75rem;font-size:.82rem;color:#6B7280;text-align:left"></div>
     </div>
   </div>
 
