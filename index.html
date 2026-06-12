@@ -1388,33 +1388,44 @@
   <div id="page-import" class="page">
     <h2>帳單匯入</h2>
 
-    <div class="card" style="margin-bottom:1rem">
-      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-        <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
-        <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+      <!-- 左欄 -->
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+            <label style="font-size:.875rem;font-weight:600;flex-shrink:0">帳單月份</label>
+            <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:130px"></select>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">CSV 格式說明</div>
+          <p style="font-size:.82rem;color:var(--gray-600);line-height:1.9;margin-bottom:1rem">
+            欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
+            第一列為標題列，匯入時自動跳過<br>
+            日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
+            範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px;font-size:.75rem;word-break:break-all">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
+          </p>
+          <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
+                  onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+          <input type="file" id="csv-file" accept=".csv" style="display:none"
+                 onchange="handleCSVFile(this.files[0])">
+        </div>
+      </div>
+
+      <!-- 右欄 -->
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">本月匯入狀態</div>
+          <div id="import-bank-status"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <div style="font-size:.875rem;font-weight:700;color:var(--gray-700);margin-bottom:.75rem">最近匯入記錄</div>
+          <div id="recent-imports"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:1rem">
-      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm"
-                onclick="toggleFormatGuide()">📋 CSV 格式說明</button>
-        <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
-                onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
-        <input type="file" id="csv-file" accept=".csv" style="display:none"
-               onchange="handleCSVFile(this.files[0])">
-      </div>
-      <div id="format-guide" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100)">
-        <p style="font-size:.875rem;color:var(--gray-600);line-height:1.8">
-          欄位順序：<strong>入帳日, 消費日, 銀行, 消費明細, 金額</strong><br>
-          第一列為標題列，匯入時自動跳過<br>
-          日期格式：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">YYYY/MM/DD</code><br>
-          範例資料列：<code style="background:var(--gray-100);padding:.1rem .4rem;border-radius:4px">2026/05/15,2026/05/13,玉山銀行,家樂福＿EC,1289</code>
-        </p>
-      </div>
-    </div>
-
-    <div id="preview-section" style="display:none">
+    <div id="preview-section" style="display:none;margin-top:1.5rem">
       <div id="import-result" class="import-result"></div>
       <div id="import-progress" class="import-progress"><div class="import-progress-inner"></div></div>
       <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
@@ -2307,7 +2318,7 @@ function showPage(name) {
   if (name === 'dashboard')    loadDashboard();
   if (name === 'transactions') loadTransactions();
   if (name === 'rules')        loadRules();
-  if (name === 'import')       populateImportBillingMonths();
+  if (name === 'import')       loadImportPage();
   if (name === 'statement')    loadStatementPage();
 }
 
@@ -2960,7 +2971,10 @@ function onImportMonthChange() {
     _pendingOldMonth = selected;
     sel.value = lastMonth;
     document.getElementById('billing-month-modal').style.display = 'flex';
-  } else { refreshPreviewInfo(); }
+  } else {
+    refreshPreviewInfo();
+    loadImportBankStatus(sel.value);
+  }
 }
 
 function confirmOldMonth() {
@@ -2968,6 +2982,7 @@ function confirmOldMonth() {
   if (_pendingOldMonth) {
     document.getElementById('import-billing-month').value = _pendingOldMonth;
     refreshPreviewInfo();
+    loadImportBankStatus(_pendingOldMonth);
   }
   _pendingOldMonth = null;
 }
@@ -2990,11 +3005,6 @@ function refreshPreviewInfo() {
   const batchIds = getBatchIds(pendingImport, billingMonth);
   document.getElementById('preview-info').textContent =
     `共 ${pendingImport.length} 筆資料，帳單月份：${billingMonth}，批次編號：${batchIds.join('、')}`;
-}
-
-function toggleFormatGuide() {
-  const el = document.getElementById('format-guide');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function handleCSVFile(file) {
@@ -3075,6 +3085,8 @@ async function submitImport() {
       initMonthSelector();
       const currentMonth = document.getElementById('dash-month-select').value;
       if (currentMonth) loadKPI(currentMonth);
+      loadImportBankStatus(billingMonth);
+      loadRecentImports();
       setTimeout(() => { cancelImport(); }, 5000);
     }
   } catch(e) {
@@ -3089,6 +3101,71 @@ function cancelImport() {
   document.getElementById('preview-section').style.display = 'none';
   document.getElementById('csv-file').value = '';
   hideImportResult(); showImportProgress(false);
+}
+
+function loadImportPage() {
+  populateImportBillingMonths();
+  const month = document.getElementById('import-billing-month').value;
+  loadImportBankStatus(month);
+  loadRecentImports();
+}
+
+async function loadImportBankStatus(billingMonth) {
+  const el = document.getElementById('import-bank-status');
+  if (!billingMonth) {
+    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400);padding:.5rem 0">請選擇帳單月份</div>';
+    return;
+  }
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const ALL_BANKS = ['玉山銀行', '永豐銀行', '聯邦銀行', '中國信託', '富邦銀行'];
+  try {
+    const d = await api('getKPI', { billingMonth });
+    const imported = new Set(d.importedBanks || []);
+    el.innerHTML = ALL_BANKS.map((bank, i) => {
+      const ok      = imported.has(bank);
+      const color   = ok ? '#22C55E' : '#FF8A3D';
+      const label   = ok ? '已匯入' : '未匯入';
+      const border  = i < ALL_BANKS.length - 1 ? 'border-bottom:1px solid var(--gray-100);' : '';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;${border}">
+        <span style="font-size:.875rem;color:var(--gray-800)">${bank}</span>
+        <span style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:${color}">
+          <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+          ${label}
+        </span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400)">載入失敗</div>';
+  }
+}
+
+async function loadRecentImports() {
+  const el = document.getElementById('recent-imports');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const d = await api('getRecentImports', {});
+    if (!d.records || !d.records.length) {
+      el.innerHTML = '<div style="text-align:center;padding:1.25rem 0;font-size:.875rem;color:var(--gray-400)">尚無匯入記錄</div>';
+      return;
+    }
+    const rows = d.records.map((r, i) => `<tr>
+      <td style="color:var(--gray-400);font-size:.8rem;width:2rem">${i + 1}</td>
+      <td>${r.bankName}</td>
+      <td>${r.billingMonth}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums">${r.count} 筆</td>
+    </tr>`).join('');
+    el.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr>
+        <th style="width:2rem">#</th>
+        <th>銀行</th>
+        <th>帳單月份</th>
+        <th style="text-align:right">筆數</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400)">載入失敗</div>';
+  }
 }
 
 // ── Rules ────────────────────────────────────────────────────────
