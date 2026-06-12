@@ -644,6 +644,50 @@
   .stmt-pwd-link-btn { background:none; border:none; color:var(--primary); font-size:.82rem; cursor:pointer; text-decoration:underline; padding:0; margin-top:.85rem; }
   .stmt-pwd-link-btn:hover { color:#1558b0; }
 
+  /* ── Login loading modal ── */
+  #login-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  #login-modal.show { display: flex; }
+  .login-modal-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem 2.25rem;
+    min-width: 260px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  .login-modal-title {
+    font-size: .95rem;
+    font-weight: 600;
+    color: #1A202C;
+    margin-bottom: 1.25rem;
+  }
+  .login-modal-track {
+    width: 100%;
+    height: 6px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .login-modal-bar {
+    height: 100%;
+    width: 40%;
+    background: #3B5BDB;
+    border-radius: 99px;
+    animation: loginBarSlide 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes loginBarSlide {
+    0%   { margin-left: 0%;   width: 40%; }
+    100% { margin-left: 60%;  width: 40%; }
+  }
+
   /* ── Top progress bar ── */
   #nprogress-bar {
     position: fixed;
@@ -736,6 +780,14 @@
     </div>
     <div class="login-error" id="login-error">帳號或密碼錯誤，請重新輸入</div>
     <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()">登入</button>
+  </div>
+</div>
+
+<!-- ─────────────────── LOGIN MODAL ────────────────────────── -->
+<div id="login-modal">
+  <div class="login-modal-box">
+    <div class="login-modal-title">登入中，請稍候...</div>
+    <div class="login-modal-track"><div class="login-modal-bar"></div></div>
   </div>
 </div>
 
@@ -1963,6 +2015,9 @@ async function doLogin() {
     errEl.textContent = '請輸入帳號與密碼'; errEl.style.display = 'block'; return;
   }
   btn.disabled = true; btn.textContent = '驗證中…';
+  const loginModal = document.getElementById('login-modal');
+  loginModal.classList.add('show');
+  let loginError = null;
   try {
     const result = await api('login', {}, { username, password });
     if (result.success) {
@@ -1984,13 +2039,19 @@ async function doLogin() {
         loadDashboard();
       }
     } else {
-      errEl.textContent = '帳號或密碼錯誤，請重新輸入'; errEl.style.display = 'block';
+      loginError = '帳號或密碼錯誤，請重新輸入';
+    }
+  } catch(e) {
+    loginError = '連線失敗，請稍後再試';
+  } finally {
+    loginModal.classList.remove('show');
+    btn.disabled = false; btn.textContent = '登入';
+    if (loginError) {
+      errEl.textContent = loginError; errEl.style.display = 'block';
       document.getElementById('login-password').value = '';
       document.getElementById('login-password').focus();
     }
-  } catch(e) {
-    errEl.textContent = '連線失敗，請稍後再試'; errEl.style.display = 'block';
-  } finally { btn.disabled = false; btn.textContent = '登入'; }
+  }
 }
 
 function doLogout() {
