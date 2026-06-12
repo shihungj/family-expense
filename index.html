@@ -375,14 +375,17 @@
 
   /* ── Rule table ── */
   .rule-row td { vertical-align: middle; }
-  #rules-table td { border-right: 1px solid #E9E2DB; }
+  #rules-table td { border-right: 1px solid #F1ECE6; }
   #rules-table td:last-child { border-right: none; }
-  .rules-table-outer { overflow-y: auto; max-height: 480px; border-radius: 12px; border: 1px solid #E9E2DB; overflow: hidden; background: #fff; }
+  .rules-table-outer { overflow-y: auto; max-height: 560px; border-radius: 12px; border: 1px solid #E9E2DB; background: #fff; }
   .rules-table-outer table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-  .rules-table-outer thead th { background: #FAF7F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #E9E2DB; position: sticky; top: 0; z-index: 10; }
-  .rules-table-outer tbody td { padding: .6rem .9rem; border-bottom: 1px solid #E9E2DB; vertical-align: middle; }
+  .rules-table-outer thead th { background: #F8F5F2; padding: .65rem .9rem; text-align: left; font-weight: 600; color: #6B7280; white-space: nowrap; box-shadow: inset 0 -1px 0 #F1ECE6; position: sticky; top: 0; z-index: 10; }
+  .rules-table-outer tbody td { padding: 0 .9rem; height: 56px; border-bottom: 1px solid #F1ECE6; vertical-align: middle; }
   .rules-table-outer tbody tr:last-child td { border-bottom: none; }
   .rules-table-outer tbody tr:hover { background: #FFF8F3; }
+  .rules-table-outer::-webkit-scrollbar { width: 8px; }
+  .rules-table-outer::-webkit-scrollbar-track { background: #F1F1F1; border-radius: 4px; }
+  .rules-table-outer::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
 
   /* ── Drop zone ── */
   .drop-zone {
@@ -1505,7 +1508,10 @@
         <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddRuleModal()">＋ 新增規則</button>
       </div>
     </div>
-    <div class="rules-table-outer" id="rules-table"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="card" style="padding:24px">
+      <div class="rules-table-outer" id="rules-table"><div class="loading"><div class="spinner"></div></div></div>
+      <div id="rules-count-text" style="margin-top:.75rem;font-size:.82rem;color:#6B7280;text-align:right"></div>
+    </div>
   </div>
 
   <!-- ─────────────────── SETTINGS ──────────────────────────── -->
@@ -3256,16 +3262,20 @@ async function loadRules() {
       <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th style="width:90px;white-space:nowrap">歸屬</th>
       <th style="width:120px">操作</th>
     </tr></thead>`;
+    const pencilSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    const trashSvg  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
     const body   = data.rules.map((r, i) => `<tr class="rule-row" data-row="${r.rowIndex}">
       <td style="color:var(--gray-400);font-size:.8rem;text-align:center">${i+1}</td>
       <td><span class="kw-tag">${r.keyword}<span class="kw-tag-x" onclick="event.stopPropagation();openRuleDeleteModal(${r.rowIndex})">×</span></span></td>
       <td style="white-space:nowrap">${attrBadge(r.attribution)}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-outline-edit btn-sm" onclick="openEditRuleModal(${r.rowIndex})">修改</button>
-        <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">刪除</button>
+        <button class="btn btn-outline-edit btn-sm" onclick="openEditRuleModal(${r.rowIndex})">${pencilSvg}修改</button>
+        <button class="btn btn-outline-delete btn-sm" style="margin-left:.25rem" onclick="openRuleDeleteModal(${r.rowIndex})">${trashSvg}刪除</button>
       </td>
     </tr>`).join('');
     wrap.innerHTML = `<table>${header}<tbody>${body}</tbody></table>`;
+    const countEl = document.getElementById('rules-count-text');
+    if (countEl) countEl.textContent = `共有 ${data.rules.length} 筆規則`;
   } catch(e) { wrap.innerHTML = '<div class="loading">載入失敗</div>'; }
 }
 
@@ -3300,6 +3310,10 @@ async function submitRuleModal() {
   const attribution = document.getElementById('edit-rule-attr').value;
   if (!keyword) { toast('請輸入關鍵字', 'error'); return; }
   if (mode === 'add') {
+    const existing = Object.values(_rulesById).map(r => r.keyword.toLowerCase());
+    if (existing.includes(keyword.toLowerCase())) {
+      toast(`關鍵字「${keyword}」已存在，請勿重複新增`, 'error'); return;
+    }
     try {
       await api('addMerchantRule', {}, { keyword, attribution });
       toast('規則已新增', 'success');
