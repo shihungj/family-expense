@@ -3520,8 +3520,10 @@ async function loadKPI(month) {
     // 本期 vs 上期長條圖
     renderComparisonChart(d);
 
-    // 支出趨勢折線圖（假資料佔位，待後端 getTrend 完成後替換）
-    renderTrendChartPlaceholder(month);
+    // 支出趨勢折線圖（從後端 getTrend 取得近 6 個月資料）
+    const sel = document.getElementById('trend-select');
+    const cat = sel ? sel.value : 'total';
+    api('getTrend', { billingMonth: month, category: cat }).then(renderTrendChart).catch(() => renderTrendChartPlaceholder(month));
 
     // 支付工具圓環圖
     renderDonutChart(d.paymentTools || {});

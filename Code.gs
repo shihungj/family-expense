@@ -63,6 +63,7 @@ function handleRequest(e) {
       case 'getSystemInfo':      result = getSystemInfo();              break;
       case 'backupData':         result = backupData();                 break;
       case 'restoreData':        result = restoreData(postData);        break;
+      case 'getTrend':           result = getTrend(params);             break;
       default: result = { error: 'Unknown action: ' + action };
     }
   } catch (err) {
@@ -872,4 +873,63 @@ function changePassword(data) {
 
   sheet.getRange(pwdRowNum, 2).setValue(Utilities.base64Encode(newPassword));
   return { success: true };
+}
+
+// ── Trend: 近 6 個月支出趨勢 ─────────────────────────────────────
+function getTrend(params) {
+  const billingMonth = String(params.billingMonth || '');
+  const category     = String(params.category || 'total');
+
+  if (!billingMonth || !/^\d{4}\/\d{2}$/.test(billingMonth)) {
+    return { months: [], amounts: [] };
+  }
+
+  // 產生近 6 個月（含傳入月份往前推 5 個月）
+  const [baseYear, baseMonthNum] = billingMonth.split('/').map(Number);
+  const monthKeys = [];
+  const monthLabels = [];
+  for (let i = 5; i >= 0; i--) {
+    let y = baseYear, m = baseMonthNum - i;
+    while (m <= 0) { m += 12; y--; }
+    const key   = y + '/' + String(m).padStart(2, '0');
+    const label = m + '月';
+    monthKeys.push(key);
+    monthLabels.push(label);
+  }
+
+  // 讀取 Transactions 工作表
+  const sheet = getSheet(SHEET_TRANSACTIONS);
+  const rows  = sheet.getDataRange().getValues();
+
+  // 初始化各月加總
+  const totals = {};
+  monthKeys.forEach(k => { totals[k] = 0; });
+
+  for (let i = 1; i < rows.length; i++) {
+    const bm     = String(rows[i][6] || '').trim();   // 帳單月份（G欄）
+    const attr   = String(rows[i][5] || '').trim();   // 歸屬（F欄）
+    const amount = parseFloat(rows[i][4]) || 0;       // 金額（E欄）
+
+    if (!totals.hasOwnProperty(bm)) continue;
+
+    switch (category) {
+      case 'shihong':
+        if (attr === '世鴻應付') totals[bm] += amount;
+        else if (attr === '共同支付') totals[bm] += Math.ceil(amount / 2);
+        break;
+      case 'huifeng':
+        if (attr === '慧鳳應付') totals[bm] += amount;
+        else if (attr === '共同支付') totals[bm] += Math.floor(amount / 2);
+        break;
+      case 'common':
+        if (attr === '共同支付') totals[bm] += amount;
+        break;
+      default: // total
+        totals[bm] += amount;
+        break;
+    }
+  }
+
+  const amounts = monthKeys.map(k => Math.round(totals[k]));
+  return { months: monthLabels, amounts };
 }
