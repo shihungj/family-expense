@@ -106,24 +106,24 @@ function initSheet(sheet, name) {
     ].forEach(r => sheet.appendRow(r));
 
   } else if (name === SHEET_MERCHANT_RULES) {
-    sheet.appendRow(['關鍵字', '歸屬']);
+    sheet.appendRow(['關鍵字', '歸屬', '關鍵字2']);
     const defaults = [
-      ['中油條碼_Autopass', '慧鳳應付'],
-      ['0918169429',        '慧鳳應付'],
-      ['悠遊卡',            '慧鳳應付'],
-      ['連加*台灣中油條碼支付', '世鴻應付'],
-      ['0939899529',        '世鴻應付'],
-      ['ETC',               '世鴻應付'],
-      ['遠通',              '世鴻應付'],
-      ['家樂福',            '共同支付'],
-      ['中華電信',          '共同支付'],
-      ['台水',              '共同支付'],
-      ['自來水',            '共同支付'],
-      ['台電',              '共同支付'],
-      ['電費',              '共同支付'],
-      ['天然氣',            '共同支付'],
-      ['瓦斯',              '共同支付'],
-      ['其他',              '未分類'],
+      ['中油條碼_Autopass', '慧鳳應付', ''],
+      ['0918169429',        '慧鳳應付', ''],
+      ['悠遊卡',            '慧鳳應付', ''],
+      ['連加*台灣中油條碼支付', '世鴻應付', ''],
+      ['0939899529',        '世鴻應付', ''],
+      ['ETC',               '世鴻應付', ''],
+      ['遠通',              '世鴻應付', ''],
+      ['家樂福',            '共同支付', ''],
+      ['中華電信',          '共同支付', ''],
+      ['台水',              '共同支付', ''],
+      ['自來水',            '共同支付', ''],
+      ['台電',              '共同支付', ''],
+      ['電費',              '共同支付', ''],
+      ['天然氣',            '共同支付', ''],
+      ['瓦斯',              '共同支付', ''],
+      ['其他',              '未分類',   ''],
     ];
     defaults.forEach(r => sheet.appendRow(r));
 
@@ -193,14 +193,33 @@ function getBatchId(bankName, billingMonth, bankCodeMap) {
 }
 
 // ── Attribution via MerchantRules ─────────────────────────────
+// 雙關鍵字規則（keyword2 非空）優先；單關鍵字規則（keyword2 空）次之
 function classifyMerchant(detail) {
-  const sheet = getSheet(SHEET_MERCHANT_RULES);
-  const data  = sheet.getDataRange().getValues();
+  const sheet      = getSheet(SHEET_MERCHANT_RULES);
+  const data       = sheet.getDataRange().getValues();
+  const detailLow  = detail.toLowerCase();
+
+  // 第一輪：雙關鍵字 AND 比對
   for (let i = 1; i < data.length; i++) {
-    const keyword     = String(data[i][0]);
-    const attribution = String(data[i][1]);
-    if (keyword && detail.includes(keyword)) return attribution;
+    const keyword  = String(data[i][0] || '');
+    const keyword2 = String(data[i][2] || '');
+    if (!keyword || !keyword2) continue;
+    if (detailLow.includes(keyword.toLowerCase()) &&
+        detailLow.includes(keyword2.toLowerCase())) {
+      return String(data[i][1]);
+    }
   }
+
+  // 第二輪：單關鍵字比對（keyword2 為空）
+  for (let i = 1; i < data.length; i++) {
+    const keyword  = String(data[i][0] || '');
+    const keyword2 = String(data[i][2] || '');
+    if (!keyword || keyword2) continue;
+    if (detailLow.includes(keyword.toLowerCase())) {
+      return String(data[i][1]);
+    }
+  }
+
   return '未分類';
 }
 
@@ -583,10 +602,22 @@ function getBillingMonths() {
 // ── Merchant Rules ────────────────────────────────────────────
 function getMerchantRules() {
   const sheet = getSheet(SHEET_MERCHANT_RULES);
+
+  // 確保 C1 標題存在（舊工作表一次性遷移）
+  if (!sheet.getRange(1, 3).getValue()) {
+    sheet.getRange(1, 3).setValue('關鍵字2');
+  }
+
   const data  = sheet.getDataRange().getValues();
   const rules = [];
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0]) rules.push({ rowIndex: i + 1, keyword: data[i][0], attribution: data[i][1] });
+    if (!data[i][0]) continue;
+    rules.push({
+      rowIndex:    i + 1,
+      keyword:     String(data[i][0]),
+      attribution: String(data[i][1]),
+      keyword2:    String(data[i][2] || ''),
+    });
   }
   return { rules };
 }
@@ -594,15 +625,23 @@ function getMerchantRules() {
 // [Bug6] 新增規則插在第一筆（標題列下方）
 function addMerchantRule(data) {
   const sheet = getSheet(SHEET_MERCHANT_RULES);
-  sheet.insertRowBefore(2);                                     // 在標題列後插入空列
-  sheet.getRange(2, 1, 1, 2).setValues([[data.keyword, data.attribution]]);
+  sheet.insertRowBefore(2);
+  sheet.getRange(2, 1, 1, 3).setValues([[
+    String(data.keyword    || ''),
+    String(data.attribution || ''),
+    String(data.keyword2   || ''),
+  ]]);
   return { success: true };
 }
 
 function updateMerchantRule(data) {
   const sheet    = getSheet(SHEET_MERCHANT_RULES);
   const rowIndex = parseInt(data.rowIndex);
-  sheet.getRange(rowIndex, 1, 1, 2).setValues([[String(data.keyword), String(data.attribution)]]);
+  sheet.getRange(rowIndex, 1, 1, 3).setValues([[
+    String(data.keyword    || ''),
+    String(data.attribution || ''),
+    String(data.keyword2   || ''),
+  ]]);
   return { success: true };
 }
 
