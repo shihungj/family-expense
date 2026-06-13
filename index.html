@@ -367,6 +367,17 @@
     border-color: #FF8A3D;
     box-shadow: 0 0 0 3px rgba(255,138,61,0.15);
   }
+  .pwd-purple:focus {
+    border-color: #7C5CFF !important;
+    box-shadow: 0 0 0 3px rgba(124,92,255,0.15) !important;
+  }
+  .pwd-input-wrap { position:relative; }
+  .pwd-input-wrap input { width:100%; padding-right:2.6rem; box-sizing:border-box; }
+  .pwd-eye-btn { position:absolute; right:.6rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:0; color:#9CA3AF; display:flex; align-items:center; }
+  .pwd-eye-btn:hover { color:#6B7280; }
+  .pwd-desc-item { display:flex; align-items:flex-start; gap:.55rem; font-size:.82rem; color:#6B7280; line-height:1.5; padding:.3rem 0; }
+  .pwd-desc-item + .pwd-desc-item { border-top:1px solid #F3F4F6; }
+  .pwd-desc-icon { flex-shrink:0; margin-top:1px; }
   ::placeholder { color: #9CA3AF; }
 
   /* ── Filter bar ── */
@@ -2061,7 +2072,7 @@
     <div id="settings-section-password" class="settings-section">
       <div class="bank-page-header">
         <div class="bank-page-header-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
         </div>
@@ -2076,68 +2087,123 @@
 
         <!-- 左欄：網站登入密碼 -->
         <div style="flex:1;min-width:280px">
-          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800);display:flex;align-items:center;gap:.45rem">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:#FF8A3D;display:flex;align-items:center;gap:.5rem">
+            <span style="width:28px;height:28px;border-radius:50%;background:#FFF3E8;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
             網站登入密碼
           </h3>
-          <div class="card" style="margin-bottom:.75rem">
-            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-              🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
-              🔑&ensp;<strong>新密碼規則</strong>：至少 8 碼，且須包含英文字母與數字<br>
-              ⚠️&ensp;<strong>變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入
+          <div class="card" style="margin-bottom:.75rem;padding:1rem 1.1rem">
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+              <span><strong style="color:#374151">目前密碼</strong>：輸入目前使用中的密碼以驗證身份</span>
+            </div>
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+              <span><strong style="color:#374151">新密碼規則</strong>：至少 8 碼，且須包含英文字母與數字</span>
+            </div>
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg></span>
+              <span><strong style="color:#374151">變更後登出</strong>：密碼變更成功後系統將自動登出，請以新密碼重新登入</span>
             </div>
           </div>
           <div class="card" style="padding:0;overflow:hidden">
-            <div style="height:4px;background:linear-gradient(90deg,var(--primary),#60A5FA)"></div>
+            <div style="height:4px;background:linear-gradient(90deg,#FF8A3D,#FFBB86)"></div>
             <div style="padding:1.5rem">
               <div class="form-group">
                 <label for="pwd-current">目前密碼</label>
-                <input type="password" id="pwd-current" style="width:100%" placeholder="請輸入目前密碼">
+                <div class="pwd-input-wrap">
+                  <input type="password" id="pwd-current" placeholder="請輸入目前密碼">
+                  <button type="button" class="pwd-eye-btn" onclick="togglePwd('pwd-current',this)" tabindex="-1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-group">
                 <label for="pwd-new">新密碼</label>
-                <input type="password" id="pwd-new" style="width:100%" placeholder="至少8碼，須含英文字母與數字">
+                <div class="pwd-input-wrap">
+                  <input type="password" id="pwd-new" placeholder="至少8碼，須含英文字母與數字">
+                  <button type="button" class="pwd-eye-btn" onclick="togglePwd('pwd-new',this)" tabindex="-1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-group">
                 <label for="pwd-confirm">確認新密碼</label>
-                <input type="password" id="pwd-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+                <div class="pwd-input-wrap">
+                  <input type="password" id="pwd-confirm" placeholder="請再次輸入新密碼">
+                  <button type="button" class="pwd-eye-btn" onclick="togglePwd('pwd-confirm',this)" tabindex="-1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="settings-msg" id="settings-msg"></div>
-              <button class="btn btn-primary btn-full" style="margin-top:.25rem" onclick="doChangePassword()">變更密碼</button>
+              <button class="btn btn-full" style="margin-top:.25rem;background:#FF8A3D;color:#fff;border:none;display:flex;align-items:center;justify-content:center;gap:.45rem" onclick="doChangePassword()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                變更密碼
+              </button>
             </div>
           </div>
         </div>
 
         <!-- 右欄：對帳單檢視密碼 -->
         <div style="flex:1;min-width:280px">
-          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800);display:flex;align-items:center;gap:.45rem">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:#7C5CFF;display:flex;align-items:center;gap:.5rem">
+            <span style="width:28px;height:28px;border-radius:50%;background:#F3F0FF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7C5CFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
             對帳單檢視密碼
           </h3>
-          <div class="card" style="margin-bottom:.75rem">
-            <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
-              🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
-              🔑&ensp;傳送對帳單連結後，收件人需輸入此密碼才能查看<br>
-              ⚠️&ensp;可直接重設，無需輸入舊密碼
+          <div class="card" style="margin-bottom:.75rem;padding:1rem 1.1rem">
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C5CFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+              <span><strong style="color:#374151">獨立管理</strong>：對帳單密碼與網站登入密碼分開設定</span>
+            </div>
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C5CFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+              <span><strong style="color:#374151">收件人驗證</strong>：傳送對帳單連結後，收件人需輸入此密碼查看</span>
+            </div>
+            <div class="pwd-desc-item">
+              <span class="pwd-desc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg></span>
+              <span><strong style="color:#374151">無需舊密碼</strong>：可直接重設，不需要輸入原本的對帳單密碼</span>
             </div>
           </div>
           <div class="card" style="padding:0;overflow:hidden">
-            <div style="height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div>
+            <div style="height:4px;background:linear-gradient(90deg,#7C5CFF,#C4B5FD)"></div>
             <div style="padding:1.5rem">
               <div class="form-group">
                 <label for="pwd-stmt-new">新的對帳單密碼</label>
-                <input type="password" id="pwd-stmt-new" style="width:100%" placeholder="請輸入新密碼（至少 4 個字元）">
+                <div class="pwd-input-wrap">
+                  <input type="password" id="pwd-stmt-new" class="pwd-purple" placeholder="請輸入新密碼（至少 4 個字元）">
+                  <button type="button" class="pwd-eye-btn" onclick="togglePwd('pwd-stmt-new',this)" tabindex="-1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-group">
                 <label for="pwd-stmt-confirm">確認新密碼</label>
-                <input type="password" id="pwd-stmt-confirm" style="width:100%" placeholder="請再次輸入新密碼">
+                <div class="pwd-input-wrap">
+                  <input type="password" id="pwd-stmt-confirm" class="pwd-purple" placeholder="請再次輸入新密碼">
+                  <button type="button" class="pwd-eye-btn" onclick="togglePwd('pwd-stmt-confirm',this)" tabindex="-1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="settings-msg" id="pwd-stmt-msg"></div>
-              <button class="btn btn-primary btn-full" style="margin-top:.25rem;background:linear-gradient(90deg,#7C3AED,#A78BFA);border:none" onclick="doChangeStmtPasswordInPwdPage()">儲存對帳單密碼</button>
+              <button class="btn btn-full" style="margin-top:.25rem;background:#7C5CFF;color:#fff;border:none;display:flex;align-items:center;justify-content:center;gap:.45rem" onclick="doChangeStmtPasswordInPwdPage()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                儲存對帳單密碼
+              </button>
             </div>
           </div>
         </div>
 
+      </div>
+
+      <!-- 底部提醒 -->
+      <div style="margin-top:1.25rem;display:flex;align-items:flex-start;gap:.6rem;background:#FFFBEB;border:1px solid #FFC857;border-radius:8px;padding:.85rem 1.1rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3"/></svg>
+        <span style="font-size:.82rem;color:#92400E;line-height:1.6">請妥善保管密碼，建議使用英數混合且不易猜測的組合。兩組密碼各自獨立，修改其中一組不影響另一組。</span>
       </div>
     </div>
   </div>
@@ -2792,6 +2858,15 @@ async function doChangePassword() {
 function showSettingsMsg(msg, type) {
   const el = document.getElementById('settings-msg');
   el.textContent = msg; el.className = 'settings-msg ' + type; el.style.display = 'block';
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = isHidden
+    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
 // ── Nav / Page ───────────────────────────────────────────────────
