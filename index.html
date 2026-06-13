@@ -4243,6 +4243,7 @@ async function loadRules() {
   try {
     const data   = await api('getMerchantRules');
     data.rules.forEach(r => { _rulesById[r.rowIndex] = r; });
+    data.rules.sort((a, b) => a.keyword.localeCompare(b.keyword, 'zh-TW'));
     const header = `<thead><tr>
       <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th>關鍵字2</th><th style="width:90px;white-space:nowrap">歸屬</th>
       <th style="width:120px">操作</th>
