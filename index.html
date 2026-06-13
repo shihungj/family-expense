@@ -2212,182 +2212,185 @@
   <div id="page-help" class="page">
     <div class="bank-page-header">
       <div class="bank-page-header-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/>
         </svg>
       </div>
       <div>
         <div class="bank-page-title">使用說明</div>
-        <div class="bank-page-subtitle">了解系統功能與每月操作標準流程</div>
+        <div class="bank-page-subtitle">瞭解如何使用家庭支出系統的各項功能</div>
       </div>
     </div>
 
-    <!-- 區塊一：每月標準操作流程 -->
-    <div class="help-block">
-      <div class="help-block-title">
-        <div class="help-block-title-icon monthly">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
+    <!-- 六大主題區塊 -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem">
+
+      <!-- 1. 登入系統 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#FFF3E8;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">登入系統</h3>
         </div>
-        每月標準操作流程
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">輸入帳號密碼即可登入，驗證成功後進入首頁總覽。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span>開啟網站，輸入帳號與密碼</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span>驗證成功後自動跳轉至首頁總覽</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span>首頁顯示本月 KPI、銀行匯入進度及支出統計</span>
+          </div>
+        </div>
       </div>
-      <div class="help-steps">
 
-        <!-- Step 1 -->
-        <div class="help-step-card monthly">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-            </svg>
+      <!-- 2. 帳單匯入 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#EFF6FF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">帳單匯入</h3>
+        </div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">選擇帳單月份並上傳 CSV 檔，系統自動比對分類規則標記歸屬。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#EFF6FF;color:#60A5FA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span>選擇正確的帳單月份（預設為上個月）</span>
           </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 1</span>
-              <span class="help-step-title">登入系統</span>
-            </div>
-            <p class="help-step-desc">開啟網站後於登入頁輸入帳號與密碼，驗證成功後系統自動跳轉至首頁總覽。首頁會顯示當月 KPI 摘要、五家銀行的帳單匯入進度，以及支付工具與消費行為統計，讓您在進行任何操作前先掌握本月整體支出狀況。</p>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#EFF6FF;color:#60A5FA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span>選取對應銀行的 CSV 檔案，按下匯入</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#EFF6FF;color:#60A5FA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span>系統自動比對分類規則，標記歸屬</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#EFF6FF;color:#60A5FA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</span>
+            <span>已匯入的批次會被阻擋，避免重複匯入</span>
           </div>
         </div>
-
-        <!-- Step 2 -->
-        <div class="help-step-card monthly">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/>
-            </svg>
-          </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 2</span>
-              <span class="help-step-title">下載對帳單並整理 CSV</span>
-            </div>
-            <p class="help-step-desc">每月帳單結帳日過後，分別至玉山、中國信託、富邦、永豐、聯邦等銀行的網路銀行或官方 App，下載當期消費明細的 PDF 對帳單。接著手動將資料整理為標準五欄 CSV 格式，欄位依序為：<strong>入帳日、消費日、銀行、消費明細、金額</strong>。</p>
-            <div class="help-tip">
-              <span class="help-tip-icon">💡</span>
-              <span>注意事項：第一列固定為標題列；日期格式須為 YYYY/MM/DD；金額欄為純數字，不含貨幣符號與千分位逗號；每張信用卡各自存成獨立的 CSV 檔案，銀行名稱須與系統銀行設定一致。</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="help-step-card monthly">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-          </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 3</span>
-              <span class="help-step-title">匯入帳單</span>
-            </div>
-            <p class="help-step-desc">進入左側選單的「帳單匯入」頁面，首先確認並選擇正確的帳單月份（系統預設為上個月，如需匯入更早月份請手動切換，系統會顯示橘色警示提醒）。接著選擇對應銀行的 CSV 檔案並按下匯入按鈕，系統會自動驗證欄位格式，並偵測是否有重複批次，若該銀行當月已匯入過則會阻擋並提示，避免資料重複。匯入成功後，首頁的帳單匯入進度卡片會更新為綠色已匯入狀態。<strong>五家銀行需分別各自匯入一次。</strong></p>
-          </div>
-        </div>
-
-        <!-- Step 4 -->
-        <div class="help-step-card monthly">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9,11 12,14 22,4"/>
-              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-            </svg>
-          </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 4</span>
-              <span class="help-step-title">確認與修正歸屬分類</span>
-            </div>
-            <p class="help-step-desc">進入「全部交易明細」頁面，系統會依據分類規則自動將消費明細比對關鍵字並標記歸屬（<strong>世鴻應付、慧鳳應付、共同支付、尚未分類</strong>）。請逐筆確認自動分類結果是否正確，若有誤判或尚未分類的項目，可點擊該列的操作按鈕進行修改。若同一類型的交易需要批次修改，可勾選多筆後使用批次修改歸屬功能一次完成，提升作業效率。</p>
-            <div class="help-tip">
-              <span class="help-tip-icon">💡</span>
-              <span>建議每月匯入完成後立即進行確認，確保對帳單金額正確無誤。</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 5 -->
-        <div class="help-step-card monthly">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/>
-              <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
-            </svg>
-          </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 5</span>
-              <span class="help-step-title">預覽對帳單並匯出 PDF</span>
-            </div>
-            <p class="help-step-desc">進入「對帳單預覽」頁面，分別切換世鴻與慧鳳兩個 Tab 確認各自本月應付金額與明細清單。共同支付項目系統會自動平均拆分，餘數歸世鴻。確認無誤後按下匯出 PDF 按鈕，系統產生格式化的對帳單 PDF 檔案並下載至本機，檔名格式為「<strong>慧鳳對帳單_YYYYMM.pdf</strong>」與「<strong>世鴻對帳單_YYYYMM.pdf</strong>」。</p>
-          </div>
-        </div>
-
       </div>
-    </div>
 
-    <!-- 區塊二：初次設定流程 -->
-    <div class="help-block">
-      <div class="help-block-title">
-        <div class="help-block-title-icon setup">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-          </svg>
+      <!-- 3. 交易明細管理 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#E8F8EF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF7D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6" stroke-width="3"/><line x1="3" y1="12" x2="3.01" y2="12" stroke-width="3"/><line x1="3" y1="18" x2="3.01" y2="18" stroke-width="3"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">交易明細管理</h3>
         </div>
-        初次設定流程
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">可篩選、修改、刪除交易，或手動新增一筆。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#E8F8EF;color:#4CAF7D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span>使用銀行、歸屬、關鍵字下拉篩選交易</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#E8F8EF;color:#4CAF7D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span>點擊操作按鈕修改單筆歸屬或刪除</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#E8F8EF;color:#4CAF7D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span>勾選多筆可批次修改歸屬或批次刪除</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#E8F8EF;color:#4CAF7D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</span>
+            <span>點擊「新增交易」可手動建立一筆交易</span>
+          </div>
+        </div>
       </div>
-      <div class="help-steps">
 
-        <!-- Setup Step 1 -->
-        <div class="help-step-card setup">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="5" width="20" height="14" rx="2"/>
-              <line x1="2" y1="10" x2="22" y2="10"/>
-            </svg>
+      <!-- 4. 分類規則設定 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#F3F0FF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">分類規則設定</h3>
+        </div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">建立關鍵字與歸屬對應，匯入時自動分類。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F0FF;color:#A78BFA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span>新增關鍵字並選擇對應歸屬</span>
           </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 1</span>
-              <span class="help-step-title">新增銀行設定</span>
-            </div>
-            <p class="help-step-desc">首次使用前，請進入「銀行設定」頁面確認五家銀行是否已正確建立。每筆銀行資料包含<strong>銀行名稱、結帳日</strong>（每月帳單截止日）與<strong>英文縮寫</strong>（建議取英文名稱前四碼大寫，用於批次編號識別）。若需新增銀行，點擊「新增銀行」按鈕，從下拉清單選擇銀行後系統會自動帶入預設縮寫，確認後儲存即可。</p>
-            <div class="help-tip">
-              <span class="help-tip-icon">💡</span>
-              <span>系統會自動防止重複新增相同銀行或相同縮寫。</span>
-            </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F0FF;color:#A78BFA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span>支援：世鴻應付、慧鳳應付、共同支付</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F0FF;color:#A78BFA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span>匯入時自動比對消費明細欄位</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F0FF;color:#A78BFA;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</span>
+            <span>關鍵字不可重複，重複時系統會提示</span>
           </div>
         </div>
-
-        <!-- Setup Step 2 -->
-        <div class="help-step-card setup">
-          <div class="help-step-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-              <line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
-            </svg>
-          </div>
-          <div class="help-step-body">
-            <div class="help-step-header">
-              <span class="help-step-num">步驟 2</span>
-              <span class="help-step-title">建立分類規則</span>
-            </div>
-            <p class="help-step-desc">進入「分類規則管理」頁面，為常見的消費明細建立關鍵字對應規則。系統匯入交易後會依關鍵字順序比對消費明細欄位，符合關鍵字則自動標記對應歸屬。建議優先建立家庭成員手機號碼（用於識別電信費歸屬）、固定扣款項目與常用商家名稱。</p>
-            <div class="help-tip">
-              <span class="help-tip-icon">💡</span>
-              <span>規則越完整，每月需要手動修正的筆數越少。</span>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- 5. 對帳單預覽與分享 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#FFF3E8;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">對帳單預覽與分享</h3>
+        </div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">查看各自應繳明細，產生連結讓對方自行查看。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span>切換世鴻／慧鳳 Tab 查看各自應繳金額明細</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span>共同支付自動平均拆分，餘數歸世鴻</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span>點擊「匯出帳單連結」取得分享網址</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#FFF3E8;color:#FF8A3D;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</span>
+            <span>對方開啟連結後輸入對帳單密碼即可查看</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. 系統設定 -->
+      <div style="background:#FFFFFF;border-radius:12px;border:1px solid #E9E2DB;padding:24px">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+          <span style="width:40px;height:40px;border-radius:50%;background:#F3F4F6;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </span>
+          <h3 style="margin:0;font-size:1rem;font-weight:700;color:#FF8A3D">系統設定</h3>
+        </div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.7;margin:0 0 1rem">管理銀行、備份資料與密碼的系統層級設定。</p>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F4F6;color:#6B7280;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+            <span><strong style="color:#374151">銀行設定</strong>：管理各銀行結帳日與英文縮寫</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F4F6;color:#6B7280;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+            <span><strong style="color:#374151">備份與還原</strong>：匯出 JSON 備份或從備份還原資料</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem;color:#1F2937">
+            <span style="min-width:20px;height:20px;border-radius:50%;background:#F3F4F6;color:#6B7280;font-size:.7rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+            <span><strong style="color:#374151">密碼設定</strong>：分別管理網站登入密碼與對帳單密碼</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
