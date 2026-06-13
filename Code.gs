@@ -95,14 +95,14 @@ function initSheet(sheet, name) {
     sheet.getRange('G:G').setNumberFormat('@');
 
   } else if (name === SHEET_BANK_SETTINGS) {
-    // Columns: A=銀行, B=結帳日, C=銀行縮寫
-    sheet.appendRow(['銀行', '結帳日', '銀行縮寫']);
+    // Columns: A=銀行, B=結帳日, C=銀行縮寫, D=網銀連結
+    sheet.appendRow(['銀行', '結帳日', '銀行縮寫', '網銀連結']);
     [
-      ['玉山銀行', 13, 'ESUN'],
-      ['永豐銀行', 26, 'SINO'],
-      ['聯邦銀行', 12, 'UNIO'],
-      ['中國信託', 25, 'CTBC'],
-      ['富邦銀行', 26, 'FUBO'],
+      ['玉山銀行', 13, 'ESUN', ''],
+      ['永豐銀行', 26, 'SINO', ''],
+      ['聯邦銀行', 12, 'UNIO', ''],
+      ['中國信託', 25, 'CTBC', ''],
+      ['富邦銀行', 26, 'FUBO', ''],
     ].forEach(r => sheet.appendRow(r));
 
   } else if (name === SHEET_MERCHANT_RULES) {
@@ -479,7 +479,7 @@ function getKPI(params) {
 }
 
 // ── [Bug3][Bug4] Bank Settings ─────────────────────────────────
-// BankSettings columns: A=銀行, B=結帳日, C=銀行縮寫
+// BankSettings columns: A=銀行, B=結帳日, C=銀行縮寫, D=網銀連結
 // [Bug4] 自動補齊 col C（既有表格無此欄的一次性遷移邏輯）
 function getBankSettings() {
   const sheet = getSheet(SHEET_BANK_SETTINGS);
@@ -487,6 +487,10 @@ function getBankSettings() {
   // [Bug4] 確保 C1 標題存在（舊表格可能沒有）
   if (!sheet.getRange(1, 3).getValue()) {
     sheet.getRange(1, 3).setValue('銀行縮寫');
+  }
+  // 確保 D1 標題存在
+  if (!sheet.getRange(1, 4).getValue()) {
+    sheet.getRange(1, 4).setValue('網銀連結');
   }
 
   const data  = sheet.getDataRange().getValues();
@@ -504,11 +508,14 @@ function getBankSettings() {
       sheet.getRange(i + 1, 3).setValue(bankCode);
     }
 
+    const url = String(data[i][3] || '').trim();
+
     banks.push({
       rowIndex:  i + 1,
       bank:      bankName,
       cutoffDay: parseInt(data[i][1]) || 1,
       bankCode:  bankCode,
+      url:       url,
     });
   }
   return { banks };
@@ -524,7 +531,12 @@ function addBankSetting(data) {
       return { success: false, error: '銀行名稱已存在' };
     }
   }
-  sheet.appendRow([String(data.bank), parseInt(data.cutoffDay) || 1, String(data.bankCode || '')]);
+  sheet.appendRow([
+    String(data.bank),
+    parseInt(data.cutoffDay) || 1,
+    String(data.bankCode || ''),
+    String(data.url || ''),
+  ]);
   return { success: true };
 }
 
@@ -537,6 +549,9 @@ function updateBankSetting(data) {
   }
   if (data.bankCode !== undefined) {
     sheet.getRange(rowIndex, 3).setValue(String(data.bankCode));
+  }
+  if (data.url !== undefined) {
+    sheet.getRange(rowIndex, 4).setValue(String(data.url));
   }
   return { success: true };
 }
