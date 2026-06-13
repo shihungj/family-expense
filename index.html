@@ -1933,134 +1933,175 @@
         </div>
       </div>
 
-      <!-- 上方兩欄卡片 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;max-width:760px;margin-bottom:1.25rem">
+      <!-- 上方兩欄卡片（等高） -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;max-width:760px;margin-bottom:1.25rem;align-items:stretch">
 
         <!-- 左欄：匯出備份 -->
-        <div class="card" style="display:flex;flex-direction:column">
-          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-            <div style="width:40px;height:40px;border-radius:10px;background:#FFF3E8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <div>
-              <div style="font-size:.95rem;font-weight:700;color:#1F2937">匯出備份</div>
-              <div style="font-size:.72rem;color:#9CA3AF">Export Backup</div>
-            </div>
-          </div>
-          <p style="font-size:.82rem;color:#6B7280;line-height:1.75;margin-bottom:1rem;flex:1">
-            將 Transactions、MerchantRules、BankSettings、SystemSettings 四張工作表全部資料匯出為 JSON 檔案，可保存至本機。
-          </p>
-          <div style="display:flex;align-items:flex-start;gap:.5rem;padding:.65rem .75rem;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A;margin-bottom:1rem">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span style="font-size:.75rem;color:#92400E;line-height:1.6">建議每月匯入後執行一次備份，確保資料安全。</span>
-          </div>
-          <button class="btn btn-primary" id="btn-backup" onclick="doBackup()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.85rem;height:48px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="card" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
+          <!-- 橘色標題列 -->
+          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
-            匯出備份
-          </button>
-          <div id="backup-msg" style="display:none;margin-bottom:.85rem"></div>
+            <div>
+              <div style="font-size:.9rem;font-weight:700;color:#FF8A3D">匯出備份</div>
+              <div style="font-size:.68rem;color:#D97706">Export Backup</div>
+            </div>
+          </div>
+          <!-- 內容區 -->
+          <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;flex:1">
+            <ul style="font-size:.81rem;color:#6B7280;line-height:1.85;margin:0 0 1rem;padding-left:0;list-style:none">
+              <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>匯出 Transactions、MerchantRules 等四張工作表</span>
+              </li>
+              <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>儲存為標準 JSON 格式至本機</span>
+              </li>
+              <li style="display:flex;align-items:flex-start;gap:.5rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>可使用文字編輯器開啟檢視</span>
+              </li>
+            </ul>
+            <div style="flex:1"></div>
+            <!-- 燈泡提示框 -->
+            <div style="display:flex;align-items:flex-start;gap:.5rem;padding:.6rem .75rem;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A;margin-bottom:1rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span style="font-size:.74rem;color:#92400E;line-height:1.6">建議每月匯入後執行一次備份，確保資料安全。</span>
+            </div>
+            <!-- 備份成功提示（內容由 JS 注入） -->
+            <div id="backup-msg" style="display:none;margin-bottom:.75rem"></div>
+            <!-- 匯出按鈕固定底部 -->
+            <button class="btn btn-primary" id="btn-backup" onclick="doBackup()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;height:48px;width:100%">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              匯出備份
+            </button>
+          </div>
         </div>
 
         <!-- 右欄：匯入還原 -->
-        <div class="card" style="display:flex;flex-direction:column">
-          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
-            <div style="width:40px;height:40px;border-radius:10px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF7D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-            </div>
+        <div class="card" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
+          <!-- 橘色標題列 -->
+          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
             <div>
-              <div style="font-size:.95rem;font-weight:700;color:#1F2937">匯入還原</div>
-              <div style="font-size:.72rem;color:#9CA3AF">Import Restore</div>
+              <div style="font-size:.9rem;font-weight:700;color:#FF8A3D">匯入還原</div>
+              <div style="font-size:.68rem;color:#D97706">Import Restore</div>
             </div>
           </div>
-          <p style="font-size:.82rem;color:#6B7280;line-height:1.75;margin-bottom:.85rem;flex:1">
-            選擇先前匯出的 JSON 備份檔，還原四張工作表的資料。
-          </p>
-          <div style="display:flex;align-items:flex-start;gap:.5rem;padding:.65rem .75rem;background:#FFFBEB;border-radius:8px;border:1px solid #FFC857;margin-bottom:1.25rem">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <span style="font-size:.75rem;color:#92400E;line-height:1.6">還原後原有資料將被覆蓋，此操作無法復原，請確認備份檔來源正確。</span>
+          <!-- 內容區 -->
+          <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;flex:1">
+            <ul style="font-size:.81rem;color:#6B7280;line-height:1.85;margin:0 0 1rem;padding-left:0;list-style:none">
+              <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>選擇先前匯出的 JSON 備份檔</span>
+              </li>
+              <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>系統自動還原四張工作表資料</span>
+              </li>
+              <li style="display:flex;align-items:flex-start;gap:.5rem">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+                <span>確認備份檔來源正確再執行</span>
+              </li>
+            </ul>
+            <div style="flex:1"></div>
+            <!-- 警示提示框 -->
+            <div style="display:flex;align-items:flex-start;gap:.5rem;padding:.6rem .75rem;background:#FFFBEB;border-radius:8px;border:1px solid #FFC857;margin-bottom:1rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span style="font-size:.74rem;color:#92400E;line-height:1.6">還原後原有資料將被覆蓋，此操作無法復原，請確認備份檔來源正確。</span>
+            </div>
+            <!-- 還原結果提示 -->
+            <div id="restore-msg" style="display:none;margin-bottom:.75rem;font-size:.78rem"></div>
+            <!-- 選擇備份檔按鈕固定底部 -->
+            <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFileSelected(this.files[0])">
+            <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;height:48px;width:100%">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+              </svg>
+              選擇備份檔
+            </button>
           </div>
-          <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFileSelected(this.files[0])">
-          <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;height:48px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
-            </svg>
-            選擇備份檔
-          </button>
-          <div id="restore-msg" style="display:none;margin-top:.75rem;font-size:.82rem"></div>
         </div>
 
       </div>
 
       <!-- 小提醒區塊 -->
-      <div class="card" style="max-width:760px;margin-bottom:1.25rem">
-        <div style="display:flex;align-items:flex-start;gap:1rem">
-          <div style="width:40px;height:40px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
-            </svg>
-          </div>
-          <div>
-            <div style="font-size:.9rem;font-weight:700;color:#1F2937;margin-bottom:.45rem">小提醒</div>
-            <ul style="font-size:.8rem;color:#6B7280;line-height:1.9;margin:0;padding-left:1.1rem">
-              <li>備份檔包含所有交易記錄與設定，請妥善保存在安全位置</li>
-              <li>還原操作會覆蓋目前所有資料，建議還原前先執行一次備份</li>
-              <li>備份檔為標準 JSON 格式，可使用文字編輯器檢視內容</li>
-            </ul>
-          </div>
+      <div class="card" style="max-width:760px;margin-bottom:1.25rem;padding:0;overflow:hidden">
+        <!-- 橘色標題列 -->
+        <div style="display:flex;align-items:center;gap:.65rem;padding:.75rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+          <span style="font-size:.9rem;font-weight:700;color:#FF8A3D">小提醒</span>
+        </div>
+        <div style="padding:.9rem 1.1rem">
+          <ul style="font-size:.8rem;color:#6B7280;line-height:1.9;margin:0;padding-left:0;list-style:none">
+            <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.3rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+              <span>備份檔包含所有交易記錄與設定，請妥善保存在安全位置</span>
+            </li>
+            <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.3rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+              <span>還原操作會覆蓋目前所有資料，建議還原前先執行一次備份</span>
+            </li>
+            <li style="display:flex;align-items:flex-start;gap:.5rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
+              <span>備份檔為標準 JSON 格式，可使用文字編輯器檢視內容</span>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <!-- 設計理念區塊 -->
-      <div class="card" style="max-width:760px">
-        <div style="display:flex;align-items:flex-start;gap:1rem">
-          <div style="width:40px;height:40px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-            </svg>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:.9rem;font-weight:700;color:#1F2937;margin-bottom:.45rem">備份流程</div>
-            <p style="font-size:.8rem;color:#6B7280;line-height:1.75;margin-bottom:1rem">
-              每月完成帳單匯入後，點擊「匯出備份」下載 JSON 檔案並保存至安全位置。若需還原，選擇備份檔後系統將自動覆寫現有資料。
-            </p>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
-              <div style="text-align:center;padding:.85rem .5rem;background:#FFF8F3;border-radius:10px;border:1px solid #FFE4CC">
-                <div style="width:36px;height:36px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                </div>
-                <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">匯出備份</div>
-                <div style="font-size:.7rem;color:#9CA3AF">每月匯入後執行</div>
+      <!-- 備份流程區塊 -->
+      <div class="card" style="max-width:760px;padding:0;overflow:hidden">
+        <!-- 橘色標題列 -->
+        <div style="display:flex;align-items:center;gap:.65rem;padding:.75rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+          <span style="font-size:.9rem;font-weight:700;color:#FF8A3D">備份流程</span>
+        </div>
+        <div style="padding:.9rem 1.1rem">
+          <p style="font-size:.8rem;color:#6B7280;line-height:1.75;margin:0 0 1rem">
+            每月完成帳單匯入後，點擊「匯出備份」下載 JSON 檔案並保存至安全位置。若需還原，選擇備份檔後系統將自動覆寫現有資料。
+          </p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem">
+            <div style="text-align:center;padding:.85rem .5rem;background:#FFF8F3;border-radius:10px;border:1px solid #FFE4CC">
+              <div style="width:36px;height:36px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
               </div>
-              <div style="text-align:center;padding:.85rem .5rem;background:#F0FDF4;border-radius:10px;border:1px solid #BBF7D0">
-                <div style="width:36px;height:36px;border-radius:50%;background:#E8F8EF;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF7D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/>
-                  </svg>
-                </div>
-                <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">妥善保存</div>
-                <div style="font-size:.7rem;color:#9CA3AF">存放至安全位置</div>
+              <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">匯出備份</div>
+              <div style="font-size:.7rem;color:#9CA3AF">每月匯入後執行</div>
+            </div>
+            <div style="text-align:center;padding:.85rem .5rem;background:#F0FDF4;border-radius:10px;border:1px solid #BBF7D0">
+              <div style="width:36px;height:36px;border-radius:50%;background:#E8F8EF;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF7D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/>
+                </svg>
               </div>
-              <div style="text-align:center;padding:.85rem .5rem;background:#F5F3FF;border-radius:10px;border:1px solid #DDD6FE">
-                <div style="width:36px;height:36px;border-radius:50%;background:#F3F0FF;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
-                </div>
-                <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">還原資料</div>
-                <div style="font-size:.7rem;color:#9CA3AF">選檔即可覆寫</div>
+              <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">妥善保存</div>
+              <div style="font-size:.7rem;color:#9CA3AF">存放至安全位置</div>
+            </div>
+            <div style="text-align:center;padding:.85rem .5rem;background:#F5F3FF;border-radius:10px;border:1px solid #DDD6FE">
+              <div style="width:36px;height:36px;border-radius:50%;background:#F3F0FF;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
               </div>
+              <div style="font-size:.75rem;font-weight:600;color:#1F2937;margin-bottom:.2rem">還原資料</div>
+              <div style="font-size:.7rem;color:#9CA3AF">選檔即可覆寫</div>
             </div>
           </div>
         </div>
