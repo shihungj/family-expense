@@ -430,22 +430,22 @@ function renderContent(monthTx, name) {
     <!-- 自付明細 -->
     <div class="card">
       <div class="section-title">${svgList} ${name} 自付明細</div>
-      <div class="table-wrap">${buildDetailTable(personalTx, '自付小計', personalSum, null, null, '#FF8A3D')}</div>
+      <div class="table-wrap">${buildDesktopTable(personalTx, '自付小計', personalSum, null, null, '#FF8A3D')}</div>
+      ${buildMobileList(personalTx, '自付小計', personalSum, null, null, '#FF8A3D')}
     </div>
 
     <!-- 共同支付明細 -->
     <div class="card">
       <div class="section-title">${svgShared} 共同支付明細</div>
-      <div class="table-wrap">${buildDetailTable(commonTx, '共同支付小計', commonSum, splitLabel, myShare, '#7C6CFF', '#22C58E')}</div>
+      <div class="table-wrap">${buildDesktopTable(commonTx, '共同支付小計', commonSum, splitLabel, myShare, '#7C6CFF', '#22C58E')}</div>
+      ${buildMobileList(commonTx, '共同支付小計', commonSum, splitLabel, myShare, '#7C6CFF', '#22C58E')}
     </div>`;
 }
 
-function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Color, sub2Color) {
+function buildDesktopTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Color, sub2Color) {
   if (!rows.length) {
     return '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:.875rem">本期無資料</div>';
   }
-
-  /* ── Desktop table ── */
   const body = rows.map(r => `<tr>
     <td>${r.date}</td>
     <td>${r.bank}</td>
@@ -464,8 +464,7 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
       <td style="text-align:right;font-weight:800;font-size:.95rem;color:${c}">${fmt(sub2Amt)}</td>
     </tr>`;
   }
-
-  const desktopTable = `<table class="detail-table">
+  return `<table class="detail-table">
     <thead><tr>
       <th>消費日</th><th>銀行</th><th>消費明細</th>
       <th>金額</th>
@@ -473,8 +472,12 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
     <tbody>${body}</tbody>
     <tfoot>${foot}</tfoot>
   </table>`;
+}
 
-  /* ── Mobile card list ── */
+function buildMobileList(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Color, sub2Color) {
+  if (!rows.length) {
+    return '<div class="mobile-list" style="padding:.75rem 0;text-align:center;color:var(--gray-400);font-size:.875rem">本期無資料</div>';
+  }
   const cards = rows.map(r => `
     <div class="tx-card">
       <div class="tx-card-row1">
@@ -485,23 +488,20 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
       <div class="tx-bank">${r.bank}</div>
     </div>`).join('');
 
-  let mobileFooter = `
+  let footer = `
     <div class="mobile-foot">
       <span class="mobile-foot-label">${sub1Label}</span>
       <span class="mobile-foot-value" style="color:${sub1Color}">${fmt(sub1Amt)}</span>
     </div>`;
   if (sub2Label) {
     const c = sub2Color || sub1Color;
-    mobileFooter += `
+    footer += `
     <div class="mobile-foot">
       <span class="mobile-foot-label">${sub2Label}</span>
       <span class="mobile-foot-value" style="color:${c}">${fmt(sub2Amt)}</span>
     </div>`;
   }
-
-  const mobileList = `<div class="mobile-list">${cards}${mobileFooter}</div>`;
-
-  return desktopTable + mobileList;
+  return `<div class="mobile-list">${cards}${footer}</div>`;
 }
 </script>
 </body>
