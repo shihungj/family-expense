@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
     --primary: #FF8A3D;
@@ -619,6 +620,61 @@
   }
   .bank-import-inline-label { font-size: .875rem; font-weight: 600; color: #6B7280; }
   .bank-import-inline-value { font-size: .875rem; font-weight: 700; color: #FF8A3D; }
+
+  /* ── Chart Row ── */
+  .chart-row { display: flex; gap: 24px; margin-bottom: 24px; }
+  .chart-card { flex: 1; min-width: 0; }
+  .chart-section-title {
+    border-left: 4px solid #FF8A3D; background: #FFF3E8; border-radius: 8px;
+    padding: 8px 12px; font-size: 15px; font-weight: 600; color: #1F2937;
+    margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .chart-section-title select {
+    border: 1px solid #E9E2DB; border-radius: 6px; padding: 4px 8px;
+    font-size: 13px; background: #FFFFFF; color: #1F2937; cursor: pointer;
+    font-family: inherit;
+  }
+  .chart-section-title select:focus { outline: none; border-color: #FF8A3D; }
+
+  /* ── Donut Chart ── */
+  .donut-container { display: flex; align-items: center; gap: 20px; margin-top: .25rem; }
+  .donut-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+  .donut-wrap canvas { width: 160px !important; height: 160px !important; }
+  .donut-center-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 13px; font-weight: 700; color: #1F2937; text-align: center;
+    pointer-events: none; white-space: nowrap;
+  }
+  .tool-list { list-style: none; flex: 1; min-width: 0; }
+  .tool-list-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .4rem 0; border-bottom: 1px solid #F1E7DA; font-size: .8rem;
+    gap: .5rem;
+  }
+  .tool-list-item:last-child { border-bottom: none; }
+  .tool-list-name { display: flex; align-items: center; gap: .4rem; color: #6B7280; }
+  .tool-list-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tool-list-right { text-align: right; }
+  .tool-list-amount { font-weight: 600; color: #1F2937; }
+  .tool-list-meta { color: #9CA3AF; font-size: .75rem; }
+
+  /* ── Import Progress Card (upgraded) ── */
+  .import-progress-card {
+    background: #FFFFFF; border: 1px solid #E9E2DB; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 1.25rem;
+  }
+  .import-progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .import-progress-label { font-size: 14px; color: #6B7280; }
+  .import-progress-count { font-size: 14px; font-weight: 700; color: #FF8A3D; }
+  .import-progress-bar-wrap { height: 8px; background: #F3ECE5; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .import-progress-bar-fill { height: 100%; background: #FF8A3D; border-radius: 4px; transition: width .4s ease; }
+  .import-progress-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+  .import-progress-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .import-tag-green {
+    font-size: 12px; padding: 2px 8px; border-radius: 999px;
+    background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0;
+  }
+  .import-progress-meta { font-size: 12px; color: #9CA3AF; text-align: right; }
 
   /* ── Payment Tools List ── */
   .tools-list { list-style: none; }
@@ -1352,85 +1408,44 @@
     <!-- hidden spans for compat -->
     <span id="bill-month-display" style="display:none">-</span>
 
-    <!-- 本期 vs 上期對比卡片 -->
-    <div class="cmp-section">
-      <div class="section-title">本期 vs 上期對比</div>
-      <div class="cmp-cards-grid">
-        <!-- 世鴻消費金額 -->
-        <div class="cmp-card">
-          <div class="cmp-card-top">
-            <span class="cmp-card-label" style="color:#FF8A3D">世鴻消費金額</span>
-            <span class="cmp-card-pct" id="cmp-sh-pct">-</span>
-          </div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" style="color:#FF8A3D" id="cmp-sh-curr">-</div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-meta">
-            <span class="cmp-card-last" id="cmp-sh-last">-</span>
-            <span class="cmp-card-diff" id="cmp-sh-diff">-</span>
-          </div>
+    <!-- 本期 vs 上期長條圖 + 支出趨勢折線圖（並排） -->
+    <div class="chart-row">
+      <!-- 長條圖 -->
+      <div class="card chart-card">
+        <div class="chart-section-title">本期 vs 上期對比</div>
+        <div style="position:relative;height:220px">
+          <canvas id="chart-comparison"></canvas>
         </div>
-        <!-- 慧鳳消費金額 -->
-        <div class="cmp-card">
-          <div class="cmp-card-top">
-            <span class="cmp-card-label" style="color:#A78BFA">慧鳳消費金額</span>
-            <span class="cmp-card-pct" id="cmp-hf-pct">-</span>
-          </div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" style="color:#A78BFA" id="cmp-hf-curr">-</div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-meta">
-            <span class="cmp-card-last" id="cmp-hf-last">-</span>
-            <span class="cmp-card-diff" id="cmp-hf-diff">-</span>
-          </div>
+      </div>
+      <!-- 折線圖 -->
+      <div class="card chart-card">
+        <div class="chart-section-title">
+          <span>支出趨勢（近 6 個月）</span>
+          <select id="trend-select" onchange="onTrendSelectChange()">
+            <option value="total">家庭總支出</option>
+            <option value="shihong">世鴻消費金額</option>
+            <option value="huifeng">慧鳳消費金額</option>
+            <option value="common">共同支出金額</option>
+          </select>
         </div>
-        <!-- 共同支出金額 -->
-        <div class="cmp-card">
-          <div class="cmp-card-top">
-            <span class="cmp-card-label" style="color:#4CAF7D">共同支出金額</span>
-            <span class="cmp-card-pct" id="cmp-cm-pct">-</span>
-          </div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" style="color:#4CAF7D" id="cmp-cm-curr">-</div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-meta">
-            <span class="cmp-card-last" id="cmp-cm-last">-</span>
-            <span class="cmp-card-diff" id="cmp-cm-diff">-</span>
-          </div>
-        </div>
-        <!-- 家庭總支出 -->
-        <div class="cmp-card">
-          <div class="cmp-card-top">
-            <span class="cmp-card-label" style="color:#1F2937">家庭總支出</span>
-            <span class="cmp-card-pct" id="cmp-total-pct">-</span>
-          </div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-curr" style="color:#1F2937" id="cmp-total-curr">-</div>
-          <div class="cmp-card-divider"></div>
-          <div class="cmp-card-meta">
-            <span class="cmp-card-last" id="cmp-total-last">-</span>
-            <span class="cmp-card-diff" id="cmp-total-diff">-</span>
-          </div>
+        <div style="position:relative;height:220px">
+          <canvas id="chart-trend"></canvas>
         </div>
       </div>
     </div>
 
     <!-- 統計參考 -->
     <div class="stats-ref-grid">
-      <!-- 左欄：支付工具統計 -->
+      <!-- 左欄：支付工具統計（圓環圖 + 列表） -->
       <div class="card">
         <div class="section-title">支付工具統計</div>
-        <table class="stats-table">
-          <thead><tr><th>工具</th><th>筆數</th><th>金額</th></tr></thead>
-          <tbody>
-            <tr><td>信用卡</td>   <td id="pt-creditcard">-</td> <td id="pt-amt-creditcard">-</td></tr>
-            <tr><td>LINE Pay</td> <td id="pt-linepay">-</td>    <td id="pt-amt-linepay">-</td></tr>
-            <tr><td>悠遊卡</td>   <td id="pt-easycard">-</td>   <td id="pt-amt-easycard">-</td></tr>
-            <tr><td>悠遊付</td>   <td id="pt-easywallet">-</td> <td id="pt-amt-easywallet">-</td></tr>
-            <tr><td>車麻吉</td>   <td id="pt-carmoji">-</td>    <td id="pt-amt-carmoji">-</td></tr>
-            <tr><td>iCASH Pay</td><td id="pt-icashpay">-</td>   <td id="pt-amt-icashpay">-</td></tr>
-          </tbody>
-        </table>
+        <div class="donut-container">
+          <div class="donut-wrap">
+            <canvas id="chart-donut"></canvas>
+            <div class="donut-center-text" id="donut-center">$0</div>
+          </div>
+          <ul class="tool-list" id="tool-list"></ul>
+        </div>
       </div>
       <!-- 右欄：消費行為參考 -->
       <div class="card">
@@ -1454,10 +1469,19 @@
       </div>
     </div>
 
-    <!-- 帳單匯入進度 -->
-    <div class="bank-import-inline">
-      <span class="bank-import-inline-label">帳單匯入進度</span>
-      <span id="bank-import-summary" class="bank-import-inline-value">載入中…</span>
+    <!-- 帳單匯入進度（升級版） -->
+    <div class="import-progress-card">
+      <div class="import-progress-header">
+        <span class="import-progress-label">帳單匯入進度（所有銀行帳單）</span>
+        <span class="import-progress-count" id="import-progress-count">0 / 5 已完成</span>
+      </div>
+      <div class="import-progress-bar-wrap">
+        <div class="import-progress-bar-fill" id="import-progress-bar-fill" style="width:0%"></div>
+      </div>
+      <div class="import-progress-footer">
+        <div class="import-progress-tags" id="import-progress-tags"></div>
+        <div class="import-progress-meta" id="import-progress-meta"></div>
+      </div>
     </div>
 
 
@@ -2844,6 +2868,9 @@ let _allTxData          = [];
 let _txInlineFilters    = { bank: '', detail: '', attr: '', billingMonth: '' };
 let _txSort             = { col: null, dir: 'asc' };
 let _pendingSingleDeleteRow = null;
+let _chartComparison = null;
+let _chartTrend      = null;
+let _chartDonut      = null;
 
 // ── Progress bar ────────────────────────────────────────────────
 let _npTimer = null;
@@ -3267,14 +3294,191 @@ async function loadDashboard() {
   if (!requireAuth()) return;
   const month = document.getElementById('dash-month-select').value;
   updateMonthDisplay();
-  await Promise.all([loadKPI(month), loadBankCountdown()]);
+  await Promise.all([loadKPI(month), loadBankCountdown(), loadHomeImportProgress()]);
 }
 
-function renderBankImportCards(importedBanks, notImportedBanks) {
-  const el = document.getElementById('bank-import-summary');
-  if (!el) return;
+async function loadHomeImportProgress() {
+  try {
+    const d = await api('getRecentImports', {});
+    const lastUpdate = (d.records && d.records.length) ? d.records[0].importedAt : '';
+    // 更新進度卡的最後更新時間（imported/notImported 已由 loadKPI → renderBankImportCards 寫入）
+    const metaEl = document.getElementById('import-progress-meta');
+    if (metaEl && lastUpdate) {
+      const remaining = parseInt((document.getElementById('import-progress-count')?.textContent || '').split('/')[1]) || 5;
+      const done = parseInt((document.getElementById('import-progress-count')?.textContent || '').split('/')[0]) || 0;
+      const rem = remaining - done;
+      const remText = rem > 0 ? `剩餘 ${rem} 家銀行尚未匯入` : '所有銀行已完成匯入';
+      metaEl.innerHTML = `<span>${remText}</span><br><span>最後更新：${lastUpdate}</span>`;
+    }
+  } catch(e) { /* 靜默失敗，不影響主流程 */ }
+}
+
+function renderBankImportCards(importedBanks, notImportedBanks, lastUpdate) {
   const total = (importedBanks.length || 0) + (notImportedBanks.length || 0);
-  el.textContent = `${importedBanks.length} / ${total} 已完成`;
+  const done  = importedBanks.length || 0;
+  const pct   = total ? Math.round(done / total * 100) : 0;
+
+  const countEl = document.getElementById('import-progress-count');
+  const fillEl  = document.getElementById('import-progress-bar-fill');
+  const tagsEl  = document.getElementById('import-progress-tags');
+  const metaEl  = document.getElementById('import-progress-meta');
+
+  if (countEl) countEl.textContent = `${done} / ${total} 已完成`;
+  if (fillEl)  fillEl.style.width = pct + '%';
+  if (tagsEl) {
+    tagsEl.innerHTML = importedBanks.map(b =>
+      `<span class="import-tag-green">${b}</span>`
+    ).join('');
+  }
+  if (metaEl) {
+    const remaining = notImportedBanks.length;
+    const remText = remaining > 0 ? `剩餘 ${remaining} 家銀行尚未匯入` : '所有銀行已完成匯入';
+    const updText = lastUpdate ? `最後更新：${lastUpdate}` : '';
+    metaEl.innerHTML = `<span>${remText}</span>${updText ? `<br><span>${updText}</span>` : ''}`;
+  }
+}
+
+// ── Chart: 本期 vs 上期長條圖 ──────────────────────────────────────
+function renderComparisonChart(d) {
+  const ctx = document.getElementById('chart-comparison');
+  if (!ctx) return;
+  const labels  = ['世鴻消費', '慧鳳消費', '共同支出', '家庭總支出'];
+  const current = [d.shihong || 0, d.huifeng || 0, d.common || 0, d.total || 0];
+  const last    = [d.shihongLastMonth || 0, d.huifengLastMonth || 0, d.commonLastMonth || 0, d.totalLastMonth || 0];
+
+  if (_chartComparison) _chartComparison.destroy();
+  _chartComparison = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: '本期', data: current, backgroundColor: '#FF8A3D', barPercentage: 0.6, categoryPercentage: 0.7 },
+        { label: '上期', data: last,    backgroundColor: '#E9E2DB', barPercentage: 0.6, categoryPercentage: 0.7 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { family: 'Noto Sans TC', size: 12 }, color: '#6B7280', boxWidth: 12, padding: 12 } },
+        tooltip: { callbacks: { label: ctx => ' $' + (ctx.raw || 0).toLocaleString('zh-TW') } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Noto Sans TC', size: 12 }, color: '#6B7280' } },
+        y: { grid: { display: false }, ticks: { font: { family: 'Noto Sans TC', size: 11 }, color: '#9CA3AF', callback: v => '$' + v.toLocaleString('zh-TW') } }
+      }
+    }
+  });
+}
+
+// ── Chart: 支出趨勢折線圖（假資料佔位） ─────────────────────────────
+function renderTrendChartPlaceholder(currentMonth) {
+  const months = ['—', '—', '—', '—', '—', '—'];
+  const amounts = [0, 0, 0, 0, 0, 0];
+  renderTrendChart({ months, amounts });
+}
+
+function renderTrendChart(data) {
+  const ctx = document.getElementById('chart-trend');
+  if (!ctx) return;
+  if (_chartTrend) _chartTrend.destroy();
+  _chartTrend = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.months || [],
+      datasets: [{
+        data: data.amounts || [],
+        borderColor: '#FF8A3D', borderWidth: 2,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx: c, chartArea } = chart;
+          if (!chartArea) return 'rgba(255,138,61,0.1)';
+          const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, 'rgba(255,138,61,0.18)');
+          gradient.addColorStop(1, 'rgba(255,138,61,0)');
+          return gradient;
+        },
+        fill: true, tension: 0.4, pointRadius: 4,
+        pointBackgroundColor: '#FF8A3D', pointBorderColor: '#FFFFFF', pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' $' + (ctx.raw || 0).toLocaleString('zh-TW') } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Noto Sans TC', size: 12 }, color: '#6B7280' } },
+        y: { grid: { display: false }, ticks: { font: { family: 'Noto Sans TC', size: 11 }, color: '#9CA3AF', callback: v => '$' + v.toLocaleString('zh-TW') } }
+      }
+    }
+  });
+}
+
+async function onTrendSelectChange() {
+  const sel   = document.getElementById('trend-select');
+  const month = document.getElementById('dash-month-select')?.value;
+  if (!sel || !month) return;
+  try {
+    const data = await api('getTrend', { billingMonth: month, category: sel.value });
+    renderTrendChart(data);
+  } catch(e) {
+    // 後端尚未部署時保持現有圖表
+  }
+}
+
+// ── Chart: 支付工具圓環圖 ─────────────────────────────────────────
+function renderDonutChart(pt) {
+  const ctx = document.getElementById('chart-donut');
+  if (!ctx) return;
+
+  const tools = [
+    { key: 'creditcard', label: '信用卡',   color: '#FF8A3D' },
+    { key: 'linepay',    label: 'LINE Pay', color: '#4CAF7D' },
+    { key: 'easycard',   label: '悠遊卡',   color: '#A78BFA' },
+    { key: 'easywallet', label: '悠遊付',   color: '#60A5FA' },
+    { key: 'carmoji',    label: '車麻吉',   color: '#FFC857' },
+    { key: 'icashpay',   label: 'iCASH Pay',color: '#E9E2DB' },
+  ];
+
+  const amounts = tools.map(t => (pt[t.key] && pt[t.key].amount) || 0);
+  const totalAmt = amounts.reduce((s, v) => s + v, 0);
+
+  // 圓環中央總金額
+  const center = document.getElementById('donut-center');
+  if (center) center.textContent = '$' + totalAmt.toLocaleString('zh-TW');
+
+  if (_chartDonut) _chartDonut.destroy();
+  _chartDonut = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: tools.map(t => t.label),
+      datasets: [{ data: amounts, backgroundColor: tools.map(t => t.color), borderWidth: 2, borderColor: '#FFFFFF' }]
+    },
+    options: {
+      responsive: false, cutout: '62%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + (ctx.raw || 0).toLocaleString('zh-TW') } } }
+    }
+  });
+
+  // 右側文字列表
+  const listEl = document.getElementById('tool-list');
+  if (!listEl) return;
+  listEl.innerHTML = tools.map(t => {
+    const tool = pt[t.key];
+    const amt  = (tool && tool.amount) || 0;
+    const cnt  = (tool && tool.count)  || 0;
+    const pct  = totalAmt ? ((amt / totalAmt) * 100).toFixed(1) : '0.0';
+    return `<li class="tool-list-item">
+      <span class="tool-list-name">
+        <span class="tool-list-dot" style="background:${t.color}"></span>${t.label}
+      </span>
+      <span class="tool-list-right">
+        <div class="tool-list-amount">$${amt.toLocaleString('zh-TW')}</div>
+        <div class="tool-list-meta">${cnt} 筆 · ${pct}%</div>
+      </span>
+    </li>`;
+  }).join('');
 }
 
 async function loadKPI(month) {
@@ -3313,58 +3517,14 @@ async function loadKPI(month) {
       if (mx) mx.textContent = maxText;
     });
 
-    // 對比卡片
-    const setCell = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    const setDiffCell = (id, curr, last) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
-      if (!last) { el.textContent = '-'; return; }
-      const d2 = (curr || 0) - last;
-      el.textContent = (d2 >= 0 ? '+' : '') + d2.toLocaleString('zh-TW');
-      el.classList.add(d2 > 0 ? 'cmp-num-up' : d2 < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
-    };
-    const setPctCell = (id, curr, last) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.remove('cmp-num-up', 'cmp-num-down', 'cmp-num-neutral');
-      if (!last) { el.textContent = '-'; return; }
-      const p = (((curr || 0) - last) / last * 100).toFixed(1);
-      el.textContent = (p > 0 ? '+' : '') + p + '%';
-      el.classList.add(p > 0 ? 'cmp-num-up' : p < 0 ? 'cmp-num-down' : 'cmp-num-neutral');
-    };
+    // 本期 vs 上期長條圖
+    renderComparisonChart(d);
 
-    setCell('cmp-sh-curr',    fmt(d.shihong));
-    setCell('cmp-hf-curr',    fmt(d.huifeng));
-    setCell('cmp-cm-curr',    fmt(d.common));
-    setCell('cmp-total-curr', fmt(d.total));
+    // 支出趨勢折線圖（假資料佔位，待後端 getTrend 完成後替換）
+    renderTrendChartPlaceholder(month);
 
-    setCell('cmp-sh-last',    '上期：' + (d.shihongLastMonth ? fmt(d.shihongLastMonth) : '-'));
-    setCell('cmp-hf-last',    '上期：' + (d.huifengLastMonth ? fmt(d.huifengLastMonth) : '-'));
-    setCell('cmp-cm-last',    '上期：' + (d.commonLastMonth  ? fmt(d.commonLastMonth)  : '-'));
-    setCell('cmp-total-last', '上期：' + (d.totalLastMonth   ? fmt(d.totalLastMonth)   : '-'));
-
-    setDiffCell('cmp-sh-diff',    d.shihong, d.shihongLastMonth);
-    setDiffCell('cmp-hf-diff',    d.huifeng, d.huifengLastMonth);
-    setDiffCell('cmp-cm-diff',    d.common,  d.commonLastMonth);
-    setDiffCell('cmp-total-diff', d.total,   d.totalLastMonth);
-
-    setPctCell('cmp-sh-pct',    d.shihong, d.shihongLastMonth);
-    setPctCell('cmp-hf-pct',    d.huifeng, d.huifengLastMonth);
-    setPctCell('cmp-cm-pct',    d.common,  d.commonLastMonth);
-    setPctCell('cmp-total-pct', d.total,   d.totalLastMonth);
-
-    // 支付工具統計
-    const pt = d.paymentTools || {};
-    [['creditcard','信用卡'],['linepay','LINE Pay'],['easycard','悠遊卡'],
-     ['easywallet','悠遊付'],['carmoji','車麻吉'],['icashpay','iCASH Pay']
-    ].forEach(([key]) => {
-      const tool = pt[key];
-      const c = document.getElementById(`pt-${key}`);
-      if (c) c.textContent = tool != null ? tool.count + ' 筆' : '-';
-      const a = document.getElementById(`pt-amt-${key}`);
-      if (a) a.textContent = tool != null ? '$' + tool.amount.toLocaleString() : '-';
-    });
+    // 支付工具圓環圖
+    renderDonutChart(d.paymentTools || {});
 
     // 消費行為參考
     _topBankByAmount = d.topBankByAmount || '';
