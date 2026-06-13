@@ -639,7 +639,7 @@
   .chart-section-title select:focus { outline: none; border-color: #FF8A3D; }
 
   /* ── Donut Chart ── */
-  .donut-container { display: flex; gap: 20px; align-items: flex-start; }
+  .donut-container { display: flex; gap: 20px; align-items: center; }
   .donut-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
   .donut-wrap canvas { width: 160px !important; height: 160px !important; }
   /* payment tools 四欄表格 */
@@ -895,10 +895,10 @@
 
   /* ── Statement Preview ── */
   .stmt-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-  .stmt-month-btn { background:var(--gray-100); border:none; border-radius:6px; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:var(--gray-600); transition:background .15s; flex-shrink:0; }
-  .stmt-month-btn:hover { background:var(--gray-200); }
-  .stmt-month-display { background:none; border:none; cursor:pointer; font-size:1.1rem; font-weight:700; color:var(--gray-800); padding:.25rem .75rem; border-radius:6px; transition:background .15s; min-width:120px; text-align:center; }
-  .stmt-month-display:hover { background:var(--gray-100); }
+  .stmt-month-btn { background:#F3F4F6; border:none; border-radius:50%; cursor:pointer; width:28px; height:28px; display:flex; align-items:center; justify-content:center; color:var(--gray-600); transition:background .15s; flex-shrink:0; }
+  .stmt-month-btn:hover { background:#E9E2DB; }
+  .stmt-month-display { background:none; border:none; cursor:pointer; font-size:15px; font-weight:700; color:#1F2937; padding:0; border-radius:0; transition:none; min-width:120px; text-align:center; }
+  .stmt-month-display:hover { background:none; }
   .stmt-picker-popup { display:none; position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%); background:#fff; border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,.15); padding:1rem; z-index:500; min-width:260px; border:1px solid var(--gray-200); }
   .stmt-picker-popup.open { display:block; }
   .stmt-tabs { display:flex; gap:.5rem; }
@@ -1529,7 +1529,7 @@
     <!-- Top: month nav + tabs -->
     <div class="stmt-header">
       <div style="position:relative" id="stmt-month-nav-wrap">
-        <div style="display:inline-flex;align-items:center;gap:.2rem">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#F3F4F6;border:none;border-radius:999px;padding:4px 8px">
           <button class="stmt-month-btn" onclick="stmtNavMonth(-1)" title="上一個月">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="15,18 9,12 15,6"/>
@@ -2088,22 +2088,21 @@
 
         <!-- 左欄：匯出備份 -->
         <div class="card" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
-          <!-- 橘色標題列 -->
-          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            <div>
-              <div style="font-size:.9rem;font-weight:700;color:#FF8A3D">匯出備份</div>
-              <div style="font-size:.68rem;color:#D97706">Export Backup</div>
+          <!-- 標題區 -->
+          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;border-bottom:1px solid #E9E2DB">
+            <div style="width:36px;height:36px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
             </div>
+            <div style="font-size:16px;font-weight:600;color:#1F2937">匯出備份</div>
           </div>
           <!-- 內容區 -->
           <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;flex:1">
             <ul style="font-size:.81rem;color:#6B7280;line-height:1.85;margin:0 0 1rem;padding-left:0;list-style:none">
               <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
-                <span>匯出 Transactions、MerchantRules 等四張工作表</span>
+                <span>匯出完整系統資料至本機</span>
               </li>
               <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
@@ -2136,15 +2135,14 @@
 
         <!-- 右欄：匯入還原 -->
         <div class="card" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
-          <!-- 橘色標題列 -->
-          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;background:#FFF3E8;border-left:4px solid #FF8A3D;border-bottom:1px solid #FFE4CC">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            <div>
-              <div style="font-size:.9rem;font-weight:700;color:#FF8A3D">匯入還原</div>
-              <div style="font-size:.68rem;color:#D97706">Import Restore</div>
+          <!-- 標題區 -->
+          <div style="display:flex;align-items:center;gap:.65rem;padding:.85rem 1.1rem;border-bottom:1px solid #E9E2DB">
+            <div style="width:36px;height:36px;border-radius:50%;background:#FFF3E8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
             </div>
+            <div style="font-size:16px;font-weight:600;color:#1F2937">匯入還原</div>
           </div>
           <!-- 內容區 -->
           <div style="padding:1rem 1.1rem;display:flex;flex-direction:column;flex:1">
@@ -2155,7 +2153,7 @@
               </li>
               <li style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.35rem">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
-                <span>系統自動還原四張工作表資料</span>
+                <span>系統自動還原所有工作表資料</span>
               </li>
               <li style="display:flex;align-items:flex-start;gap:.5rem">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><polyline points="20,6 9,17 4,12"/></svg>
@@ -3015,9 +3013,9 @@ function initTopBarGreeting() {
   const avatarEl = document.getElementById('top-bar-avatar');
   if (avatarEl) {
     if (username === '世鴻') {
-      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#FFF3E8"/><circle cx="16" cy="13" r="5" stroke="#FF8A3D" stroke-width="1.5" fill="none"/><path d="M7 28c0-5 4-8 9-8s9 3 9 8" stroke="#FF8A3D" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
+      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#FFF3E8"/><path d="M11 13c0-2.76 2.24-5 5-5s5 2.24 5 5" fill="#3D2B1F"/><circle cx="16" cy="13" r="5" fill="#FDDBB4"/><path d="M8 29c0-4.42 3.58-8 8-8s8 3.58 8 8" fill="#FF8A3D"/></svg>`;
     } else if (username === '慧鳳') {
-      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#F0ECFF"/><circle cx="16" cy="12" r="4.5" stroke="#7C5CFF" stroke-width="1.5" fill="none"/><path d="M11.5 12c0-3 1.5-5.5 4.5-5.5s4.5 2.5 4.5 5.5" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M11 16c-1 3-1 6 0 8" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M21 16c1 3 1 6 0 8" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M8 28c0-4.5 3.6-7.5 8-7.5s8 3 8 7.5" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
+      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#F0ECFF"/><path d="M11 13c0-2.76 2.24-5 5-5s5 2.24 5 5" fill="#3D2B1F"/><rect x="10" y="13" width="2.5" height="10" rx="1.25" fill="#3D2B1F"/><rect x="19.5" y="13" width="2.5" height="10" rx="1.25" fill="#3D2B1F"/><circle cx="16" cy="13" r="5" fill="#FDDBB4"/><path d="M8 29c0-4.42 3.58-8 8-8s8 3.58 8 8" fill="#7C5CFF"/></svg>`;
     } else {
       avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#F3F4F6"/><circle cx="16" cy="13" r="5" stroke="#6B7280" stroke-width="1.5" fill="none"/><path d="M7 28c0-5 4-8 9-8s9 3 9 8" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
     }
