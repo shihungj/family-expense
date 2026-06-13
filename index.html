@@ -445,8 +445,8 @@
   /* ── 銀行設定頁 ── */
   .bank-page-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
   .bank-page-header-icon { width: 52px; height: 52px; border-radius: 50%; background: #FFF3E8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .bank-page-title { font-size: 1.15rem; font-weight: 700; color: #1F2937; margin: 0 0 .25rem; }
-  .bank-page-subtitle { font-size: .85rem; color: #6B7280; margin: 0; }
+  .bank-page-title { font-size: 24px; font-weight: 700; color: #1F2937; margin: 0 0 .3rem; }
+  .bank-page-subtitle { font-size: 14px; font-weight: 400; color: #6B7280; margin: 0; }
   .bank-info-card { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
   .bank-info-left { display: flex; flex-direction: column; gap: .65rem; flex: 1; min-width: 0; }
   .bank-info-item { display: flex; align-items: flex-start; gap: .6rem; font-size: .85rem; color: #374151; line-height: 1.5; }
@@ -1420,8 +1420,17 @@
 
   <!-- ─────────────────── TRANSACTIONS ──────────────────────── -->
   <div id="page-transactions" class="page">
-    <div style="margin-bottom:1rem">
-      <h2 style="margin-bottom:0">全部交易明細</h2>
+    <div class="bank-page-header">
+      <div class="bank-page-header-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+          <circle cx="3" cy="6" r="1" fill="#FF8A3D" stroke="none"/><circle cx="3" cy="12" r="1" fill="#FF8A3D" stroke="none"/><circle cx="3" cy="18" r="1" fill="#FF8A3D" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <div class="bank-page-title">全部交易明細</div>
+        <div class="bank-page-subtitle">查詢、篩選、修改及刪除所有消費記錄</div>
+      </div>
     </div>
     <!-- 篩選列（表格卡片外） -->
     <div class="tx-filter-bar">
@@ -1443,7 +1452,17 @@
 
   <!-- ─────────────────── IMPORT ────────────────────────────── -->
   <div id="page-import" class="page">
-    <h2>帳單匯入</h2>
+    <div class="bank-page-header">
+      <div class="bank-page-header-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div>
+        <div class="bank-page-title">帳單匯入</div>
+        <div class="bank-page-subtitle">上傳 CSV 帳單並確認匯入月份</div>
+      </div>
+    </div>
 
     <!-- 上方寬版卡片（45% : 55%） -->
     <div class="imp-card" style="margin-bottom:1.5rem;display:flex;align-items:stretch;padding:0;overflow:hidden;min-height:180px">
@@ -1520,7 +1539,17 @@
 
   <!-- ─────────────────── RULES ─────────────────────────────── -->
   <div id="page-rules" class="page">
-    <h2>分類規則管理</h2>
+    <div class="bank-page-header">
+      <div class="bank-page-header-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7" stroke-linecap="round" stroke-width="3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="bank-page-title">分類規則管理</div>
+        <div class="bank-page-subtitle">設定消費明細的自動歸屬對應規則</div>
+      </div>
+    </div>
     <div class="card" style="margin-bottom:1rem">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
         <div style="flex:1;min-width:0">
@@ -1543,7 +1572,7 @@
 
   <!-- ─────────────────── SETTINGS ──────────────────────────── -->
   <div id="page-settings" class="page">
-    <h2 id="settings-page-title">系統設定</h2>
+    <h2 id="settings-page-title" style="display:none">系統設定</h2>
 
     <!-- 銀行設定 -->
     <div id="settings-section-bank" class="settings-section">
@@ -1598,6 +1627,17 @@
 
     <!-- 系統資訊 -->
     <div id="settings-section-info" class="settings-section">
+      <div class="bank-page-header">
+        <div class="bank-page-header-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="bank-page-title">系統資訊</div>
+          <div class="bank-page-subtitle">查看系統版本、資料庫狀態與資料統計</div>
+        </div>
+      </div>
 
       <!-- 版本資訊卡片 -->
       <div class="card" style="margin-bottom:1rem;display:flex;gap:2.5rem;align-items:center;flex-wrap:wrap">
@@ -1672,6 +1712,17 @@
 
     <!-- 備份與還原 -->
     <div id="settings-section-backup" class="settings-section">
+      <div class="bank-page-header">
+        <div class="bank-page-header-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="bank-page-title">備份與還原</div>
+          <div class="bank-page-subtitle">匯出 JSON 備份或從備份檔還原資料</div>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:720px">
 
         <!-- 匯出備份 -->
@@ -1710,13 +1761,27 @@
 
     <!-- 密碼設定 -->
     <div id="settings-section-password" class="settings-section">
+      <div class="bank-page-header">
+        <div class="bank-page-header-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="bank-page-title">密碼設定</div>
+          <div class="bank-page-subtitle">管理網站登入密碼與對帳單檢視密碼</div>
+        </div>
+      </div>
 
       <!-- 左右兩欄配置 -->
       <div style="display:flex;gap:1.25rem;align-items:flex-start;flex-wrap:wrap">
 
         <!-- 左欄：網站登入密碼 -->
         <div style="flex:1;min-width:280px">
-          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">網站登入密碼</h3>
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800);display:flex;align-items:center;gap:.45rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            網站登入密碼
+          </h3>
           <div class="card" style="margin-bottom:.75rem">
             <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
               🔒&ensp;<strong>目前密碼</strong>：輸入目前使用中的密碼以驗證身份<br>
@@ -1747,7 +1812,10 @@
 
         <!-- 右欄：對帳單檢視密碼 -->
         <div style="flex:1;min-width:280px">
-          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800)">對帳單檢視密碼</h3>
+          <h3 style="margin-bottom:.85rem;font-size:1rem;font-weight:700;color:var(--gray-800);display:flex;align-items:center;gap:.45rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            對帳單檢視密碼
+          </h3>
           <div class="card" style="margin-bottom:.75rem">
             <div style="font-size:.82rem;color:var(--gray-600);line-height:2.2">
               🔒&ensp;對帳單檢視密碼與登入密碼分開管理<br>
@@ -1778,7 +1846,17 @@
 
   <!-- ─────────────────── HELP ───────────────────────────────── -->
   <div id="page-help" class="page">
-    <h2>使用說明</h2>
+    <div class="bank-page-header">
+      <div class="bank-page-header-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="bank-page-title">使用說明</div>
+        <div class="bank-page-subtitle">了解系統功能與每月操作標準流程</div>
+      </div>
+    </div>
 
     <!-- 區塊一：每月標準操作流程 -->
     <div class="help-block">
