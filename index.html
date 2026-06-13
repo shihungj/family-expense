@@ -1922,20 +1922,13 @@
         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1D4ED8"></span> 世鴻對帳單
       </div>
       <div style="display:flex;align-items:center;gap:.5rem">
-        <input type="text" id="stmt-link-shihong" readonly
-               style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
-               onclick="this.select()">
-        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
+        <a id="stmt-link-shihong" href="#" target="_blank" rel="noopener noreferrer"
+           style="flex:1;font-size:.78rem;padding:.45rem .65rem;background:var(--gray-50);border:1px solid var(--border);border-radius:8px;color:var(--primary);text-decoration:underline;word-break:break-all;line-height:1.5;cursor:pointer"></a>
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative;flex-shrink:0"
                 onclick="copyStmtLink('shihong')">
           複製
           <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
         </button>
-      </div>
-      <div style="margin-top:.45rem">
-        <a id="stmt-link-a-shihong" href="#" target="_blank" rel="noopener noreferrer"
-           style="font-size:.75rem;color:var(--primary);text-decoration:underline;word-break:break-all">
-          ↗ 點此開啟世鴻對帳單
-        </a>
       </div>
     </div>
     <!-- 慧鳳 -->
@@ -1944,20 +1937,13 @@
         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E53935"></span> 慧鳳對帳單
       </div>
       <div style="display:flex;align-items:center;gap:.5rem">
-        <input type="text" id="stmt-link-huifeng" readonly
-               style="flex:1;font-size:.78rem;background:var(--gray-50);color:var(--gray-700);cursor:pointer"
-               onclick="this.select()">
-        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative"
+        <a id="stmt-link-huifeng" href="#" target="_blank" rel="noopener noreferrer"
+           style="flex:1;font-size:.78rem;padding:.45rem .65rem;background:var(--gray-50);border:1px solid var(--border);border-radius:8px;color:var(--primary);text-decoration:underline;word-break:break-all;line-height:1.5;cursor:pointer"></a>
+        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative;flex-shrink:0"
                 onclick="copyStmtLink('huifeng')">
           複製
           <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
         </button>
-      </div>
-      <div style="margin-top:.45rem">
-        <a id="stmt-link-a-huifeng" href="#" target="_blank" rel="noopener noreferrer"
-           style="font-size:.75rem;color:var(--primary);text-decoration:underline;word-break:break-all">
-          ↗ 點此開啟慧鳳對帳單
-        </a>
       </div>
     </div>
     <div class="modal-footer">
@@ -3981,10 +3967,10 @@ function openStmtLinkModal() {
   const base = location.origin + location.pathname.replace(/[^/]*$/, '') + 'statement.html';
   const shLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=shihong`;
   const hfLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=huifeng`;
-  document.getElementById('stmt-link-shihong').value = shLink;
-  document.getElementById('stmt-link-huifeng').value = hfLink;
-  document.getElementById('stmt-link-a-shihong').href = shLink;
-  document.getElementById('stmt-link-a-huifeng').href = hfLink;
+  const elSh = document.getElementById('stmt-link-shihong');
+  const elHf = document.getElementById('stmt-link-huifeng');
+  elSh.href = shLink; elSh.textContent = shLink;
+  elHf.href = hfLink; elHf.textContent = hfLink;
   const modal = document.getElementById('stmt-link-modal');
   modal.style.display = 'flex';
 }
@@ -3997,7 +3983,7 @@ function copyStmtLink(person) {
   const input = document.getElementById('stmt-link-' + person);
   const hint  = document.getElementById('hint-' + person);
   if (!input) return;
-  navigator.clipboard.writeText(input.value).then(() => {
+  navigator.clipboard.writeText(input.href).then(() => {
     hint.classList.add('show');
     setTimeout(() => hint.classList.remove('show'), 1800);
   }).catch(() => {
