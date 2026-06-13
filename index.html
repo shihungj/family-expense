@@ -4299,9 +4299,12 @@ async function submitRuleModal() {
   const attribution = document.getElementById('edit-rule-attr').value;
   if (!keyword) { toast('請輸入關鍵字', 'error'); return; }
   if (mode === 'add') {
-    const existing = Object.values(_rulesById).map(r => r.keyword.toLowerCase());
-    if (existing.includes(keyword.toLowerCase())) {
-      toast(`關鍵字「${keyword}」已存在，請勿重複新增`, 'error'); return;
+    const isDuplicate = Object.values(_rulesById).some(r =>
+      r.keyword.toLowerCase() === keyword.toLowerCase() &&
+      (r.keyword2 || '').toLowerCase() === keyword2.toLowerCase()
+    );
+    if (isDuplicate) {
+      toast(`關鍵字「${keyword}${keyword2 ? '＋' + keyword2 : ''}」組合已存在，請勿重複新增`, 'error'); return;
     }
     try {
       await api('addMerchantRule', {}, { keyword, keyword2, attribution });
