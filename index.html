@@ -4026,6 +4026,12 @@ function handleCSVFile(file) {
   reader.readAsText(file, 'UTF-8');
 }
 
+function toHalfWidth(str) {
+  return str.replace(/[！-～]/g, c =>
+    String.fromCharCode(c.charCodeAt(0) - 0xfee0)
+  ).replace(/　/g, ' ');
+}
+
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   const rows  = [];
@@ -4034,7 +4040,7 @@ function parseCSV(text) {
     const parts = line.split(/,|，/); if (parts.length < 5) continue;
     rows.push({
       postingDate: parts[0].trim(), date: parts[1].trim(),
-      bank: parts[2].trim(), detail: parts[3].trim(),
+      bank: toHalfWidth(parts[2].trim()), detail: toHalfWidth(parts[3].trim()),
       amount: parseFloat(parts[4].trim().replace(/[^\d.]/g, '')) || 0,
     });
   }
