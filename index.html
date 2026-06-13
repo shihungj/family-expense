@@ -1656,23 +1656,23 @@
     </div>
 
     <!-- 下方左右並排 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:stretch">
 
       <!-- 左：本月匯入狀態 -->
-      <div class="imp-card">
+      <div class="imp-card" style="display:flex;flex-direction:column">
         <div style="font-size:.875rem;font-weight:700;color:#1A202C;margin-bottom:.5rem">本月匯入狀態</div>
-        <div id="import-bank-status" class="imp-scroll">
+        <div id="import-bank-status" class="imp-scroll" style="flex:1">
           <div class="loading"><div class="spinner"></div></div>
         </div>
       </div>
 
       <!-- 右：最近匯入記錄 -->
-      <div class="imp-card">
+      <div class="imp-card" style="display:flex;flex-direction:column">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
           <span style="font-size:.875rem;font-weight:700;color:#1A202C">最近匯入記錄</span>
           <button class="imp-view-all-btn" onclick="showPage('transactions')">查看全部</button>
         </div>
-        <div id="recent-imports" class="imp-scroll">
+        <div id="recent-imports" class="imp-scroll" style="flex:1">
           <div class="loading"><div class="spinner"></div></div>
         </div>
       </div>
@@ -2600,41 +2600,44 @@
 
 <!-- 匯出帳單連結 Modal -->
 <div id="stmt-link-modal" class="modal-overlay" onclick="if(event.target===this)closeStmtLinkModal()">
-  <div class="modal-box" style="max-width:520px">
+  <div class="modal-box" style="max-width:300px">
     <div class="modal-title">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-.25em;margin-right:.45rem"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
       匯出帳單連結
     </div>
-    <p style="font-size:.82rem;color:var(--gray-400);margin-bottom:1.25rem;line-height:1.7">
-      以下連結可直接開啟獨立對帳單頁面，輸入對帳單密碼後即可查看。複製連結後傳送給對應成員。
-    </p>
     <!-- 世鴻 -->
-    <div style="margin-bottom:1rem">
-      <div style="font-size:.78rem;font-weight:700;color:#1E40AF;margin-bottom:.45rem;display:flex;align-items:center;gap:.35rem">
-        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1D4ED8"></span> 世鴻對帳單
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:.82rem;font-weight:700;color:#1F2937;margin-bottom:.65rem;display:flex;align-items:center;gap:.4rem">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF8A3D"></span> 世鴻對帳單
       </div>
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <a id="stmt-link-shihong" href="#" target="_blank" rel="noopener noreferrer"
-           style="flex:1;font-size:.78rem;padding:8px 12px;background:#FFFFFF;border:1px solid #E8DED2;border-radius:8px;color:var(--primary);text-decoration:underline;word-break:break-all;line-height:1.5;cursor:pointer"></a>
-        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative;flex-shrink:0"
-                onclick="copyStmtLink('shihong')">
-          複製
-          <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+        <button onclick="openStmtPage('shihong')"
+          style="display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;padding:8px 12px;font-size:13px;background:#FF8A3D;color:#FFFFFF;border:none;cursor:pointer;font-family:inherit;font-weight:500">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          開啟對帳單頁面
+        </button>
+        <button id="stmt-copy-shihong" onclick="copyStmtLink('shihong')"
+          style="display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;padding:8px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;border:none;cursor:pointer;font-family:inherit;font-weight:500">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="stmt-copy-text-shihong">複製對帳單連結</span>
         </button>
       </div>
     </div>
     <!-- 慧鳳 -->
     <div style="margin-bottom:1.5rem">
-      <div style="font-size:.78rem;font-weight:700;color:#991B1B;margin-bottom:.45rem;display:flex;align-items:center;gap:.35rem">
-        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#E53935"></span> 慧鳳對帳單
+      <div style="font-size:.82rem;font-weight:700;color:#1F2937;margin-bottom:.65rem;display:flex;align-items:center;gap:.4rem">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#A78BFA"></span> 慧鳳對帳單
       </div>
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <a id="stmt-link-huifeng" href="#" target="_blank" rel="noopener noreferrer"
-           style="flex:1;font-size:.78rem;padding:8px 12px;background:#FFFFFF;border:1px solid #E8DED2;border-radius:8px;color:var(--primary);text-decoration:underline;word-break:break-all;line-height:1.5;cursor:pointer"></a>
-        <button class="btn btn-outline-edit btn-sm" style="white-space:nowrap;position:relative;flex-shrink:0"
-                onclick="copyStmtLink('huifeng')">
-          複製
-          <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+        <button onclick="openStmtPage('huifeng')"
+          style="display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;padding:8px 12px;font-size:13px;background:#FF8A3D;color:#FFFFFF;border:none;cursor:pointer;font-family:inherit;font-weight:500">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          開啟對帳單頁面
+        </button>
+        <button id="stmt-copy-huifeng" onclick="copyStmtLink('huifeng')"
+          style="display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;padding:8px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;border:none;cursor:pointer;font-family:inherit;font-weight:500">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="stmt-copy-text-huifeng">複製對帳單連結</span>
         </button>
       </div>
     </div>
@@ -2710,7 +2713,7 @@
 
 <!-- Add / Edit Rule modal -->
 <div id="edit-rule-modal" class="modal-overlay">
-  <div class="modal-box" style="max-width:420px">
+  <div class="modal-box" style="max-width:300px">
     <div class="modal-title" id="rule-modal-title">新增規則</div>
     <input type="hidden" id="edit-rule-row-index">
     <input type="hidden" id="rule-modal-mode" value="add">
@@ -2746,7 +2749,7 @@
 
 <!-- Add Bank modal -->
 <div id="add-bank-modal" class="modal-overlay">
-  <div class="modal-box" style="max-width:560px">
+  <div class="modal-box" style="max-width:300px">
     <div class="modal-title">新增銀行設定</div>
     <div>
       <div class="form-group">
@@ -2775,7 +2778,7 @@
 
 <!-- Edit Bank modal -->
 <div id="edit-bank-modal" class="modal-overlay">
-  <div class="modal-box" style="max-width:560px">
+  <div class="modal-box" style="max-width:300px">
     <div class="modal-title">修改銀行設定</div>
     <input type="hidden" id="edit-bank-row-index">
     <div>
@@ -3048,7 +3051,7 @@ async function doLogin() {
   try {
     const [result] = await Promise.all([
       api('login', {}, { username, password }),
-      new Promise(r => setTimeout(r, 2000))
+      new Promise(r => setTimeout(r, 5000))
     ]);
     if (result.success) {
       const wasPwdChanged = sessionStorage.getItem('pwdChanged');
@@ -4148,19 +4151,23 @@ async function loadRecentImports() {
         String(d.getMonth()+1).padStart(2,'0') + '/' +
         String(d.getDate()).padStart(2,'0');
     };
-    const rows = d.records.map((r, i) => `<tr>
+    const TARGET_ROWS = 4;
+    const dataRows = d.records.slice(0, TARGET_ROWS).map((r, i) => `<tr>
       <td style="color:#9B9287;font-size:.8rem">${i + 1}</td>
       <td>${r.bankName}</td>
       <td>${r.billingMonth}</td>
       <td class="num">${r.count}</td>
       <td class="num">${fmtImportedAt(r.importedAt)}</td>
     </tr>`).join('');
+    const emptyRows = Array.from({length: Math.max(0, TARGET_ROWS - d.records.length)}, () =>
+      `<tr><td style="color:#9B9287;font-size:.8rem">-</td><td>-</td><td>-</td><td class="num">-</td><td class="num">-</td></tr>`
+    ).join('');
     el.innerHTML = `<table class="imp-recent-table">
       <thead><tr>
         <th style="width:2rem">#</th><th>銀行</th><th>帳單月份</th>
         <th class="num">筆數</th><th class="num">匯入時間</th>
       </tr></thead>
-      <tbody>${rows}</tbody>
+      <tbody>${dataRows}${emptyRows}</tbody>
     </table>`;
   } catch(e) {
     el.innerHTML = '<div style="font-size:.82rem;color:#9B9287">載入失敗</div>';
@@ -4878,35 +4885,35 @@ function buildStmtDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, acce
   </table>`;
 }
 
+let _stmtLinks = {};
+
 function openStmtLinkModal() {
   if (!_stmtYM) { toast('請先選擇帳單月份', 'error'); return; }
   const base = location.origin + location.pathname.replace(/[^/]*$/, '') + 'statement.html';
-  const shLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=shihong`;
-  const hfLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=huifeng`;
-  const elSh = document.getElementById('stmt-link-shihong');
-  const elHf = document.getElementById('stmt-link-huifeng');
-  elSh.href = shLink; elSh.textContent = shLink;
-  elHf.href = hfLink; elHf.textContent = hfLink;
-  const modal = document.getElementById('stmt-link-modal');
-  modal.style.display = 'flex';
+  _stmtLinks.shihong = `${base}?month=${encodeURIComponent(_stmtYM)}&person=shihong`;
+  _stmtLinks.huifeng = `${base}?month=${encodeURIComponent(_stmtYM)}&person=huifeng`;
+  document.getElementById('stmt-link-modal').style.display = 'flex';
 }
 
 function closeStmtLinkModal() {
   document.getElementById('stmt-link-modal').style.display = 'none';
 }
 
+function openStmtPage(person) {
+  if (_stmtLinks[person]) window.open(_stmtLinks[person], '_blank');
+}
+
 function copyStmtLink(person) {
-  const input = document.getElementById('stmt-link-' + person);
-  const hint  = document.getElementById('hint-' + person);
-  if (!input) return;
-  navigator.clipboard.writeText(input.href).then(() => {
-    hint.classList.add('show');
-    setTimeout(() => hint.classList.remove('show'), 1800);
-  }).catch(() => {
-    input.select();
-    document.execCommand('copy');
-    hint.classList.add('show');
-    setTimeout(() => hint.classList.remove('show'), 1800);
+  const url = _stmtLinks[person];
+  if (!url) return;
+  const textEl = document.getElementById('stmt-copy-text-' + person);
+  const restore = () => { if (textEl) textEl.textContent = '複製對帳單連結'; };
+  const onCopied = () => { if (textEl) { textEl.textContent = '已複製！'; setTimeout(restore, 2000); } };
+  navigator.clipboard.writeText(url).then(onCopied).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    onCopied();
   });
 }
 
