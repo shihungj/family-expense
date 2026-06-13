@@ -2769,6 +2769,10 @@
         <input type="text" id="add-bank-code" placeholder="例：ESUN" style="width:120px">
         <div style="font-size:.75rem;color:#718096;margin-top:.25rem">選擇銀行後自動帶入，可手動修改</div>
       </div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">網銀連結（選填）</label>
+        <input type="text" id="add-bank-url" placeholder="https://..." style="width:100%">
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeAddBankModal()">取消</button>
@@ -2794,6 +2798,10 @@
       <div class="form-group">
         <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">銀行縮寫</label>
         <input type="text" id="edit-bank-code" placeholder="例：ESUN" style="width:120px">
+      </div>
+      <div class="form-group">
+        <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">網銀連結（選填）</label>
+        <input type="text" id="edit-bank-url" placeholder="https://..." style="width:100%">
       </div>
     </div>
     <div class="modal-footer">
@@ -4127,19 +4135,31 @@ async function loadImportBankStatus(billingMonth) {
     return;
   }
   el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  const ALL_BANKS = ['玉山銀行', '永豐銀行', '聯邦銀行', '中國信託', '富邦銀行'];
+  const extLinkSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
   try {
+    if (!_bankSettings.length) await loadBankSettings();
     const d = await api('getKPI', { billingMonth });
     const imported = new Set(d.importedBanks || []);
-    el.innerHTML = ALL_BANKS.map(bank => {
-      const ok    = imported.has(bank);
+    const banks = _bankSettings.length
+      ? _bankSettings
+      : ['玉山銀行', '永豐銀行', '聯邦銀行', '中國信託', '富邦銀行'].map(n => ({ bank: n, url: '' }));
+    el.innerHTML = banks.map(b => {
+      const bankName = b.bank || b;
+      const url      = b.url || '';
+      const ok    = imported.has(bankName);
       const color = ok ? '#22C55E' : '#FF8A3D';
       const label = ok ? '已匯入' : '未匯入';
+      const linkBtn = url
+        ? `<button onclick="window.open('${url}','_blank')" style="border:1px solid #FF8A3D;color:#FF8A3D;background:#FFFFFF;border-radius:999px;padding:2px 10px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center">${extLinkSvg}前往網銀</button>`
+        : '';
       return `<div class="imp-bank-row">
-        <span style="font-size:.875rem;color:#1A202C">${bank}</span>
-        <span style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:${color}">
-          <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
-          ${label}
+        <span style="font-size:.875rem;color:#1A202C">${bankName}</span>
+        <span style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;justify-content:flex-end">
+          ${linkBtn}
+          <span style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:${color}">
+            <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+            ${label}
+          </span>
         </span>
       </div>`;
     }).join('');
@@ -4428,13 +4448,15 @@ async function loadBankSettingsTable() {
   }
   const pencilSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
   const trashSvg  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+  const extLinkSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-left:3px"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
   const header = `<thead><tr>
-    <th>銀行名稱</th><th>結帳日</th><th>縮寫</th><th style="width:150px">操作</th>
+    <th>銀行名稱</th><th>結帳日</th><th>縮寫</th><th>網銀連結</th><th style="width:150px">操作</th>
   </tr></thead>`;
   const body = _bankSettings.map(b => `<tr>
     <td style="font-weight:600">${b.bank}</td>
     <td style="color:#6B7280">${b.cutoffDay} 日</td>
     <td><span class="bank-abbr-tag">${b.bankCode || '—'}</span></td>
+    <td>${b.url ? `<a href="${b.url}" target="_blank" style="color:#FF8A3D;font-size:13px;text-decoration:none">前往網銀${extLinkSvg}</a>` : '<span style="color:#9CA3AF">－</span>'}</td>
     <td style="white-space:nowrap">
       <button class="btn btn-outline-edit btn-sm" onclick="openEditBankModal(${b.rowIndex})">${pencilSvg}編輯</button>
       <button class="btn btn-outline-delete btn-sm" style="margin-left:.4rem" onclick="deleteBankSetting(${b.rowIndex})">${trashSvg}刪除</button>
@@ -4474,6 +4496,7 @@ function openAddBankModal() {
   document.getElementById('add-bank-name-custom').value = '';
   document.getElementById('add-bank-cutoff').value = '';
   document.getElementById('add-bank-code').value = '';
+  document.getElementById('add-bank-url').value = '';
   document.getElementById('add-bank-modal').style.display = 'flex';
 }
 function closeAddBankModal() {
@@ -4490,6 +4513,7 @@ async function addBankSetting() {
   if (isNaN(parseInt(cutoff)) || parseInt(cutoff) < 1 || parseInt(cutoff) > 31) {
     toast('結帳日請輸入 1–31 的數字', 'error'); return;
   }
+  const url    = document.getElementById('add-bank-url').value.trim();
   const dupName = (_bankSettings || []).find(b => b.bank.trim() === name);
   if (dupName) { toast(`「${name}」已存在，請勿重複新增`, 'error'); return; }
   if (code) {
@@ -4497,7 +4521,7 @@ async function addBankSetting() {
     if (dupCode) { toast(`縮寫「${code}」已被「${dupCode.bank}」使用，請修改後再送出`, 'error'); return; }
   }
   try {
-    await api('addBankSetting', {}, { bank: name, cutoffDay: parseInt(cutoff), bankCode: code });
+    await api('addBankSetting', {}, { bank: name, cutoffDay: parseInt(cutoff), bankCode: code, url });
     toast('銀行已新增', 'success');
     closeAddBankModal();
     await loadBankSettingsTable();
@@ -4512,6 +4536,7 @@ function openEditBankModal(rowIndex) {
   document.getElementById('edit-bank-name-display').textContent = b.bank;
   document.getElementById('edit-bank-cutoff').value        = b.cutoffDay;
   document.getElementById('edit-bank-code').value          = b.bankCode || '';
+  document.getElementById('edit-bank-url').value           = b.url || '';
   document.getElementById('edit-bank-modal').style.display = 'flex';
 }
 function closeEditBankModal() {
@@ -4521,9 +4546,10 @@ async function submitEditBank() {
   const rowIndex = parseInt(document.getElementById('edit-bank-row-index').value);
   const cutoff   = document.getElementById('edit-bank-cutoff').value.trim();
   const code     = document.getElementById('edit-bank-code').value.trim().toUpperCase();
+  const url      = document.getElementById('edit-bank-url').value.trim();
   if (!cutoff || isNaN(parseInt(cutoff))) { toast('結帳日格式不正確', 'error'); return; }
   try {
-    await api('updateBankSetting', {}, { rowIndex, cutoffDay: parseInt(cutoff), bankCode: code });
+    await api('updateBankSetting', {}, { rowIndex, cutoffDay: parseInt(cutoff), bankCode: code, url });
     toast('已更新', 'success');
     closeEditBankModal();
     await loadBankSettingsTable();
