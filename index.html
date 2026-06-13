@@ -2723,6 +2723,11 @@
       <input type="text" id="edit-rule-keyword" style="width:100%" placeholder="例：全聯">
     </div>
     <div class="form-group">
+      <label style="font-size:13px;color:#6B7280;display:block;margin-bottom:.3rem">第二關鍵字（選填）</label>
+      <div style="font-size:11px;color:#9CA3AF;margin-bottom:.4rem">設定後，消費明細須同時符合兩個關鍵字才套用此規則</div>
+      <input type="text" id="edit-rule-keyword2" style="width:100%" placeholder="同時包含此關鍵字才觸發">
+    </div>
+    <div class="form-group">
       <label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.3rem">歸屬</label>
       <select id="edit-rule-attr" style="width:100%">
         <option>世鴻應付</option><option>慧鳳應付</option>
@@ -4233,7 +4238,7 @@ async function loadRules() {
     const data   = await api('getMerchantRules');
     data.rules.forEach(r => { _rulesById[r.rowIndex] = r; });
     const header = `<thead><tr>
-      <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th style="width:90px;white-space:nowrap">歸屬</th>
+      <th style="width:52px;text-align:center">項次</th><th>關鍵字</th><th>關鍵字2</th><th style="width:90px;white-space:nowrap">歸屬</th>
       <th style="width:120px">操作</th>
     </tr></thead>`;
     const pencilSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
@@ -4241,6 +4246,7 @@ async function loadRules() {
     const body   = data.rules.map((r, i) => `<tr class="rule-row" data-row="${r.rowIndex}">
       <td style="color:var(--gray-400);font-size:.8rem;text-align:center">${i+1}</td>
       <td><span class="kw-tag">${r.keyword}<span class="kw-tag-x" onclick="event.stopPropagation();openRuleDeleteModal(${r.rowIndex})">×</span></span></td>
+      <td>${r.keyword2 ? `<span class="kw-tag">${r.keyword2}</span>` : `<span style="color:#9CA3AF">－</span>`}</td>
       <td style="white-space:nowrap">${attrBadge(r.attribution)}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-outline-edit btn-sm" onclick="openEditRuleModal(${r.rowIndex})">${pencilSvg}修改</button>
@@ -4254,24 +4260,26 @@ async function loadRules() {
 }
 
 function openAddRuleModal() {
-  document.getElementById('rule-modal-mode').value         = 'add';
-  document.getElementById('rule-modal-title').textContent  = '新增規則';
-  document.getElementById('edit-rule-row-index').value     = '';
-  document.getElementById('edit-rule-keyword').value       = '';
-  document.getElementById('edit-rule-attr').value          = '世鴻應付';
-  document.getElementById('edit-rule-modal').style.display = 'flex';
+  document.getElementById('rule-modal-mode').value          = 'add';
+  document.getElementById('rule-modal-title').textContent   = '新增規則';
+  document.getElementById('edit-rule-row-index').value      = '';
+  document.getElementById('edit-rule-keyword').value        = '';
+  document.getElementById('edit-rule-keyword2').value       = '';
+  document.getElementById('edit-rule-attr').value           = '世鴻應付';
+  document.getElementById('edit-rule-modal').style.display  = 'flex';
   setTimeout(() => document.getElementById('edit-rule-keyword').focus(), 50);
 }
 
 function openEditRuleModal(rowIndex) {
   const rule = _rulesById[rowIndex];
   if (!rule) return;
-  document.getElementById('rule-modal-mode').value         = 'edit';
-  document.getElementById('rule-modal-title').textContent  = '修改規則';
-  document.getElementById('edit-rule-row-index').value     = rowIndex;
-  document.getElementById('edit-rule-keyword').value       = rule.keyword;
-  document.getElementById('edit-rule-attr').value          = rule.attribution;
-  document.getElementById('edit-rule-modal').style.display = 'flex';
+  document.getElementById('rule-modal-mode').value          = 'edit';
+  document.getElementById('rule-modal-title').textContent   = '修改規則';
+  document.getElementById('edit-rule-row-index').value      = rowIndex;
+  document.getElementById('edit-rule-keyword').value        = rule.keyword;
+  document.getElementById('edit-rule-keyword2').value       = rule.keyword2 || '';
+  document.getElementById('edit-rule-attr').value           = rule.attribution;
+  document.getElementById('edit-rule-modal').style.display  = 'flex';
 }
 
 function closeRuleModal() {
@@ -4281,6 +4289,7 @@ function closeRuleModal() {
 async function submitRuleModal() {
   const mode        = document.getElementById('rule-modal-mode').value;
   const keyword     = document.getElementById('edit-rule-keyword').value.trim();
+  const keyword2    = document.getElementById('edit-rule-keyword2').value.trim();
   const attribution = document.getElementById('edit-rule-attr').value;
   if (!keyword) { toast('請輸入關鍵字', 'error'); return; }
   if (mode === 'add') {
@@ -4289,14 +4298,14 @@ async function submitRuleModal() {
       toast(`關鍵字「${keyword}」已存在，請勿重複新增`, 'error'); return;
     }
     try {
-      await api('addMerchantRule', {}, { keyword, attribution });
+      await api('addMerchantRule', {}, { keyword, keyword2, attribution });
       toast('規則已新增', 'success');
       closeRuleModal(); loadRules();
     } catch(e) { toast('新增失敗：' + e.message, 'error'); }
   } else {
     const rowIndex = parseInt(document.getElementById('edit-rule-row-index').value);
     try {
-      await api('updateMerchantRule', {}, { rowIndex, keyword, attribution });
+      await api('updateMerchantRule', {}, { rowIndex, keyword, keyword2, attribution });
       toast('規則已更新', 'success');
       closeRuleModal(); loadRules();
     } catch(e) { toast('更新失敗：' + e.message, 'error'); }
