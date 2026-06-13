@@ -157,20 +157,20 @@
     border-bottom: none;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 1.5rem;
     position: sticky;
     top: 0;
     z-index: 100;
-    gap: .75rem;
     flex-shrink: 0;
   }
   .month-nav-wrapper {
     position: relative; display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid #E9E2DB; border-radius: 999px;
-    background: #FFFFFF; padding: 4px 8px;
+    border: none; border-radius: 999px;
+    background: #F3F4F6; padding: 4px 8px;
   }
   .month-nav-btn {
-    background: #F3F4F6;
+    background: none;
     border: none; border-radius: 50%;
     cursor: pointer; width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
@@ -183,7 +183,7 @@
     background: none; border: none; cursor: pointer;
     font-size: 15px; font-weight: 700; color: #1F2937;
     padding: 0 .5rem; border-radius: 6px;
-    transition: background .15s; min-width: 100px; text-align: center;
+    transition: background .15s; min-width: 130px; text-align: center;
   }
   .month-display-btn:hover { background: #F5EFE8; }
   /* Month picker popup */
@@ -211,9 +211,11 @@
   .picker-month-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
   .picker-month-btn.disabled { opacity: .3; cursor: not-allowed; }
   .picker-month-btn.disabled:hover { background: #fff; border-color: var(--gray-200); color: var(--gray-700); }
-  .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: .65rem; }
+  .top-bar-left { display: flex; align-items: center; gap: 16px; }
+  .top-bar-right { display: flex; align-items: center; gap: .65rem; }
   .top-divider { width: 1px; height: 24px; background: var(--gray-200); }
-  .top-username { font-size: .875rem; font-weight: 600; color: var(--gray-700); }
+  .top-username { font-size: 14px; font-weight: 600; color: #1F2937; }
+  .top-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: inline-flex; }
   .logout-btn-top {
     display: flex; align-items: center; gap: .35rem;
     padding: .4rem .9rem;
@@ -244,7 +246,7 @@
   .kpi-name { font-size: 14px; font-weight: 600; color: #6B7280; }
   .kpi-amt  { font-size: 28px; font-weight: 700; line-height: 1.1; margin-bottom: .75rem; }
   .kpi-card-sh    .kpi-amt { color: #FF8A3D; }
-  .kpi-card-hf    .kpi-amt { color: #A78BFA; }
+  .kpi-card-hf    .kpi-amt { color: #7C5CFF; }
   .kpi-card-cm    .kpi-amt { color: #4CAF7D; }
   .kpi-card-total .kpi-amt { color: #FF8A3D; }
   .kpi-detail-row {
@@ -331,7 +333,7 @@
   .td-amount { text-align: right; font-weight: 600; color: #1F2937; }
   .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; }
   .badge-shihong { background: #FFF3E8; color: #FF8A3D; border: 1px solid #FFD4A8; }
-  .badge-huifeng { background: #F3F0FF; color: #A78BFA; border: 1px solid #DDD6FE; }
+  .badge-huifeng { background: #F0ECFF; color: #7C5CFF; border: 1px solid #C4B5FD; }
   .badge-common  { background: #E8F8EF; color: #4CAF7D; border: 1px solid #A7F3C4; }
   .badge-unclass { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
   /* 關鍵字 tag（分類規則管理頁）*/
@@ -501,7 +503,7 @@
     left: 0; top: 0;
     height: 100%;
     width: 45%;
-    padding: 2rem;
+    padding: 2rem 2rem 2rem 2.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -520,7 +522,7 @@
     padding: 10px 20px;
     font-size: 14px;
     font-weight: 600;
-    margin-top: 16px;
+    margin-top: 12px;
     width: fit-content;
     cursor: pointer;
     border: none;
@@ -531,20 +533,16 @@
 
   /* ── Top Bar Greeting ── */
   .top-bar-greeting {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 2px;
-    pointer-events: none;
   }
   .greeting-line1 {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     color: #1F2937;
   }
   .greeting-line2 {
@@ -611,9 +609,9 @@
   .stats-table tr:last-child td { border-bottom: none; }
   .stats-table td:first-child { font-weight: 500; color: #6B7280; }
   .stats-table td:nth-child(3) { font-weight: 600; }
-  .behavior-ref-item { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid var(--gray-100); }
+  .behavior-ref-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
   .behavior-ref-item:last-child { border-bottom: none; }
-  .behavior-ref-label { font-size: .8rem; color: #6B7280; }
+  .behavior-ref-label { font-size: .8rem; color: #6B7280; display: flex; align-items: center; gap: 6px; }
   .behavior-ref-value { font-size: .875rem; font-weight: 700; color: #1F2937; }
 
   /* ── Bank Import Progress ── */
@@ -641,9 +639,22 @@
   .chart-section-title select:focus { outline: none; border-color: #FF8A3D; }
 
   /* ── Donut Chart ── */
-  .donut-container { display: flex; align-items: center; gap: 20px; margin-top: .25rem; }
-  .donut-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
-  .donut-wrap canvas { width: 160px !important; height: 160px !important; }
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 16px; }
+  .donut-wrap canvas { width: 140px !important; height: 140px !important; }
+  /* payment tools 四欄表格 */
+  .pt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .pt-table thead tr { color: #9CA3AF; font-size: 12px; }
+  .pt-table thead th { padding: 4px 0; font-weight: 500; }
+  .pt-table thead th:first-child { text-align: left; }
+  .pt-table thead th:nth-child(2) { text-align: center; }
+  .pt-table thead th:nth-child(3), .pt-table thead th:nth-child(4) { text-align: right; }
+  .pt-table tbody tr { border-bottom: 1px solid #F3ECE5; }
+  .pt-table tbody tr:last-child { border-bottom: none; }
+  .pt-table tbody td { padding: 6px 0; }
+  .pt-table tbody td:first-child { text-align: left; color: #6B7280; }
+  .pt-table tbody td:nth-child(2) { text-align: center; color: #6B7280; }
+  .pt-table tbody td:nth-child(3) { text-align: right; font-weight: 600; color: #1F2937; }
+  .pt-table tbody td:nth-child(4) { text-align: right; color: #9CA3AF; }
   .donut-center-text {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 13px; font-weight: 700; color: #1F2937; text-align: center;
@@ -1226,44 +1237,47 @@
 
   <!-- ── Top Bar ── -->
   <div id="top-bar">
-    <!-- Month navigator -->
-    <div class="month-nav-wrapper" id="month-nav-wrapper">
-      <button class="month-nav-btn" onclick="prevMonth()" title="上一個月">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="15,18 9,12 15,6"/>
-        </svg>
-      </button>
-      <button class="month-display-btn" id="month-display-btn" onclick="toggleMonthPicker()">—</button>
-      <button class="month-nav-btn" onclick="nextMonth()" title="下一個月">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="9,18 15,12 9,6"/>
-        </svg>
-      </button>
-      <!-- Month picker popup -->
-      <div class="month-picker-popup" id="month-picker-popup">
-        <div class="picker-year-row">
-          <button class="picker-year-btn" onclick="pickerChangeYear(-1)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-          </button>
-          <span class="picker-year-label" id="picker-year-label">2026</span>
-          <button class="picker-year-btn" onclick="pickerChangeYear(1)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
+    <!-- Left: month nav + greeting -->
+    <div class="top-bar-left">
+      <div class="month-nav-wrapper" id="month-nav-wrapper">
+        <button class="month-nav-btn" onclick="prevMonth()" title="上一個月">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15,18 9,12 15,6"/>
+          </svg>
+        </button>
+        <button class="month-display-btn" id="month-display-btn" onclick="toggleMonthPicker()">—</button>
+        <button class="month-nav-btn" onclick="nextMonth()" title="下一個月">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9,18 15,12 9,6"/>
+          </svg>
+        </button>
+        <!-- Month picker popup -->
+        <div class="month-picker-popup" id="month-picker-popup">
+          <div class="picker-year-row">
+            <button class="picker-year-btn" onclick="pickerChangeYear(-1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+            </button>
+            <span class="picker-year-label" id="picker-year-label">2026</span>
+            <button class="picker-year-btn" onclick="pickerChangeYear(1)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg>
+            </button>
+          </div>
+          <div class="picker-months" id="picker-months-grid"></div>
         </div>
-        <div class="picker-months" id="picker-months-grid"></div>
+      </div>
+      <!-- Greeting -->
+      <div class="top-bar-greeting" id="top-bar-greeting">
+        <div class="greeting-line1">
+          <span id="greeting-icon"></span>
+          <span id="greeting-text">歡迎回來！</span>
+        </div>
+        <div class="greeting-line2" id="greeting-date"></div>
       </div>
     </div>
 
-    <!-- Greeting (center) -->
-    <div class="top-bar-greeting" id="top-bar-greeting">
-      <div class="greeting-line1">
-        <span id="greeting-icon"></span>
-        <span id="greeting-text">歡迎回來！</span>
-      </div>
-      <div class="greeting-line2" id="greeting-date"></div>
-    </div>
-
+    <!-- Right: avatar + username + logout -->
     <div class="top-bar-right">
+      <span id="top-bar-avatar" class="top-avatar"></span>
       <span class="top-username" id="nav-username"></span>
       <button class="logout-btn-top" onclick="doLogout()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1325,7 +1339,7 @@
       <!-- 慧鳳消費金額 -->
       <div class="kpi-card-new kpi-card-hf">
         <div class="kpi-card-header">
-          <div class="kpi-icon" style="background:#F3F0FF;color:#A78BFA">
+          <div class="kpi-icon" style="background:#F0ECFF;color:#7C5CFF">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
               <circle cx="12" cy="8" r="3.5"/>
               <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
@@ -1416,23 +1430,23 @@
     <div class="chart-row">
       <!-- 長條圖 -->
       <div class="card chart-card">
-        <div class="chart-section-title">本期 vs 上期對比</div>
-        <div style="position:relative;height:220px">
+        <div style="font-size:15px;font-weight:600;color:#1F2937;margin-bottom:12px;">本期 vs 上期對比</div>
+        <div style="position:relative;height:160px">
           <canvas id="chart-comparison"></canvas>
         </div>
       </div>
       <!-- 折線圖 -->
       <div class="card chart-card">
-        <div class="chart-section-title">
-          <span>支出趨勢（近 6 個月）</span>
-          <select id="trend-select" onchange="onTrendSelectChange()">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:15px;font-weight:600;color:#1F2937;">支出趨勢（近 6 個月）</span>
+          <select id="trend-select" onchange="onTrendSelectChange()" style="border:1px solid #E9E2DB;border-radius:6px;padding:4px 8px;font-size:13px;background:#FFFFFF;color:#1F2937;cursor:pointer;font-family:inherit;outline:none;">
             <option value="total">家庭總支出</option>
             <option value="shihong">世鴻消費金額</option>
             <option value="huifeng">慧鳳消費金額</option>
             <option value="common">共同支出金額</option>
           </select>
         </div>
-        <div style="position:relative;height:220px">
+        <div style="position:relative;height:160px">
           <canvas id="chart-trend"></canvas>
         </div>
       </div>
@@ -1440,42 +1454,55 @@
 
     <!-- 統計參考 -->
     <div class="stats-ref-grid">
-      <!-- 左欄：支付工具統計（圓環圖 + 列表） -->
+      <!-- 左欄：支付工具統計（圓環圖上方 + 四欄表格） -->
       <div class="card">
         <div class="section-title">支付工具統計</div>
-        <div class="donut-container">
-          <div class="donut-wrap">
-            <canvas id="chart-donut"></canvas>
-            <div class="donut-center-text" id="donut-center">$0</div>
-          </div>
-          <ul class="tool-list" id="tool-list"></ul>
+        <div class="donut-wrap">
+          <canvas id="chart-donut"></canvas>
+          <div class="donut-center-text" id="donut-center">$0</div>
         </div>
+        <div id="tool-list"></div>
       </div>
       <!-- 右欄：本期總覽 -->
       <div class="card">
         <div class="section-title">本期總覽</div>
         <div class="behavior-ref-item">
-          <span class="behavior-ref-label">日均消費</span>
+          <span class="behavior-ref-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            日均消費
+          </span>
           <span class="behavior-ref-value" id="bs-daily-avg">-</span>
         </div>
         <div class="behavior-ref-item" id="bs-top-bank-amount-item" style="cursor:pointer">
-          <span class="behavior-ref-label">最高消費額銀行</span>
+          <span class="behavior-ref-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            最高消費額銀行
+          </span>
           <span class="behavior-ref-value" id="bs-top-bank-amount">-</span>
         </div>
         <div class="behavior-ref-item" id="bs-top-bank-count-item" style="cursor:pointer">
-          <span class="behavior-ref-label">最多消費次數銀行</span>
+          <span class="behavior-ref-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            最多消費次數銀行
+          </span>
           <span class="behavior-ref-value" id="bs-top-bank-count">-</span>
         </div>
         <div class="behavior-ref-item">
-          <span class="behavior-ref-label">分類完成度</span>
+          <span class="behavior-ref-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            分類完成度
+          </span>
           <span class="behavior-ref-value" id="bs-classify-rate">-</span>
         </div>
         <!-- 分隔線 -->
-        <div style="border-top:1px solid #E9E2DB;margin:16px 0;"></div>
+        <div style="border-top:1px solid #E9E2DB;margin:10px 0;"></div>
         <!-- 帳單匯入進度 -->
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:13px;color:#6B7280;">帳單匯入進度</span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#6B7280;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              帳單匯入進度
+            </span>
             <span style="font-size:13px;font-weight:700;color:#FF8A3D;" id="import-progress-count">0 / 5 已完成</span>
           </div>
           <div style="margin-top:8px;height:8px;background:#F3ECE5;border-radius:4px;overflow:hidden;">
@@ -2978,6 +3005,18 @@ function initTopBarGreeting() {
   if (iconEl) iconEl.innerHTML = icon;
   if (textEl) textEl.textContent = `${word}，${username}！`;
   if (dateEl) dateEl.textContent = dateStr;
+
+  // 頭像 SVG
+  const avatarEl = document.getElementById('top-bar-avatar');
+  if (avatarEl) {
+    if (username === '世鴻') {
+      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#FFF3E8"/><circle cx="16" cy="13" r="5" stroke="#FF8A3D" stroke-width="1.5" fill="none"/><path d="M7 28c0-5 4-8 9-8s9 3 9 8" stroke="#FF8A3D" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
+    } else if (username === '慧鳳') {
+      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#F0ECFF"/><circle cx="16" cy="12" r="4.5" stroke="#7C5CFF" stroke-width="1.5" fill="none"/><path d="M11.5 12c0-3 1.5-5.5 4.5-5.5s4.5 2.5 4.5 5.5" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M11 16c-1 3-1 6 0 8" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M21 16c1 3 1 6 0 8" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M8 28c0-4.5 3.6-7.5 8-7.5s8 3 8 7.5" stroke="#7C5CFF" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
+    } else {
+      avatarEl.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#F3F4F6"/><circle cx="16" cy="13" r="5" stroke="#6B7280" stroke-width="1.5" fill="none"/><path d="M7 28c0-5 4-8 9-8s9 3 9 8" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`;
+    }
+  }
 }
 
 // ── Auth ─────────────────────────────────────────────────────────
@@ -3214,7 +3253,7 @@ async function initMonthSelector() {
 function updateMonthDisplay() {
   const sel = document.getElementById('dash-month-select');
   const val = sel.value || '';
-  const display = val ? val.replace('/', '-') : '—';
+  const display = val ? val.split('/')[0] + ' 年 ' + val.split('/')[1] + ' 月' : '—';
   document.getElementById('month-display-btn').textContent = display;
   document.getElementById('bill-month-display').textContent = val || '—';
   _pickerYear = val ? parseInt(val.split('/')[0]) : new Date().getFullYear();
@@ -3438,12 +3477,12 @@ function renderDonutChart(pt) {
   if (!ctx) return;
 
   const tools = [
-    { key: 'creditcard', label: '信用卡',   color: '#FF8A3D' },
-    { key: 'linepay',    label: 'LINE Pay', color: '#4CAF7D' },
-    { key: 'easycard',   label: '悠遊卡',   color: '#A78BFA' },
-    { key: 'easywallet', label: '悠遊付',   color: '#60A5FA' },
-    { key: 'carmoji',    label: '車麻吉',   color: '#FFC857' },
-    { key: 'icashpay',   label: 'iCASH Pay',color: '#E9E2DB' },
+    { key: 'creditcard', label: '信用卡',    color: '#FF8A3D' },
+    { key: 'linepay',    label: 'LINE Pay',  color: '#4CAF7D' },
+    { key: 'easycard',   label: '悠遊卡',    color: '#7C5CFF' },
+    { key: 'easywallet', label: '悠遊付',    color: '#60A5FA' },
+    { key: 'carmoji',    label: '車麻吉',    color: '#FFC857' },
+    { key: 'icashpay',   label: 'iCASH Pay', color: '#E9E2DB' },
   ];
 
   const amounts = tools.map(t => (pt[t.key] && pt[t.key].amount) || 0);
@@ -3462,28 +3501,29 @@ function renderDonutChart(pt) {
     },
     options: {
       responsive: false, cutout: '62%',
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + (ctx.raw || 0).toLocaleString('zh-TW') } } }
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' $' + (c.raw || 0).toLocaleString('zh-TW') } } }
     }
   });
 
-  // 右側文字列表
+  // 四欄表格式清單
   const listEl = document.getElementById('tool-list');
   if (!listEl) return;
-  listEl.innerHTML = tools.map(t => {
+  const rows = tools.map((t, i) => {
     const tool = pt[t.key];
     const amt  = (tool && tool.amount) || 0;
     const cnt  = (tool && tool.count)  || 0;
     const pct  = totalAmt ? ((amt / totalAmt) * 100).toFixed(1) : '0.0';
-    return `<li class="tool-list-item">
-      <span class="tool-list-name">
-        <span class="tool-list-dot" style="background:${t.color}"></span>${t.label}
-      </span>
-      <span class="tool-list-right">
-        <div class="tool-list-amount">$${amt.toLocaleString('zh-TW')}</div>
-        <div class="tool-list-meta">${cnt} 筆 · ${pct}%</div>
-      </span>
-    </li>`;
+    return `<tr>
+      <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${t.color};display:inline-block;flex-shrink:0"></span>${t.label}</span></td>
+      <td>${cnt}</td>
+      <td>$${amt.toLocaleString('zh-TW')}</td>
+      <td>${pct}%</td>
+    </tr>`;
   }).join('');
+  listEl.innerHTML = `<table class="pt-table">
+    <thead><tr><th>名稱</th><th>筆數</th><th>金額</th><th>佔比</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 async function loadKPI(month) {
