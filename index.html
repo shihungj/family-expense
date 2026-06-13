@@ -1931,6 +1931,12 @@
           <span class="stmt-copy-hint" id="hint-shihong">已複製連結</span>
         </button>
       </div>
+      <div style="margin-top:.45rem">
+        <a id="stmt-link-a-shihong" href="#" target="_blank" rel="noopener noreferrer"
+           style="font-size:.75rem;color:var(--primary);text-decoration:underline;word-break:break-all">
+          ↗ 點此開啟世鴻對帳單
+        </a>
+      </div>
     </div>
     <!-- 慧鳳 -->
     <div style="margin-bottom:1.5rem">
@@ -1946,6 +1952,12 @@
           複製
           <span class="stmt-copy-hint" id="hint-huifeng">已複製連結</span>
         </button>
+      </div>
+      <div style="margin-top:.45rem">
+        <a id="stmt-link-a-huifeng" href="#" target="_blank" rel="noopener noreferrer"
+           style="font-size:.75rem;color:var(--primary);text-decoration:underline;word-break:break-all">
+          ↗ 點此開啟慧鳳對帳單
+        </a>
       </div>
     </div>
     <div class="modal-footer">
@@ -3971,6 +3983,8 @@ function openStmtLinkModal() {
   const hfLink = `${base}?month=${encodeURIComponent(_stmtYM)}&person=huifeng`;
   document.getElementById('stmt-link-shihong').value = shLink;
   document.getElementById('stmt-link-huifeng').value = hfLink;
+  document.getElementById('stmt-link-a-shihong').href = shLink;
+  document.getElementById('stmt-link-a-huifeng').href = hfLink;
   const modal = document.getElementById('stmt-link-modal');
   modal.style.display = 'flex';
 }
