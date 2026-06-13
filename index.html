@@ -601,7 +601,7 @@
   .help-tip-icon { flex-shrink: 0; font-size: .9rem; }
 
   /* ── Stats Reference ── */
-  .stats-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+  .stats-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; align-items: stretch; }
   .stats-table { width: 100%; border-collapse: collapse; font-size: .875rem; margin-top: .25rem; }
   .stats-table th { font-size: .75rem; font-weight: 600; color: #6B7280; padding: .45rem .6rem; border-bottom: 1px solid #E9E2DB; }
   .stats-table th:not(:first-child), .stats-table td:not(:first-child) { text-align: right; }
@@ -639,8 +639,9 @@
   .chart-section-title select:focus { outline: none; border-color: #FF8A3D; }
 
   /* ── Donut Chart ── */
-  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 16px; }
-  .donut-wrap canvas { width: 140px !important; height: 140px !important; }
+  .donut-container { display: flex; gap: 20px; align-items: flex-start; }
+  .donut-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+  .donut-wrap canvas { width: 160px !important; height: 160px !important; }
   /* payment tools 四欄表格 */
   .pt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .pt-table thead tr { color: #9CA3AF; font-size: 12px; }
@@ -650,7 +651,7 @@
   .pt-table thead th:nth-child(3), .pt-table thead th:nth-child(4) { text-align: right; }
   .pt-table tbody tr { border-bottom: 1px solid #F3ECE5; }
   .pt-table tbody tr:last-child { border-bottom: none; }
-  .pt-table tbody td { padding: 6px 0; }
+  .pt-table tbody td { padding: 7px 0; }
   .pt-table tbody td:first-child { text-align: left; color: #6B7280; }
   .pt-table tbody td:nth-child(2) { text-align: center; color: #6B7280; }
   .pt-table tbody td:nth-child(3) { text-align: right; font-weight: 600; color: #1F2937; }
@@ -1454,17 +1455,19 @@
 
     <!-- 統計參考 -->
     <div class="stats-ref-grid">
-      <!-- 左欄：支付工具統計（圓環圖上方 + 四欄表格） -->
-      <div class="card">
+      <!-- 左欄：支付工具統計（圓環圖左 + 四欄表格右） -->
+      <div class="card" style="display:flex;flex-direction:column;">
         <div class="section-title">支付工具統計</div>
-        <div class="donut-wrap">
-          <canvas id="chart-donut"></canvas>
-          <div class="donut-center-text" id="donut-center">$0</div>
+        <div class="donut-container">
+          <div class="donut-wrap">
+            <canvas id="chart-donut"></canvas>
+            <div class="donut-center-text" id="donut-center">$0</div>
+          </div>
+          <div id="tool-list" style="flex:1;min-width:0;"></div>
         </div>
-        <div id="tool-list"></div>
       </div>
       <!-- 右欄：本期總覽 -->
-      <div class="card">
+      <div class="card" style="display:flex;flex-direction:column;">
         <div class="section-title">本期總覽</div>
         <div class="behavior-ref-item">
           <span class="behavior-ref-label">
@@ -1494,7 +1497,8 @@
           </span>
           <span class="behavior-ref-value" id="bs-classify-rate">-</span>
         </div>
-        <!-- 分隔線 -->
+        <!-- 分隔線 + 帳單匯入進度（margin-top:auto 讓兩卡片等高） -->
+        <div style="margin-top:auto;">
         <div style="border-top:1px solid #E9E2DB;margin:10px 0;"></div>
         <!-- 帳單匯入進度 -->
         <div>
@@ -1513,6 +1517,7 @@
             <div id="import-progress-meta" style="font-size:11px;color:#9CA3AF;text-align:right;line-height:1.6;"></div>
           </div>
         </div>
+        </div><!-- /margin-top:auto -->
       </div>
     </div>
 
