@@ -2421,6 +2421,11 @@ function showSettingsTab(tab) {
   const mnw = document.getElementById('month-nav-wrapper');
   if (mnw) mnw.style.display = 'none';
 
+  const mc = document.getElementById('main-content');
+  const pw = document.querySelector('.pages-wrapper');
+  if (mc) mc.style.background = '#FCFAF7';
+  if (pw) pw.style.background = '#FCFAF7';
+
   resetSettingsForm();
   if (tab === 'bank')  loadBankSettingsTable();
   if (tab === 'info')  loadSystemInfo();
