@@ -235,9 +235,9 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
   .kpi-card-header { display: flex; align-items: center; gap: .65rem; margin-bottom: .85rem; }
-  .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .kpi-name { font-size: .82rem; font-weight: 600; color: #6B7280; }
-  .kpi-amt  { font-size: 1.55rem; font-weight: 800; line-height: 1.1; margin-bottom: .75rem; }
+  .kpi-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .kpi-name { font-size: 14px; font-weight: 600; color: #6B7280; }
+  .kpi-amt  { font-size: 28px; font-weight: 700; line-height: 1.1; margin-bottom: .75rem; }
   .kpi-card-sh    .kpi-amt { color: #FF8A3D; }
   .kpi-card-hf    .kpi-amt { color: #A78BFA; }
   .kpi-card-cm    .kpi-amt { color: #4CAF7D; }
@@ -249,15 +249,8 @@
     padding: .55rem .75rem;
   }
   .kpi-detail-item { flex: 1; min-width: 0; }
-  .kpi-detail-label { font-size: .68rem; color: #9CA3AF; margin-bottom: .15rem; }
-  .kpi-detail-value { font-size: .78rem; font-weight: 700; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  /* 筆數（第 2 個 detail item）全卡片統一橘色 */
-  .kpi-detail-item:nth-child(2) .kpi-detail-value { color: #FF8A3D; }
-  /* 最高單筆（第 3 個）依卡片主色 */
-  .kpi-card-sh    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
-  .kpi-card-hf    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #A78BFA; }
-  .kpi-card-cm    .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #4CAF7D; }
-  .kpi-card-total .kpi-detail-item:nth-child(3) .kpi-detail-value { color: #FF8A3D; }
+  .kpi-detail-label { font-size: 12px; color: #6B7280; margin-bottom: .15rem; }
+  .kpi-detail-value { font-size: 12px; font-weight: 600; color: #1F2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* ── Comparison Cards ── */
   .cmp-section { margin-bottom: 1.25rem; }
@@ -486,6 +479,73 @@
 
   /* hidden legacy selects */
   #dash-month-select { display: none; }
+
+  /* ── Home Banner ── */
+  .home-banner {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    height: 200px;
+    margin-bottom: 24px;
+    background-image: url('assets/banner.png');
+    background-size: cover;
+    background-position: center top;
+  }
+  .home-banner-text {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: 45%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .home-banner-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F2937;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .home-banner-btn {
+    background: #FF8A3D;
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 16px;
+    width: fit-content;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+  .home-banner-btn:hover { opacity: .88; }
+
+  /* ── Top Bar Greeting ── */
+  .top-bar-greeting {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+  }
+  .greeting-line1 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1F2937;
+  }
+  .greeting-line2 {
+    font-size: 12px;
+    color: #6B7280;
+  }
 
   /* ── Help page ── */
   .help-block { margin-bottom: 2rem; }
@@ -1134,6 +1194,15 @@
       </div>
     </div>
 
+    <!-- Greeting (center) -->
+    <div class="top-bar-greeting" id="top-bar-greeting">
+      <div class="greeting-line1">
+        <span id="greeting-icon"></span>
+        <span id="greeting-text">歡迎回來！</span>
+      </div>
+      <div class="greeting-line2" id="greeting-date"></div>
+    </div>
+
     <div class="top-bar-right">
       <span class="top-username" id="nav-username"></span>
       <button class="logout-btn-top" onclick="doLogout()">
@@ -1154,6 +1223,14 @@
   <div id="page-dashboard" class="page active">
     <!-- Hidden legacy select for API compat -->
     <select id="dash-month-select" onchange="onDashMonthChange()"></select>
+
+    <!-- Banner -->
+    <div class="home-banner">
+      <div class="home-banner-text">
+        <p class="home-banner-title">持續記錄每一筆支出，<br>就能看見更好的自己與家庭！</p>
+        <button class="home-banner-btn" onclick="showPage('import')">記錄支出 →</button>
+      </div>
+    </div>
 
     <!-- KPI Cards (4 cards) -->
     <div class="kpi-grid-new">
@@ -2826,6 +2903,51 @@ function toast(msg, type = 'info') {
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 3500);
 }
 
+// ── Top Bar Greeting ─────────────────────────────────────────────
+function initTopBarGreeting() {
+  const username = sessionStorage.getItem('authUser') || '';
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const y = now.getFullYear();
+  const pad = n => String(n).padStart(2, '0');
+  const dateStr = `今天是 ${y}/${pad(m)}/${pad(d)}，祝您有美好的一天！`;
+
+  const sunSVG = `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="14" cy="14" r="5" fill="#FFC857"/>
+    <line x1="14" y1="2" x2="14" y2="5" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="23" x2="14" y2="26" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="2" y1="14" x2="5" y2="14" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="23" y1="14" x2="26" y2="14" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="5.51" y1="5.51" x2="7.63" y2="7.63" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="20.37" y1="20.37" x2="22.49" y2="22.49" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="22.49" y1="5.51" x2="20.37" y2="7.63" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+    <line x1="7.63" y1="20.37" x2="5.51" y2="22.49" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+
+  const moonSVG = `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15.5A9 9 0 0112.5 7a9 9 0 00-.5 0 9 9 0 109 9 9 9 0 00.5-0.5z" fill="#A78BFA"/>
+    <ellipse cx="19" cy="20" rx="5" ry="3" fill="#E9E2DB"/>
+    <ellipse cx="15.5" cy="21" rx="4" ry="2.5" fill="#E9E2DB"/>
+    <ellipse cx="22" cy="21" rx="3" ry="2" fill="#E9E2DB"/>
+  </svg>`;
+
+  const isDay = h >= 6 && h < 18;
+  const icon = isDay ? sunSVG : moonSVG;
+  let word;
+  if (h >= 0 && h < 12) word = '早安';
+  else if (h < 18) word = '午安';
+  else word = '晚安';
+
+  const iconEl = document.getElementById('greeting-icon');
+  const textEl = document.getElementById('greeting-text');
+  const dateEl = document.getElementById('greeting-date');
+  if (iconEl) iconEl.innerHTML = icon;
+  if (textEl) textEl.textContent = `${word}，${username}！`;
+  if (dateEl) dateEl.textContent = dateStr;
+}
+
 // ── Auth ─────────────────────────────────────────────────────────
 function requireAuth() {
   if (!sessionStorage.getItem('authToken')) { showLoginPage(); return false; }
@@ -2861,6 +2983,7 @@ async function doLogin() {
       document.getElementById('login-page').style.display = 'none';
       document.getElementById('main-app').style.display  = 'block';
       document.getElementById('nav-username').textContent = username;
+      initTopBarGreeting();
       populateImportBillingMonths();
       await Promise.all([loadBankSettings(), initMonthSelector()]);
       if (wasPwdChanged) {
@@ -4612,6 +4735,7 @@ async function doChangeStmtPasswordInPwdPage() {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('main-app').style.display   = 'block';
   document.getElementById('nav-username').textContent = username;
+  initTopBarGreeting();
 
   await Promise.all([loadBankSettings(), initMonthSelector()]);
   loadDashboard();
