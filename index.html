@@ -1449,7 +1449,10 @@
       <select class="tx-filter-select" id="txf-bank" onchange="updateTxFilter('bank',this.value)"></select>
       <input type="text" class="tx-filter-input" id="txf-detail" placeholder="消費明細關鍵字" oninput="updateTxFilter('detail',this.value)">
       <select class="tx-filter-select" id="txf-attr" onchange="updateTxFilter('attr',this.value)"></select>
-      <button class="btn btn-primary btn-sm" onclick="openAddTxModal()">新增交易</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddTxModal()" style="display:inline-flex;align-items:center;gap:.35rem;white-space:nowrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        新增交易
+      </button>
     </div>
     <div class="tx-container">
       <div class="tx-batch-bar" id="tx-batch-bar">
@@ -1490,8 +1493,11 @@
             <label style="font-size:.875rem;font-weight:600;color:#1A202C;flex-shrink:0">帳單月份</label>
             <select id="import-billing-month" onchange="onImportMonthChange()" style="min-width:120px"></select>
           </div>
-          <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem"
-                  onclick="document.getElementById('csv-file').click()">📂 匯入帳單</button>
+          <button class="btn btn-primary" style="padding:.55rem 1.4rem;font-size:.95rem;display:inline-flex;align-items:center;gap:.45rem"
+                  onclick="document.getElementById('csv-file').click()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            匯入帳單
+          </button>
           <input type="file" id="csv-file" accept=".csv" style="display:none"
                  onchange="handleCSVFile(this.files[0])">
         </div>
@@ -1572,7 +1578,10 @@
             <div style="display:flex;align-items:center;gap:.45rem"><span class="badge badge-unclass">尚未分類</span>消費明細包含關鍵字時，保留尚未分類狀態</div>
           </div>
         </div>
-        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddRuleModal()">新增規則</button>
+        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center;display:inline-flex;align-items:center;gap:.4rem" onclick="openAddRuleModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7" stroke-width="3"/></svg>
+          新增規則
+        </button>
       </div>
     </div>
     <div class="card" style="padding:24px">
@@ -1628,7 +1637,10 @@
             <span><strong>其他銀行</strong>：下拉選單選擇「其他」時，需自行輸入銀行名稱與縮寫</span>
           </div>
         </div>
-        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center" onclick="openAddBankModal()">新增銀行</button>
+        <button class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:center;display:inline-flex;align-items:center;gap:.4rem" onclick="openAddBankModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 11l9-9 9 9"/></svg>
+          新增銀行
+        </button>
       </div>
       <!-- 表格 -->
       <div class="card" style="padding:0;overflow:hidden">
