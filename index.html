@@ -164,22 +164,26 @@
     gap: .75rem;
     flex-shrink: 0;
   }
-  .month-nav-wrapper { position: relative; display: inline-flex; align-items: center; gap: .2rem; }
+  .month-nav-wrapper {
+    position: relative; display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid #E9E2DB; border-radius: 999px;
+    background: #FFFFFF; padding: 4px 8px;
+  }
   .month-nav-btn {
-    background: var(--gray-100);
-    border: none; border-radius: 6px;
-    cursor: pointer; width: 30px; height: 30px;
+    background: #F3F4F6;
+    border: none; border-radius: 50%;
+    cursor: pointer; width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
     color: var(--gray-600);
     transition: background .15s;
     flex-shrink: 0;
   }
-  .month-nav-btn:hover { background: var(--gray-200); }
+  .month-nav-btn:hover { background: #E9E2DB; }
   .month-display-btn {
     background: none; border: none; cursor: pointer;
-    font-size: 1rem; font-weight: 700; color: #1F2937;
-    padding: .25rem .75rem; border-radius: 6px;
-    transition: background .15s; min-width: 110px; text-align: center;
+    font-size: 15px; font-weight: 700; color: #1F2937;
+    padding: 0 .5rem; border-radius: 6px;
+    transition: background .15s; min-width: 100px; text-align: center;
   }
   .month-display-btn:hover { background: #F5EFE8; }
   /* Month picker popup */
@@ -672,7 +676,7 @@
   .import-progress-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .import-tag-green {
     font-size: 12px; padding: 2px 8px; border-radius: 999px;
-    background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0;
+    background: #E8F8EF; color: #4CAF7D; border: 1px solid #A7F3C4;
   }
   .import-progress-meta { font-size: 12px; color: #9CA3AF; text-align: right; }
 
@@ -1447,9 +1451,9 @@
           <ul class="tool-list" id="tool-list"></ul>
         </div>
       </div>
-      <!-- 右欄：消費行為參考 -->
+      <!-- 右欄：本期總覽 -->
       <div class="card">
-        <div class="section-title">消費行為參考</div>
+        <div class="section-title">本期總覽</div>
         <div class="behavior-ref-item">
           <span class="behavior-ref-label">日均消費</span>
           <span class="behavior-ref-value" id="bs-daily-avg">-</span>
@@ -1466,21 +1470,22 @@
           <span class="behavior-ref-label">分類完成度</span>
           <span class="behavior-ref-value" id="bs-classify-rate">-</span>
         </div>
-      </div>
-    </div>
-
-    <!-- 帳單匯入進度（升級版） -->
-    <div class="import-progress-card">
-      <div class="import-progress-header">
-        <span class="import-progress-label">帳單匯入進度（所有銀行帳單）</span>
-        <span class="import-progress-count" id="import-progress-count">0 / 5 已完成</span>
-      </div>
-      <div class="import-progress-bar-wrap">
-        <div class="import-progress-bar-fill" id="import-progress-bar-fill" style="width:0%"></div>
-      </div>
-      <div class="import-progress-footer">
-        <div class="import-progress-tags" id="import-progress-tags"></div>
-        <div class="import-progress-meta" id="import-progress-meta"></div>
+        <!-- 分隔線 -->
+        <div style="border-top:1px solid #E9E2DB;margin:16px 0;"></div>
+        <!-- 帳單匯入進度 -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:#6B7280;">帳單匯入進度</span>
+            <span style="font-size:13px;font-weight:700;color:#FF8A3D;" id="import-progress-count">0 / 5 已完成</span>
+          </div>
+          <div style="margin-top:8px;height:8px;background:#F3ECE5;border-radius:4px;overflow:hidden;">
+            <div id="import-progress-bar-fill" style="height:100%;background:#FF8A3D;border-radius:4px;width:0%;transition:width .4s ease;"></div>
+          </div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
+            <div id="import-progress-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+            <div id="import-progress-meta" style="font-size:11px;color:#9CA3AF;text-align:right;line-height:1.6;"></div>
+          </div>
+        </div>
       </div>
     </div>
 
