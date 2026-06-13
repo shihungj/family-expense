@@ -1947,7 +1947,7 @@
             </svg>
             <span style="font-size:.75rem;color:#92400E;line-height:1.6">建議每月匯入後執行一次備份，確保資料安全。</span>
           </div>
-          <button class="btn btn-primary" id="btn-backup" onclick="doBackup()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.85rem">
+          <button class="btn btn-primary" id="btn-backup" onclick="doBackup()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.85rem;height:48px">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
@@ -1979,7 +1979,7 @@
             <span style="font-size:.75rem;color:#92400E;line-height:1.6">還原後原有資料將被覆蓋，此操作無法復原，請確認備份檔來源正確。</span>
           </div>
           <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFileSelected(this.files[0])">
-          <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()" style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+          <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()" style="display:flex;align-items:center;justify-content:center;gap:.5rem;height:48px">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
             </svg>
