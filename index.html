@@ -1824,9 +1824,15 @@
 
         <!-- 最近更新紀錄 -->
         <div class="card" style="padding:1.25rem 1.4rem">
-          <div style="font-size:.85rem;font-weight:700;color:var(--gray-700);margin-bottom:1rem;display:flex;align-items:center;gap:.4rem">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            最近更新紀錄
+          <div style="font-size:.85rem;font-weight:700;color:var(--gray-700);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:.4rem">
+            <div style="display:flex;align-items:center;gap:.4rem">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              最近更新紀錄
+            </div>
+            <button onclick="document.getElementById('modal-version-history-help').style.display='flex'" style="font-size:.72rem;font-weight:600;color:#A78BFA;background:#F3F0FF;border:1px solid #DDD6FE;border-radius:999px;padding:.2rem .65rem;cursor:pointer;line-height:1.5;display:flex;align-items:center;gap:.3rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3"/></svg>
+              版本歷史增修
+            </button>
           </div>
           <div style="display:flex;flex-direction:column;gap:.65rem">
             <div style="display:flex;align-items:flex-start;gap:.75rem;padding-bottom:.65rem;border-bottom:1px solid #F3ECE5">
@@ -4360,5 +4366,20 @@ async function doChangeStmtPasswordInPwdPage() {
   loadDashboard();
 })();
 </script>
+
+<!-- Version history help modal -->
+<div id="modal-version-history-help" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box" style="max-width:520px">
+    <p style="font-weight:700;font-size:1.05rem;margin-bottom:1rem">如何自行新增版本歷史紀錄</p>
+    <div style="font-size:.875rem;color:var(--gray-600);line-height:1.75;margin-bottom:1.5rem">
+      <p style="margin-bottom:.75rem">從 <code style="background:#FAF7F2;border:1px solid #E9E2DB;border-radius:4px;padding:.1rem .35rem;font-size:.82rem;color:var(--primary)">index.html</code> 中搜尋「最近更新紀錄」，往下第 2 排有</p>
+      <pre style="background:#FAF7F2;border:1px solid #E9E2DB;border-radius:8px;padding:.75rem 1rem;font-size:.78rem;color:var(--gray-700);overflow-x:auto;margin-bottom:.75rem;line-height:1.6">&lt;div style="display:flex;flex-direction:column;gap:.65rem"&gt;</pre>
+      <p>使用 GitHub 編輯功能即可自動標示整段函數，複製整段函數改成你要的日期與版本歷史，並貼在此標籤下。</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn btn-ghost" style="min-width:88px" onclick="document.getElementById('modal-version-history-help').style.display='none'">關閉</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
