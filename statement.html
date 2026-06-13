@@ -147,6 +147,57 @@
   .sh-badge { background: #FFF0E6; color: #C05A1A; }
   .hf-badge { background: #F0EEFF; color: #4F3EBB; }
 
+  /* ── Mobile card list (hidden on desktop) ── */
+  .mobile-list { display: none; }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .page-wrap { padding: 1rem 16px 2rem; }
+
+    /* Header */
+    .stmt-top { flex-direction: column; align-items: flex-start; gap: .75rem; padding: 1rem; }
+    .stmt-heading-right { align-items: flex-start; flex-direction: row; gap: .5rem; flex-wrap: wrap; }
+
+    /* Card */
+    .card { padding: 16px; }
+
+    /* Summary */
+    .summary-amount { font-size: 1.25rem; }
+    .sub-grid { grid-template-columns: 1fr; gap: .6rem; }
+    .sub-cell { padding: .7rem .9rem; }
+    .sub-cell-label { font-size: .7rem; }
+    .sub-cell-value { font-size: 1.25rem; }
+
+    /* Stat grid */
+    .stat-grid { grid-template-columns: 1fr; gap: .6rem; }
+    .stat-icon-wrap { width: 32px; height: 32px; }
+    .stat-icon-wrap svg { width: 16px; height: 16px; }
+    .stat-value { font-size: 1rem; }
+
+    /* Toggle table/cards */
+    .table-wrap { display: none; }
+    .mobile-list { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Transaction card */
+    .tx-card {
+      background: #FFFFFF; border: 1px solid #EEF1F5;
+      border-radius: 8px; padding: 12px 14px;
+    }
+    .tx-card-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .tx-date  { font-size: .8rem; color: var(--gray-500); }
+    .tx-amount { font-size: .9rem; font-weight: 700; color: var(--gray-800); }
+    .tx-detail { font-size: .875rem; color: var(--gray-800); margin-bottom: 3px; }
+    .tx-bank  { font-size: .75rem; color: #64748B; }
+
+    /* Mobile subtotal row */
+    .mobile-foot {
+      display: flex; justify-content: flex-end; align-items: center; gap: .5rem;
+      padding: 10px 4px 2px; border-top: 1px solid #EEF1F5; margin-top: 4px;
+    }
+    .mobile-foot-label { font-size: .8rem; color: var(--gray-600); font-weight: 600; }
+    .mobile-foot-value { font-size: .95rem; font-weight: 800; }
+  }
+
   @media print {
     #pwd-screen { display: none !important; }
     body { background: #fff !important; }
@@ -393,6 +444,8 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
   if (!rows.length) {
     return '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:.875rem">本期無資料</div>';
   }
+
+  /* ── Desktop table ── */
   const body = rows.map(r => `<tr>
     <td>${r.date}</td>
     <td>${r.bank}</td>
@@ -412,7 +465,7 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
     </tr>`;
   }
 
-  return `<table class="detail-table">
+  const desktopTable = `<table class="detail-table">
     <thead><tr>
       <th>消費日</th><th>銀行</th><th>消費明細</th>
       <th>金額</th>
@@ -420,6 +473,35 @@ function buildDetailTable(rows, sub1Label, sub1Amt, sub2Label, sub2Amt, sub1Colo
     <tbody>${body}</tbody>
     <tfoot>${foot}</tfoot>
   </table>`;
+
+  /* ── Mobile card list ── */
+  const cards = rows.map(r => `
+    <div class="tx-card">
+      <div class="tx-card-row1">
+        <span class="tx-date">${r.date}</span>
+        <span class="tx-amount">NT$ ${Number(parseFloat(r.amount)||0).toLocaleString()}</span>
+      </div>
+      <div class="tx-detail">${r.detail}</div>
+      <div class="tx-bank">${r.bank}</div>
+    </div>`).join('');
+
+  let mobileFooter = `
+    <div class="mobile-foot">
+      <span class="mobile-foot-label">${sub1Label}</span>
+      <span class="mobile-foot-value" style="color:${sub1Color}">${fmt(sub1Amt)}</span>
+    </div>`;
+  if (sub2Label) {
+    const c = sub2Color || sub1Color;
+    mobileFooter += `
+    <div class="mobile-foot">
+      <span class="mobile-foot-label">${sub2Label}</span>
+      <span class="mobile-foot-value" style="color:${c}">${fmt(sub2Amt)}</span>
+    </div>`;
+  }
+
+  const mobileList = `<div class="mobile-list">${cards}${mobileFooter}</div>`;
+
+  return desktopTable + mobileList;
 }
 </script>
 </body>
