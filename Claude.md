@@ -239,3 +239,69 @@
 - Code.gs 修改後必須重新部署 Apps Script
 - 每次完成後自動執行 git add . / git commit / git push origin main
 - 每次任務最多 3～5 個項目，前後端分開處理
+
+## 視覺設計規範（更新）
+
+### 配色規範
+- 頁面最外層背景：#FAF7F2
+- 主內容區背景：#FCFAF7
+- 卡片背景：#FFFFFF
+- 卡片邊框：#E9E2DB
+- 卡片陰影：0 1px 3px rgba(0,0,0,0.06)
+- 主題色（暖橘）：#FF8A3D
+- 輔助色（綠）：#22C58E
+- 輔助色（紫）：#7C5CFF
+- 輔助色（黃）：#FFC857
+- 文字主要：#1F2937
+- 文字次要：#6B7280
+- 邊框／分隔線：#E9E2DB
+- 成功：#22C55E
+- 警示：#F59E0B
+- 錯誤：#EF4444
+
+### 頁面標題區規格
+- 橘色圓形底色 SVG inline 圖示＋標題 24px Bold #1F2937＋副標 14px Regular #6B7280
+- 所有頁面統一套用
+
+### 有色標題列規格（功能性區塊）
+- 左側 4px solid 主色、背景淡色版、圖示＋標題
+- 左欄橘色：背景 #FFF3E8、border #FF8A3D
+- 右欄紫色：背景 #F3F0FF、border #7C5CFF
+
+### 按鈕樣式規範
+- Primary：background #FF8A3D、color #FFFFFF、圓角 8px、高度 36px～48px、SVG inline 圖示置左
+- Secondary（紫）：background #7C5CFF、color #FFFFFF
+- Danger：outline red，hover 填滿
+- 全站按鈕一律移除加號文字，改用 SVG 圖示取代
+
+### 表格樣式規範
+- 外框 border 1px solid #E9E2DB、border-radius 12px
+- 表頭背景 #FAF7F2、表頭文字 #6B7280
+- 列高 56px、分隔線 1px solid #F1E7DA
+- hover 背景 #FFF8F3
+- 取消垂直格線
+- 捲動軸：寬 8px、track #F3ECE5、thumb #D8CFC4、圓角 4px
+- 金額欄靠右、font-weight 600
+
+### 歸屬標籤規範（border-radius 999px）
+- 世鴻應付：background #FFF3E8、color #FF8A3D、border #FFD4A8
+- 慧鳳應付：background #F3F0FF、color #A78BFA、border #DDD6FE
+- 共同支付：background #E8F8EF、color #4CAF7D、border #A7F3C4
+- 未分類：background #F3F4F6、color #6B7280、border #E5E7EB
+
+### 輸入框規範
+- border 1px solid #E9E2DB、border-radius 8px
+- focus：border-color 對應主色、box-shadow 0 0 0 3px rgba(主色,0.15)
+
+### 成功提示樣式
+- 綠色勾勾 SVG 圖示、背景 #F0FDF4、文字 #16A34A、邊框 1px solid #BBF7D0、圓角 8px、內距 12px 16px
+
+### 警示提示樣式
+- 警告圖示、背景 #FFFBEB、邊框 #FFC857、圓角 8px
+
+### 圖示規範
+- 全站一律 SVG inline，不引入外部圖示庫
+- 線性風格、圓角端點、與按鈕搭配時顏色 #FFFFFF
+
+### scrollbar-gutter
+- body 套用 scrollbar-gutter: stable，防止切換頁面時左側欄水平位移
